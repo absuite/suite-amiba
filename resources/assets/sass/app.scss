@@ -1,0 +1,17 @@
+@include layout-small-and-up {
+  .md-refs-dialog,
+  .md-query {
+    .md-table .md-table-cell {
+      height: inherit;
+    }
+  }
+}
+
+.md-card {
+  .md-card-expand {
+    .md-card-content {
+      max-height: 3rem;
+    }
+    &.md-active {}
+  }
+}
