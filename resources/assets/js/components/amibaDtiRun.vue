@@ -95,10 +95,15 @@
         this.is_running++;
         this.$http.post('amiba/dtis/run',datas).then(response => {
           this.is_running--;
+          this.$toast('执行成功!');
           if(callback)callback();
         }, response => {
           this.is_running--;
-          this.$toast(response.message);
+          if(response&&response.response&&response.response.data){
+            this.$toast(response.response.data.msg);
+          }else{
+            this.$toast(response.message);
+          }
           if(callback)callback(response);
         });
       },

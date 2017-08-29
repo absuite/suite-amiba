@@ -2,10 +2,10 @@
 
 namespace Suite\Amiba\Http\Controllers;
 use Auth;
-use Suite\Amiba\Jobs;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Models;
 use Illuminate\Http\Request;
+use Suite\Amiba\Jobs;
 
 class DtiController extends Controller {
 	public function run(Request $request) {

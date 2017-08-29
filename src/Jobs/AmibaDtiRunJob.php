@@ -98,7 +98,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		if (!empty($paramsConfig['ent_code'])) {
 			$input['context']['EntCode'] = $paramsConfig['ent_code'];
 		}
-		if ($dti->params) {
+		if ($dti->params && count($dti->params)) {
 			$input['parameters'] = $this->parseParams($dti->params, $paramsConfig);
 		}
 		$res = $client->request('POST', $apiPath, [
@@ -109,6 +109,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$result = json_decode($result);
 
 		if ($result->d->Error) {
+			Log::error($result->d->Error);
 			throw new \Exception($result->d->Error, 1);
 		}
 
