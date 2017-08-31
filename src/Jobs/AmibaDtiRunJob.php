@@ -98,8 +98,8 @@ class AmibaDtiRunJob implements ShouldQueue {
 		if (!empty($paramsConfig['ent_code'])) {
 			$input['context']['EntCode'] = $paramsConfig['ent_code'];
 		}
-		if ($dti->params && count($dti->params)) {
-			$input['parameters'] = $this->parseParams($dti->params, $paramsConfig);
+		if ($dti->body && count($dti->body)) {
+			$input['parameters'] = $this->parseParams($dti->body, $paramsConfig);
 		}
 		$res = $client->request('POST', $apiPath, [
 			'json' => $input,
@@ -116,7 +116,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$result = $result->d->Datas;
 
 		if ($result) {
-			$result = json_decode($result);
+			$result = json_decode($result, false, 512, JSON_BIGINT_AS_STRING);
 		}
 		return $result;
 	}
@@ -213,6 +213,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			'date' => $this->context['date'],
 			'datas' => $data,
 		];
+
 		try {
 			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始']);
 			Log::error($base_uri . $apiPath);
