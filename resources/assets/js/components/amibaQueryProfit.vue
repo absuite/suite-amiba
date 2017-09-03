@@ -37,14 +37,19 @@ export default {
       model: { period: this.$root.userConfig.period, purpose: this.$root.userConfig.purpose }
     };
   },
+  watch: {
+    'model.purpose': function(value) {
+      this.query();
+    },
+    'model.period': function(value) {
+      this.query();
+    },
+  },
   methods: {
     select(items) {
       this.selectRows = items;
     },
     query() {
-
-    },
-    load() {
       this.$refs.list.pagination(1);
     },
     init_model_query(options) {
@@ -52,10 +57,10 @@ export default {
       options.wheres.period = false;
 
       if (this.model.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.purpose.id };
+        options.wheres.purpose = { name: 'purpose.id', value: this.model.purpose.id };
       }
       if (this.model.period) {
-        options.wheres.period = { name: 'period_id', value: this.model.period.id };
+        options.wheres.period = { name: 'period.id', value: this.model.period.id };
       }
 
       options.orders[0] = { name: 'purpose_id' };
