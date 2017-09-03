@@ -5,22 +5,14 @@
         <md-layout md-gutter>
           <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20">
             <md-input-container class="md-inset">
-              <div class="label">
-                <label>目的</label>
-              </div>
-              <div class="input">
-                <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-input-ref>
-              </div>
+              <label>目的</label>
+              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-input-ref>
             </md-input-container>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="25" md-flex-large="20">
             <md-input-container class="md-inset">
-              <div class="label">
-                <label>期间</label>
-              </div>
-              <div class="input">
-                <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-input-ref>
-              </div>
+              <label>期间</label>
+              <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-input-ref>
             </md-input-container>
           </md-layout>
         </md-layout>
@@ -46,7 +38,9 @@
           </md-table-header>
           <md-table-body>
             <md-table-row v-for="(row, index) in dataDetail" :key="index">
-              <md-table-cell><div :class="['md-indent-'+row.indent]">{{row.itemName}}</div></md-table-cell>
+              <md-table-cell>
+                <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
+              </md-table-cell>
               <md-table-cell md-numeric>{{row.plan_value}}</md-table-cell>
               <md-table-cell md-numeric>{{row.month_value}}</md-table-cell>
               <md-table-cell md-numeric>{{row.diff_value}}</md-table-cell>
@@ -58,78 +52,77 @@
   </md-part>
 </template>
 <script>
-  import common from '../../gmf-sys/core/utils/common';
-  
-  export default {
-    data() {
-      return {
-        model:{
-          purpose:this.$root.userConfig.purpose,
-          period:this.$root.userConfig.period,
-          group:null
-        },
-        groups:[],
-        dataDetail:[]
-      };
+import common from '../../gmf-sys/core/utils/common';
+
+export default {
+  data() {
+    return {
+      model: {
+        purpose: this.$root.userConfig.purpose,
+        period: this.$root.userConfig.period,
+        group: null
+      },
+      groups: [],
+      dataDetail: []
+    };
+  },
+  watch: {
+    'model.purpose': function(value) {
+      this.loadData();
     },
-    watch: {
-      'model.purpose':function(value) {
-        this.loadData();
-      },
-      'model.period':function(value) {
-        this.loadData();
-      },
-      'model.group':function(value) {
-        this.loadData();
-      },
+    'model.period': function(value) {
+      this.loadData();
     },
-    methods: {
-      loadData() {
-        var queryCase={wheres:[]};
-        if(!this.model.purpose||!this.model.period||!this.model.group){
-          this.dataDetail=[];
-          return;
-        }
-        if(this.model.purpose){
-          queryCase.wheres.push({name:'purpose_id',value:this.model.purpose.id});
-        }
-        if(this.model.period){
-          queryCase.wheres.push({name:'period_id',value:this.model.period.id});
-        }
-        if(this.model.group){
-          queryCase.wheres.push({name:'group_id',value:this.model.group.id});
-        }
-        this.$http.post('amiba/reports/statement-purpose',queryCase).then(response => {
-            this.updateTableOptions(response.data.data);
-          }, response => {
-            console.log(response);
-          });
-      },
-      focusGroup(group){
-        this.model.group=group;
-      },
-      loadGroups() {
-        this.$http.get('amiba/groups/all',{params: {}}).then(response => {
-          this.groups=response.data.data;
-        }, response => {
-          console.log(response);
-        });
-        this.$http.get('amiba/reports/period-info').then(response => {
-          this.model.fm_period=response.data.data.yearFirstPeriod;
-          this.model.to_period=response.data.data.period;
-        });
-      },
-      updateTableOptions(data){
-        this.dataDetail=[];
-        this._.each(data,(value,key)=>{
-            this.dataDetail.push(value);
-        });
-      },
+    'model.group': function(value) {
+      this.loadData();
     },
-    created() {
+  },
+  methods: {
+    loadData() {
+      var queryCase = { wheres: [] };
+      if (!this.model.purpose || !this.model.period || !this.model.group) {
+        this.dataDetail = [];
+        return;
+      }
+      if (this.model.purpose) {
+        queryCase.wheres.push({ name: 'purpose_id', value: this.model.purpose.id });
+      }
+      if (this.model.period) {
+        queryCase.wheres.push({ name: 'period_id', value: this.model.period.id });
+      }
+      if (this.model.group) {
+        queryCase.wheres.push({ name: 'group_id', value: this.model.group.id });
+      }
+      this.$http.post('amiba/reports/statement-purpose', queryCase).then(response => {
+        this.updateTableOptions(response.data.data);
+      }, response => {
+        console.log(response);
+      });
     },
-    mounted() {
-     this.loadGroups();
+    focusGroup(group) {
+      this.model.group = group;
     },
-  };
+    loadGroups() {
+      this.$http.get('amiba/groups/all', { params: {} }).then(response => {
+        this.groups = response.data.data;
+      }, response => {
+        console.log(response);
+      });
+      this.$http.get('amiba/reports/period-info').then(response => {
+        this.model.fm_period = response.data.data.yearFirstPeriod;
+        this.model.to_period = response.data.data.period;
+      });
+    },
+    updateTableOptions(data) {
+      this.dataDetail = [];
+      this._.each(data, (value, key) => {
+        this.dataDetail.push(value);
+      });
+    },
+  },
+  created() {},
+  mounted() {
+    this.loadGroups();
+  },
+};
 </script>
