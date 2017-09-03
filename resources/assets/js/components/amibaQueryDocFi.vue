@@ -55,7 +55,7 @@
       return {
         selectRows: [],
         loading:0,
-         model: { period: null, biz_type: '', doc_type: '', org: '', account: '' }
+         model: { period: this.$root.userConfig.period, biz_type: '', doc_type: '', org: '', account: '' }
       };
     },
     methods: {
