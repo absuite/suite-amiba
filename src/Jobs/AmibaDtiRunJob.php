@@ -145,15 +145,19 @@ class AmibaDtiRunJob implements ShouldQueue {
 
 		$params = [];
 		foreach ($dtiCategoryParams as $key => $value) {
-			if ($value->type_enum == 'input' && $value->value == 'date') {
-				$params[$value->code] = $this->context['date'];
+			if ($value->type_enum == 'input') {
+				if (!empty($this->context[$value->value])) {
+					$params[$value->code] = $this->context[$value->value];
+				}
 			} else {
 				$params[$value->code] = $value->value;
 			}
 		}
 		foreach ($dtiParams as $key => $value) {
-			if ($value->type_enum == 'input' && $value->value == 'date') {
-				$params[$value->code] = $this->context['date'];
+			if ($value->type_enum == 'input') {
+				if (!empty($this->context[$value->value])) {
+					$params[$value->code] = $this->context[$value->value];
+				}
 			} else {
 				$params[$value->code] = $value->value;
 			}
