@@ -49,6 +49,7 @@ class RouteRegistrar {
 			$router->resource('allot-rules', 'AllotRuleController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 			$router->resource('data-inits', 'DataInitController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+			$router->get('/data-docs/{id}/lines', ['uses' => 'DataDocController@showLines']);
 			$router->resource('data-docs', 'DataDocController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 			$router->resource('data-times', 'DataTimeController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 			$router->resource('data-closes', 'DataCloseController', ['only' => ['index', 'store', 'destroy']]);

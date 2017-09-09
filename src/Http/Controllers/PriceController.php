@@ -58,7 +58,7 @@ class PriceController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['code', 'name']);
+		$input = $request->only(['code', 'name']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period']);
 		$validator = Validator::make($input, [
 			'code' => 'required',

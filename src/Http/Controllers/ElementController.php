@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class ElementController extends Controller {
@@ -60,7 +60,8 @@ class ElementController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['code', 'name', 'type_enum', 'direction_enum', 'factor_enum', 'scope_enum', 'is_manual']);
+		$input = $request->only(['code', 'name', 'type_enum', 'direction_enum', 'factor_enum', 'scope_enum', 'is_manual']);
+
 		$input = InputHelper::fillEntity($input, $request, ['parent', 'purpose']);
 		$parent = false;
 		if (!empty($input['parent_id'])) {

@@ -1,11 +1,11 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Libs\MonthClose;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Libs\MonthClose;
+use Suite\Amiba\Models;
 use Validator;
 
 class DataAdjustController extends Controller {
@@ -60,7 +60,7 @@ class DataAdjustController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['memo']);
+		$input = $request->only(['memo']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',

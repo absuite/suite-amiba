@@ -46,7 +46,7 @@ class ResultProfitController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['is_init', 'init_profit', 'income', 'cost', 'bal_profit', 'time_profit', 'time_output', 'time_total']);
+		$input = $request->only(['is_init', 'init_profit', 'income', 'cost', 'bal_profit', 'time_profit', 'time_output', 'time_total']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period', 'element']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',

@@ -76,7 +76,7 @@ class GroupController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['code', 'name', 'type_enum']);
+		$input = $request->only(['code', 'name', 'type_enum']);
 		$input = InputHelper::fillEntity($input, $request, ['parent', 'purpose']);
 		$validator = Validator::make($input, [
 			'code' => 'required',

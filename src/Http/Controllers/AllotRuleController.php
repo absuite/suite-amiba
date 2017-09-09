@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class AllotRuleController extends Controller {
@@ -54,7 +54,7 @@ class AllotRuleController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['code', 'name']);
+		$input = $request->only(['code', 'name']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'method', 'element', 'group']);
 		$validator = Validator::make($input, [
 			'code' => 'required',

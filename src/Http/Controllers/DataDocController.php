@@ -1,25 +1,29 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Jobs;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Jobs;
+use Suite\Amiba\Models;
 use Validator;
 
 class DataDocController extends Controller {
 	public function index(Request $request) {
+		$pageSize = $request->input('size', 10);
 		$query = Models\DataDoc::with('purpose', 'fm_group', 'to_group', 'period', 'element');
-
-		$data = $query->get();
-
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\DataDocLine::with('trader', 'item_category', 'item', 'unit');
+		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
 	}
 	public function show(Request $request, string $id) {
 		$query = Models\DataDoc::with('purpose', 'fm_group', 'to_group',
-			'period', 'element', 'currency',
-			'lines.trader', 'lines.item_category', 'lines.item', 'lines.unit');
+			'period', 'element', 'currency');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -53,7 +57,7 @@ class DataDocController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['doc_no', 'doc_date', 'state_enum', 'memo', 'biz_type_enum', 'is_outside', 'qty', 'money']);
+		$input = $request->only(['doc_no', 'doc_date', 'state_enum', 'memo', 'biz_type_enum', 'is_outside', 'qty', 'money']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'fm_group', 'to_group', 'period', 'element', 'currency']);
 
 		$validator = Validator::make($input, [

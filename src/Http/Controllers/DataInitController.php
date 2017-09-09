@@ -56,7 +56,7 @@ class DataInitController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['isInit', 'income', 'cost', 'profit', 'ext_income', 'ext_cost', 'ext_profit']);
+		$input = $request->only(['isInit', 'income', 'cost', 'profit', 'ext_income', 'ext_cost', 'ext_profit']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'period', 'currency']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',

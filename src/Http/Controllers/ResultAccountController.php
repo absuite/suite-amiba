@@ -46,7 +46,7 @@ class ResultAccountController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['type_enum', 'is_init', 'is_outside', 'money', 'src_id', 'src_no']);
+		$input = $request->only(['type_enum', 'is_init', 'is_outside', 'money', 'src_id', 'src_no']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period', 'element']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',

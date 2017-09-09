@@ -67,7 +67,7 @@ class DataTimeController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->intersect(['memo']);
+		$input = $request->only(['memo']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',
