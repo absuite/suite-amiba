@@ -19,12 +19,12 @@ class CreateSuiteAmibaModelingLinesTable extends Migration {
 		$md->entity('modeling', 'suite.amiba.modeling')->nullable()->comment('经营模型');
 		$md->entity('element', 'suite.amiba.element')->nullable()->comment('核算要素');
 		$md->enum('biz_type', 'suite.amiba.biz.type.enum')->nullable()->comment('业务类型');
-		$md->string('doc_type')->nullable()->comment('单据类型');
-		$md->string('item_category')->nullable()->comment('料品分类');
+		$md->entity('doc_type', 'suite.cbo.doc.type')->nullable()->comment('单据类型');
+		$md->entity('item_category', 'suite.cbo.item.category')->nullable()->comment('料品分类');
 		$md->string('project')->nullable()->comment('费用项目');
 		$md->string('account')->nullable()->comment('会计科目');
-		$md->string('trader')->nullable()->comment('客商');
-		$md->string('item')->nullable()->comment('料品');
+		$md->entity('trader', 'suite.cbo.trader')->nullable()->comment('客商');
+		$md->entity('item', 'suite.cbo.item')->nullable()->comment('料品');
 		$md->string('factor1')->nullable()->comment('因素1');
 		$md->string('factor2')->nullable()->comment('因素2');
 		$md->string('factor3')->nullable()->comment('因素3');
