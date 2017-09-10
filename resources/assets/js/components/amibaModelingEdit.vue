@@ -60,7 +60,6 @@
                   <md-table-head width="150px">因素1</md-table-head>
                   <md-table-head width="150px">因素2</md-table-head>
                   <md-table-head width="150px">来源巴</md-table-head>
-                  <md-table-head width="150px">来源要素</md-table-head>
                   <md-table-head width="150px">取值类型</md-table-head>
                   <md-table-head md-tooltip="100">取值比例%</md-table-head>
                 </md-table-row>
@@ -125,11 +124,6 @@
                   <md-table-cell>
                     <md-input-container>
                       <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.src_group"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.amiba.element.ref" v-model="row.src_element"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>

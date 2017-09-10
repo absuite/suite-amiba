@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class PriceController extends Controller {
@@ -37,6 +37,7 @@ class PriceController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Price::create($input);
 		$lines = $request->input('lines');
 		if ($lines && count($lines)) {
@@ -45,6 +46,7 @@ class PriceController extends Controller {
 				if (empty($value['cost_price'])) {
 					$value['cost_price'] = 0;
 				}
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group', 'item']);
 				Models\PriceLine::create($value);
 			}
@@ -76,6 +78,7 @@ class PriceController extends Controller {
 				if (empty($value['cost_price'])) {
 					$value['cost_price'] = 0;
 				}
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group', 'item']);
 				Models\PriceLine::create($value);
 			}

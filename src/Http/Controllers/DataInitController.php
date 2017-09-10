@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class DataInitController extends Controller {
@@ -36,12 +36,14 @@ class DataInitController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataInit::create($input);
 
 		$lines = $request->input('lines');
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['init_id'] = $data->id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group']);
 				Models\DataInitLine::create($value);
 			}
@@ -73,6 +75,7 @@ class DataInitController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['init_id'] = $id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group']);
 				Models\DataInitLine::create($value);
 			}

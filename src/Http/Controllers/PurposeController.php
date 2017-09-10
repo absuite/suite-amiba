@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class PurposeController extends Controller {
@@ -35,6 +35,7 @@ class PurposeController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Purpose::create($input);
 		return $this->show($request, $data->id);
 	}

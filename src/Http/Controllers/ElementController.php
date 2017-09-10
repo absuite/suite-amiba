@@ -50,6 +50,7 @@ class ElementController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Element::create($input);
 		return $this->show($request, $data->id);
 	}

@@ -46,6 +46,7 @@ class DataDocController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataDoc::create($input);
 
 		$this->storeLines($request, $data->id);
@@ -79,6 +80,7 @@ class DataDocController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['doc_id'] = $headId;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['trader', 'item_category', 'item', 'mfc', 'project', 'unit']);
 
 				Models\DataDocLine::create($value);

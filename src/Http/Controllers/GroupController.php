@@ -1,11 +1,11 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Gmf\Sys\Libs\TreeBuilder;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class GroupController extends Controller {
@@ -46,6 +46,7 @@ class GroupController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$input['is_leaf'] = 1;
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Group::create($input);
 		$lines = $request->input('lines');
 		$dataType = Models\Group::getDataTypeName($data->type_enum);
@@ -54,6 +55,7 @@ class GroupController extends Controller {
 			foreach ($lines as $key => $value) {
 				$value['group_id'] = $data->id;
 				$value['data_type'] = $dataType;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['data']);
 
 				Models\GroupLine::create($value);
@@ -96,6 +98,7 @@ class GroupController extends Controller {
 			foreach ($lines as $key => $value) {
 				$value['group_id'] = $data->id;
 				$value['data_type'] = $dataType;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['data']);
 
 				Models\GroupLine::create($value);

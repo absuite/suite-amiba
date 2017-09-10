@@ -35,11 +35,13 @@ class ModelingController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Modeling::create($input);
 		$lines = $request->input('lines');
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $data->id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
 				Models\ModelingLine::create($value);
 			}
@@ -67,6 +69,7 @@ class ModelingController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
 				Models\ModelingLine::create($value);
 			}

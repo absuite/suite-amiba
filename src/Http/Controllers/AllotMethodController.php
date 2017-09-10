@@ -35,11 +35,13 @@ class AllotMethodController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\AllotMethod::create($input);
 		$lines = $request->input('lines');
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['method_id'] = $data->id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group']);
 				Models\AllotMethodLine::create($value);
 			}
@@ -70,6 +72,7 @@ class AllotMethodController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['method_id'] = $id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group']);
 				Models\AllotMethodLine::create($value);
 			}

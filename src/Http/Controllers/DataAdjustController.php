@@ -39,12 +39,14 @@ class DataAdjustController extends Controller {
 		}
 		//月结校验
 		MonthClose::check($request, $input['period_id'], $input['purpose_id']);
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataAdjust::create($input);
 
 		$lines = $request->input('lines');
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['adjust_id'] = $data->id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['fm_group', 'to_group', 'fm_element', 'to_element']);
 
 				Models\DataAdjustLine::create($value);
@@ -78,6 +80,7 @@ class DataAdjustController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['adjust_id'] = $id;
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['fm_group', 'to_group', 'fm_element', 'to_element']);
 
 				Models\DataAdjustLine::create($value);

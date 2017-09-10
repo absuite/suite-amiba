@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class DataTimeController extends Controller {
@@ -36,6 +36,7 @@ class DataTimeController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataTime::create($input);
 
 		$this->storeLines($request, $data->id);
@@ -54,6 +55,7 @@ class DataTimeController extends Controller {
 					$value['over_time'] = 0;
 				}
 				$value['total_time'] = $value['nor_time'] + $value['over_time'];
+				$value['ent_id'] = $request->oauth_ent_id;
 				$value = InputHelper::fillEntity($value, $value, ['group']);
 
 				Models\DataTimeLine::create($value);

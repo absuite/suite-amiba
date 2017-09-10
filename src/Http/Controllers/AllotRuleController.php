@@ -35,12 +35,13 @@ class AllotRuleController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$data['ent_id'] = $request->oauth_ent_id;
 		$data = Models\AllotRule::create($input);
 		$lines = $request->input('lines');
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$ldata = ['rule_id' => $data->id, 'rate' => $value['rate']];
-
+				$ldata['ent_id'] = $request->oauth_ent_id;
 				$ldata = InputHelper::fillEntity($ldata, $value, ['element', 'group']);
 				Models\AllotRuleLine::create($ldata);
 			}
@@ -72,6 +73,7 @@ class AllotRuleController extends Controller {
 			foreach ($lines as $key => $value) {
 				$ldata = ['rule_id' => $id, 'rate' => $value['rate']];
 				$ldata = InputHelper::fillEntity($ldata, $value, ['element', 'group']);
+				$ldata['ent_id'] = $request->oauth_ent_id;
 				Models\AllotRuleLine::create($ldata);
 			}
 		}
