@@ -74,7 +74,7 @@
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-enum md-enum-id="suite.amiba.biz.type.enum" v-model="row.biz_type_enum"></md-enum>
+                      <md-enum md-enum-id="suite.cbo.biz.type.enum" v-model="row.biz_type_enum"></md-enum>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>

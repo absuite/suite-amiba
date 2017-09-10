@@ -17,7 +17,7 @@ class CreateSuiteAmibaDataDocLinesTable extends Migration {
 		$md->string('id', 100)->primary();
 		$md->entity('ent', 'gmf.sys.ent')->nullable()->comment('企业');
 		$md->entity('doc', 'suite.amiba.data.doc')->nullable()->comment('单据');
-		// $md->enum('biz_type', 'suite.amiba.biz.type.enum')->nullable()->comment('业务类型');
+		// $md->enum('biz_type', 'suite.cbo.biz.type.enum')->nullable()->comment('业务类型');
 		// $md->enum('data_type', 'suite.amiba.doc.data.type.enum')->nullable()->comment('数据类型');
 		$md->entity('trader', 'suite.cbo.trader')->nullable()->comment('客商');
 		$md->entity('item_category', 'suite.cbo.item.category')->nullable()->comment('料品分类');
