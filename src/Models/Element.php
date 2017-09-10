@@ -15,6 +15,9 @@ class Element extends Model {
 	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo',
 		'purpose_id', 'parent_id', 'type_enum', 'direction_enum', 'factor_enum', 'scope_enum', 'is_manual',
 	];
+	protected $casts = [
+		'is_manual' => 'integer',
+	];
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}
