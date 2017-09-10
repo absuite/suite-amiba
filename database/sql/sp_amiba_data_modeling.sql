@@ -18,9 +18,12 @@ DROP TEMPORARY TABLE IF EXISTS tml_data_elementing;
 CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_elementing(
 `purpose_id` NVARCHAR(100),
 `period_id` NVARCHAR(100),
-`el_group_id` NVARCHAR(100),
-`fm_group_id` NVARCHAR(100),
-`to_group_id` NVARCHAR(100),
+`def_group_id` NVARCHAR(100),/*模型头定义的巴*/
+`m_fm_group_id` NVARCHAR(100),/*模型行按匹配方向取得的巴*/
+`m_to_group_id` NVARCHAR(100),/*模型行按匹配方向取得的巴*/
+`ml_id` NVARCHAR(100),/*模型行ID*/
+`fm_group_id` NVARCHAR(100),/*业务数据来源对应的巴*/
+`to_group_id` NVARCHAR(100),/*业务数据目标对应的巴*/
 `element_id` NVARCHAR(100),
 
 `data_id`  NVARCHAR(100),
@@ -95,13 +98,15 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_docLine(
 /*期间的开始时间和结束时间*/
 SELECT from_date,to_date INTO v_from_date,v_to_date FROM `suite_cbo_period_accounts` WHERE id=p_period;
 
+
 INSERT INTO tml_data_elementing
 (
-  `purpose_id`,`period_id`,`el_group_id`,`element_id`,
+  `purpose_id`,`period_id`,`def_group_id`,`ml_id`,`element_id`,
   `data_id`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
 )
+
 SELECT 
-  p_purpose,p_period,m.group_id,ml.element_id,
+  p_purpose,p_period,m.group_id,ml.id,ml.element_id,
   d.id AS data_id,ml.`value_type_enum`,
   CASE WHEN ml.`value_type_enum`='qty' THEN d.qty ELSE 0 END AS src_qty,
   CASE WHEN ml.`value_type_enum`='amt' THEN d.money ELSE 0 END AS src_money,
@@ -144,7 +149,6 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     LEFT JOIN  `suite_cbo_traders` AS trader ON trader.ent_id=p_ent AND trader.code=d.trader
     LEFT JOIN  `suite_cbo_items` AS item ON item.ent_id=p_ent AND item.code=d.item
     LEFT JOIN  `suite_cbo_item_categories` AS item_category ON item_category.ent_id=p_ent AND item_category.code=d.item_category
-    
   SET
     l.fm_org_id=fm_org.id,
     l.fm_dept_id=fm_dept.id,
@@ -160,8 +164,9 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     l.item_id=item.id,
     l.item_category_id=item_category.id
   WHERE d.ent_id=p_ent;
+
   -- 如果模型中指定阿米巴，则直接取阿米巴
-  UPDATE tml_data_elementing SET fm_group_id=el_group_id WHERE el_group_id IS NOT NULL;
+  UPDATE tml_data_elementing SET fm_group_id=def_group_id WHERE def_group_id IS NOT NULL;
   -- 依据阿米巴定义找来源阿米巴
   UPDATE tml_data_elementing AS l 
     INNER JOIN `suite_amiba_groups` AS g ON g.`purpose_id`=p_purpose
@@ -188,16 +193,29 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
       )
   SET l.to_group_id=g.id
   WHERE g.ent_id=p_ent AND g.id!=l.fm_group_id; 
+  
+  /*更新模型巴*/
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_amiba_modeling_lines` AS ml ON l.ml_id=ml.id
+  SET l.m_fm_group_id=l.fm_group_id,l.m_to_group_id=l.to_group_id
+  WHERE ml.match_direction_enum='fm' AND l.fm_group_id!='';
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_amiba_modeling_lines` AS ml ON l.ml_id=ml.id
+  SET l.m_fm_group_id=l.to_group_id,l.m_to_group_id=l.fm_group_id
+  WHERE ml.match_direction_enum='to' AND l.to_group_id!='';
+  
+  DELETE FROM tml_data_elementing WHERE m_fm_group_id!=def_group_id;
+  
   -- 更新数据用途
-  UPDATE tml_data_elementing SET use_type_enum='indirect' WHERE fm_group_id IS NULL;
-  UPDATE tml_data_elementing SET use_type_enum='direct' WHERE fm_group_id IS NOT NULL;
+  UPDATE tml_data_elementing SET use_type_enum='indirect' WHERE m_fm_group_id IS NULL;
+  UPDATE tml_data_elementing SET use_type_enum='direct' WHERE m_fm_group_id IS NOT NULL;
   -- 更新业务主键
-  UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(purpose_id,period_id,IFNULL(fm_group_id,''),IFNULL(to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
+  UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
   
   INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`)
-  SELECT MD5(REPLACE(UUID(),'-','')) AS id,l.bizKey,DATE_FORMAT(v_to_date,'%Y%m%d'),v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.fm_group_id,l.to_group_id,l.element_id,SUM(l.money) AS money
+  SELECT MD5(REPLACE(UUID(),'-','')) AS id,l.bizKey,DATE_FORMAT(v_to_date,'%Y%m%d'),v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
   FROM tml_data_elementing AS l
-  GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.fm_group_id,l.to_group_id,l.element_id,l.bizKey;
+  GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey;
   
   
   INSERT INTO tml_data_docLine(`id`,`bizKey`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`qty`,`money`)

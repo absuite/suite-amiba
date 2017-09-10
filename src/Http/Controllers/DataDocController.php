@@ -18,6 +18,7 @@ class DataDocController extends Controller {
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
 		$query = Models\DataDocLine::with('trader', 'item_category', 'item', 'unit');
+		$query->where('doc_id', $id);
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
 	}
