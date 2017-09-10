@@ -107,15 +107,19 @@ SELECT
   CASE WHEN ml.`value_type_enum`='amt' THEN d.money ELSE 0 END AS src_money,
   ml.`adjust`
 FROM `suite_amiba_doc_bizs` AS d 
-  INNER JOIN  `suite_amiba_modelings` AS m ON m.purpose_id=p_purpose
+  INNER JOIN  `suite_amiba_modelings` AS m ON m.purpose_id=p_purpose  
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
+  LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.doc_type_id=dt.id
+  LEFT JOIN `suite_cbo_item_categories` AS ic ON ml.item_category_id=ic.id
+  LEFT JOIN `suite_cbo_items` AS item ON ml.item_id=item.id
+  LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id
 WHERE ml.`biz_type_enum`=d.`biz_type` 
   AND d.doc_date BETWEEN v_from_date AND v_to_date
-  AND (ml.`doc_type` IS NULL OR(ml.`doc_type` IS NOT NULL AND ml.`doc_type`=d.`doc_type`))
-  AND (ml.`project` IS NULL OR(ml.`project` IS NOT NULL AND ml.`project`=d.`project`))
-  AND (ml.`item_category` IS NULL OR(ml.`item_category` IS NOT NULL AND ml.`item_category`=d.`item_category`))
-  AND (ml.`trader` IS NULL OR(ml.`trader` IS NOT NULL AND ml.`trader`=d.`trader`))
-  AND (ml.`item` IS NULL OR(ml.`item` IS NOT NULL AND ml.`item`=d.`item`))
+  AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
+  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ic.`code`=d.`item_category`))
+  AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
+  AND (item.`code` IS NULL OR(item.`code` IS NOT NULL AND item.`code`=d.`item`))
+  AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))
   AND (ml.`factor1` IS NULL OR(ml.`factor1` IS NOT NULL AND ml.`factor1`=d.`factor1`))
   AND (ml.`factor2` IS NULL OR(ml.`factor2` IS NOT NULL AND ml.`factor2`=d.`factor2`))
   AND (ml.`factor3` IS NULL OR(ml.`factor3` IS NOT NULL AND ml.`factor3`=d.`factor3`))

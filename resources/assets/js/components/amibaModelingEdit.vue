@@ -63,10 +63,7 @@
                 </md-table-row>
               </md-table-header>
               <md-table-body>
-                <md-table-row v-for="(row, rowIndex) in model.main.lines" 
-                  :key="rowIndex" 
-                  :md-item="row" 
-                  md-selection>
+                <md-table-row v-for="(row, rowIndex) in model.main.lines" :key="rowIndex" :md-item="row" md-selection>
                   <md-table-cell>
                     <md-input-container>
                       <md-input-ref @init="init_element_ref" md-ref-id="suite.amiba.element.ref" v-model="row.element"></md-input-ref>
@@ -79,32 +76,32 @@
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.doc_type"></md-input>
+                      <md-input-ref @init="init_doc_type_ref" md-ref-id="suite.cbo.doc.type.ref" v-model="row.doc_type"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.item_category"></md-input>
+                      <md-input-ref md-ref-id="suite.cbo.item.category.ref" v-model="row.item_category"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.project"></md-input>
+                      <md-input v-model="row.project_code"></md-input>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.account"></md-input>
+                      <md-input v-model="row.account_code"></md-input>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.trader"></md-input>
+                      <md-input-ref md-ref-id="suite.cbo.trader.ref" v-model="row.trader"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.item"></md-input>
+                      <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
@@ -131,20 +128,9 @@
               </md-table-body>
             </md-table>
             <md-table-tool>
-              <md-table-action 
-                md-insert
-                @onAdd="onLineAdd"
-                @onRemove="onLineRemove"
-                ></md-table-action>
+              <md-table-action md-insert @onAdd="onLineAdd" @onRemove="onLineRemove"></md-table-action>
               <md-layout class="flex"></md-layout>
-              <md-table-pagination
-                  md-size="5"
-                  md-total="10"
-                  md-page="1"
-                  md-label="Rows"
-                  md-separator="of"
-                  :md-page-options="[5, 10, 25, 50]"
-                  @pagination="onTablePagination">
+              <md-table-pagination md-size="5" md-total="10" md-page="1" md-label="Rows" md-separator="of" :md-page-options="[5, 10, 25, 50]" @pagination="onTablePagination">
               </md-table-pagination>
             </md-table-tool>
           </md-table-card>
@@ -155,86 +141,89 @@
   </md-part>
 </template>
 <script>
-  import model from '../../gmf-sys/core/mixin/model';
-  export default {
-    data() {
+import model from '../../gmf-sys/core/mixin/model';
+export default {
+  data() {
+    return {
+      selectedRows: [],
+    };
+  },
+  mixins: [model],
+  computed: {
+    canSave() {
+      return this.validate(true);
+    }
+  },
+  methods: {
+    validate(notToast) {
+      var validator = this.$validate(this.model.main, { 'purpose': 'required' });
+      var fail = validator.fails();
+      if (fail && !notToast) {
+        this.$toast(validator.errors.all());
+      }
+      return !fail;
+    },
+    initModel() {
       return {
-        selectedRows:[],
-      };
-    },
-    mixins: [model],
-    computed: {
-      canSave() {
-        return this.validate(true);
-      }
-    },
-    methods: {
-      validate(notToast){
-        var validator=this.$validate(this.model.main,{'purpose':'required'});
-        var fail=validator.fails();
-        if(fail&&!notToast){
-          this.$toast(validator.errors.all());
-        }
-        return !fail;
-      },
-      initModel(){
-        return {
-          main:{
-            'lines':[],
-            'purpose':this.$root.userConfig.purpose,
-            'group':null,
-            'memo':''
-          }
-        }
-      },
-      list() {
-        this.$router.push({ name: 'module', params: { module: 'amiba.modeling.list' }});
-      },
-      onTablePagination(page){
-         
-      },
-      onTableSelect(items){
-        this.selectedRows=[];
-        Object.keys(items).forEach((row, index) =>{
-          this.selectedRows[index]=items[row];
-        });
-      },
-      onLineAdd(){
-        this.$refs['lineRef'].open();
-      },
-      onLineRemove(){
-        this._.forEach(this.selectedRows,(v,k)=>{
-          var idx=this.model.main.lines.indexOf(v);
-          if(idx>=0){
-            this.model.main.lines.splice(idx,1);
-          }
-        });
-      },
-      lineRefClose(datas){
-        this._.forEach(datas,(v,k)=>{
-          this.model.main.lines.push({'element':v,'biz_type_enum':'','value_type_enum':'amt',adjust:'100'});
-        });
-      },
-      init_group_ref(options){
-        options.wheres.leaf={name:'is_leaf',value:'1'};
-        if(this.model.main.purpose){
-          options.wheres.purpose={name:'purpose_id',value:this.model.main.purpose.id};
-        }else{
-          options.wheres.purpose=false;
-        }
-      },
-      init_element_ref(options){
-        if(this.model.main.purpose){
-          options.wheres.purpose={name:'purpose_id',value:this.model.main.purpose.id};
-        }else{
-          options.wheres.purpose=false;
+        main: {
+          'lines': [],
+          'purpose': this.$root.userConfig.purpose,
+          'group': null,
+          'memo': ''
         }
       }
     },
-    created() {
-      this.model.entity='suite.amiba.modeling';
-      this.model.order="created_at";
-      this.route='amiba/modelings';
+    list() {
+      this.$router.push({ name: 'module', params: { module: 'amiba.modeling.list' } });
     },
-  };
+    onTablePagination(page) {
+
+    },
+    onTableSelect(items) {
+      this.selectedRows = [];
+      Object.keys(items).forEach((row, index) => {
+        this.selectedRows[index] = items[row];
+      });
+    },
+    onLineAdd() {
+      this.$refs['lineRef'].open();
+    },
+    onLineRemove() {
+      this._.forEach(this.selectedRows, (v, k) => {
+        var idx = this.model.main.lines.indexOf(v);
+        if (idx >= 0) {
+          this.model.main.lines.splice(idx, 1);
+        }
+      });
+    },
+    lineRefClose(datas) {
+      this._.forEach(datas, (v, k) => {
+        this.model.main.lines.push({ 'element': v, 'biz_type_enum': '', 'value_type_enum': 'amt', adjust: '100' });
+      });
+    },
+    init_group_ref(options) {
+      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      if (this.model.main.purpose) {
+        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+      } else {
+        options.wheres.purpose = false;
+      }
+    },
+    init_element_ref(options) {
+      if (this.model.main.purpose) {
+        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+      } else {
+        options.wheres.purpose = false;
+      }
+    },
+    init_doc_type_ref(options){
+
+    }
+  },
+  created() {
+    this.model.entity = 'suite.amiba.modeling';
+    this.model.order = "created_at";
+    this.route = 'amiba/modelings';
+  },
+};
 </script>

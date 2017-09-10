@@ -1,10 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models;
 use Validator;
 
 class ModelingController extends Controller {
@@ -15,7 +15,7 @@ class ModelingController extends Controller {
 		return $this->toJson($data);
 	}
 	public function show(Request $request, string $id) {
-		$query = Models\Modeling::with('purpose', 'group', 'lines', 'lines.element');
+		$query = Models\Modeling::with('purpose', 'group', 'lines', 'lines.element', 'lines.doc_type', 'lines.item_category', 'lines.item', 'lines.trader');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -39,7 +39,7 @@ class ModelingController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $data->id;
-				$value = InputHelper::fillEntity($value, $value, ['element']);
+				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader']);
 				Models\ModelingLine::create($value);
 			}
 		}
@@ -66,7 +66,7 @@ class ModelingController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $id;
-				$value = InputHelper::fillEntity($value, $value, ['element']);
+				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader']);
 				Models\ModelingLine::create($value);
 			}
 		}
