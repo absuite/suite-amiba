@@ -1,9 +1,9 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models as AmibaModels;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models as AmibaModels;
 use Validator;
 
 class DocBizController extends Controller {
@@ -29,8 +29,11 @@ class DocBizController extends Controller {
 		if ($data_src_identity) {
 			$query = AmibaModels\DocBiz::where('data_src_identity', $data_src_identity);
 			$query->where('ent_id', $entId);
-			if (!empty($input['date'])) {
-				$query->where('doc_date', '>=', $input['date']);
+			if (!empty($input['fm_date'])) {
+				$query->where('doc_date', '>=', $input['fm_date']);
+			}
+			if (!empty($input['to_date'])) {
+				$query->where('doc_date', '<=', $input['to_date']);
 			}
 			$query->delete();
 		}

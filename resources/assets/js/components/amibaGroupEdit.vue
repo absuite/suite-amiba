@@ -84,7 +84,7 @@
               </md-table-header>
               <md-table-body>
                 <md-table-row v-for="(row, rowIndex) in model.main.lines" 
-                  :key="rowIndex" 
+                  :key="row.id" 
                   :md-item="row" 
                   md-selection>
                   <md-table-cell>
@@ -119,6 +119,7 @@
 </template>
 <script>
   import model from '../../gmf-sys/core/mixin/model';
+  import common from '../../gmf-sys/core/utils/common';
   export default {
     data() {
       return {
@@ -205,7 +206,7 @@
       },
       lineRefClose(datas){
         this._.forEach(datas,(v,k)=>{
-          this.model.main.lines.push({data:v});
+          this.model.main.lines.push({data:v,id:v.id});
         });
       },
       initParentGroupRef(options){

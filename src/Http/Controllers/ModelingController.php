@@ -15,7 +15,8 @@ class ModelingController extends Controller {
 		return $this->toJson($data);
 	}
 	public function show(Request $request, string $id) {
-		$query = Models\Modeling::with('purpose', 'group', 'lines', 'lines.element', 'lines.doc_type', 'lines.item_category', 'lines.item', 'lines.trader');
+		$query = Models\Modeling::with('purpose', 'group',
+			'lines.element', 'lines.doc_type', 'lines.item_category', 'lines.item', 'lines.trader', 'lines.src_element', 'lines.src_group');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -39,7 +40,7 @@ class ModelingController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $data->id;
-				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader']);
+				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
 				Models\ModelingLine::create($value);
 			}
 		}
@@ -66,7 +67,7 @@ class ModelingController extends Controller {
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $id;
-				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader']);
+				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
 				Models\ModelingLine::create($value);
 			}
 		}

@@ -18,6 +18,9 @@ class CreateSuiteAmibaModelingLinesTable extends Migration {
 		$md->entity('ent', 'gmf.sys.ent')->nullable()->comment('企业');
 		$md->entity('modeling', 'suite.amiba.modeling')->nullable()->comment('经营模型');
 		$md->entity('element', 'suite.amiba.element')->nullable()->comment('核算要素');
+		$md->enum('match_direction', 'suite.amiba.modeling.match.direction.enum')->nullable()->comment('匹配方向');
+		$md->entity('src_group', 'suite.amiba.group')->nullable()->comment('来源阿米巴');
+		$md->entity('src_element', 'suite.amiba.element')->nullable()->comment('来源要素');
 		$md->enum('biz_type', 'suite.cbo.biz.type.enum')->nullable()->comment('业务类型');
 		$md->entity('doc_type', 'suite.cbo.doc.type')->nullable()->comment('单据类型');
 		$md->entity('item_category', 'suite.cbo.item.category')->nullable()->comment('料品分类');
