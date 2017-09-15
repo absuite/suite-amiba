@@ -118,6 +118,7 @@ export default {
   watch: {
     'model.purpose': function(value) {
       this.loadData();
+      this.loadGroups();
     },
     'model.fm_period': function(value) {
       this.loadData();
@@ -165,11 +166,19 @@ export default {
     },
     focusGroup(node) {},
     loadGroups() {
-      this.$http.get('amiba/groups/all', { params: {} }).then(response => {
+      var params={};
+      if(this.model.purpose){
+        params.purpose_id=this.model.purpose.id;
+      }
+      this.groups=[];
+      this.$http.get('amiba/groups/all', { params: params }).then(response => {
         this.groups = response.data.data;
+        this.model.group=[];
       }, response => {
         console.log(response);
       });
+    },
+    loadPeriodInfo(){
       this.$http.get('amiba/reports/period-info').then(response => {
         this.model.fm_period = response.data.data.yearFirstPeriod;
         this.model.to_period = response.data.data.period;
@@ -199,6 +208,7 @@ export default {
   created() {},
   mounted() {
     this.loadGroups();
+    this.loadPeriodInfo();
   },
 };
 </script>

@@ -187,12 +187,10 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing AS l 
   SET l.m_fm_group_id=l.to_group_id,l.m_to_group_id=l.fm_group_id
   WHERE l.match_direction_enum='to' AND l.to_group_id!='';
-  
-  SELECT * FROM tml_data_elementing AS l
-  WHERE l.match_direction_enum='to'
-  ORDER BY match_direction_enum,ml_id;
+   
   
   DELETE FROM tml_data_elementing WHERE m_fm_group_id!=def_group_id OR m_fm_group_id IS NULL;
+  DELETE FROM tml_data_elementing WHERE m_fm_group_id=m_to_group_id;
   
   /*如果取数量，则需要从价表里取单价*/
   UPDATE `suite_amiba_prices` AS p

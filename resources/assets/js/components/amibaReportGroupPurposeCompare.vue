@@ -115,6 +115,7 @@ export default {
   watch: {
     'model.purpose': function(value) {
       this.loadData();
+      this.loadGroups();
     },
     'model.period': function(value) {
       this.loadData();
@@ -155,8 +156,14 @@ export default {
     },
     focusGroup(node) {},
     loadGroups() {
-      this.$http.get('amiba/groups/all', { params: {} }).then(response => {
+      var params={};
+      if(this.model.purpose){
+        params.purpose_id=this.model.purpose.id;
+      }
+      this.groups=[];
+      this.$http.get('amiba/groups/all', { params: params }).then(response => {
         this.groups = response.data.data;
+        this.model.group=[];
       }, response => {
         console.log(response);
       });

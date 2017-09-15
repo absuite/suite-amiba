@@ -21,9 +21,13 @@ class GroupController extends Controller {
 		return $this->toJson($data);
 	}
 	public function all(Request $request) {
+		$input = $request->all();
 		$query = Models\Group::with('purpose', 'parent', 'lines.data');
 		if ($request->is_leaf) {
 			$query->where('is_leaf', '1');
+		}
+		if (!empty($input['purpose_id'])) {
+			$query->where('purpose_id', $input['purpose_id']);
 		}
 		$data = $query->get();
 		$tree = TreeBuilder::create($data);
@@ -36,7 +40,8 @@ class GroupController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function store(Request $request) {
-		$input = $request->all();
+		$tester = new Models\Group;
+		$input = $request->only($tester->getFillable());
 		$input = InputHelper::fillEntity($input, $request, ['parent', 'purpose']);
 		$validator = Validator::make($input, [
 			'code' => 'required',
@@ -78,7 +83,8 @@ class GroupController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->only(['code', 'name', 'type_enum']);
+		$tester = new Models\Group;
+		$input = $request->only($tester->getFillable());
 		$input = InputHelper::fillEntity($input, $request, ['parent', 'purpose']);
 		$validator = Validator::make($input, [
 			'code' => 'required',
