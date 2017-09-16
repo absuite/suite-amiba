@@ -28,6 +28,7 @@ class CreateSuiteAmibaElementsTable extends Migration {
 		$md->boolean('is_manual')->default(0)->comment('是否人工');
 		$md->string('name')->comment('名称');
 		$md->text('memo')->nullable()->comment('备注');
+		$md->boolean('is_leaf')->default(1)->comment('叶子');
 		$md->timestamps();
 
 		$md->build();

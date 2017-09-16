@@ -50,8 +50,18 @@ class ElementController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$input['is_leaf'] = 1;
 		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Element::create($input);
+
+		if ($data && $data->parent_id) {
+			$t = Models\Element::where('parent_id', $data->parent_id)->where('id', '!=', $data->parent_id)->first();
+			if ($t) {
+				Models\Element::where('id', $data->parent_id)->update(['is_leaf' => 0]);
+			} else {
+				Models\Element::where('id', $data->parent_id)->update(['is_leaf' => 1]);
+			}
+		}
 		return $this->show($request, $data->id);
 	}
 	/**
@@ -85,7 +95,34 @@ class ElementController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		Models\Element::where('id', $id)->update($input);
+		$oldData = Models\Group::find($id);
+
+		$data = Models\Element::where('id', $id)->update($input);
+
+		if ($data && $data->id) {
+			$t = Models\Element::where('parent_id', $data->id)->where('id', '!=', $data->id)->first();
+			if ($t) {
+				Models\Element::where('id', $data->id)->update(['is_leaf' => 0]);
+			} else {
+				Models\Element::where('id', $data->id)->update(['is_leaf' => 1]);
+			}
+		}
+		if ($data && $data->parent_id) {
+			$t = Models\Element::where('parent_id', $data->parent_id)->where('id', '!=', $data->parent_id)->first();
+			if ($t) {
+				Models\Element::where('id', $data->parent_id)->update(['is_leaf' => 0]);
+			} else {
+				Models\Element::where('id', $data->parent_id)->update(['is_leaf' => 1]);
+			}
+		}
+		if ($oldData && $oldData->parent_id) {
+			$t = Models\Element::where('parent_id', $oldData->parent_id)->where('id', '!=', $oldData->parent_id)->first();
+			if ($t) {
+				Models\Element::where('id', $oldData->parent_id)->update(['is_leaf' => 0]);
+			} else {
+				Models\Element::where('id', $oldData->parent_id)->update(['is_leaf' => 1]);
+			}
+		}
 		return $this->show($request, $id);
 	}
 	/**

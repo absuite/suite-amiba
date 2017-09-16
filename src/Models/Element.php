@@ -13,7 +13,8 @@ class Element extends Model {
 	protected $table = 'suite_amiba_elements';
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo',
-		'purpose_id', 'parent_id', 'type_enum', 'direction_enum', 'factor_enum', 'scope_enum', 'is_manual',
+		'purpose_id', 'parent_id', 'type_enum', 'direction_enum', 'factor_enum', 'scope_enum',
+		'is_manual', 'is_leaf',
 	];
 	protected $casts = [
 		'is_manual' => 'integer',
