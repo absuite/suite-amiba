@@ -149,7 +149,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
-    <md-ref md-ref-id="suite.amiba.element.ref" ref="lineRef" @close="lineRefClose"></md-ref>
+    <md-ref md-ref-id="suite.amiba.element.ref" @init="init_element_ref" ref="lineRef" @close="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>

@@ -94,8 +94,8 @@ INSERT INTO tml_data_elementing
 SELECT 
   p_purpose,p_period,m.group_id,ml.id,ml.match_direction_enum,ml.element_id,
   d.id AS data_id,ml.`value_type_enum`,
-  CASE WHEN ml.`value_type_enum`='qty' THEN d.qty ELSE 0 END AS src_qty,
-  CASE WHEN ml.`value_type_enum`='amt' THEN d.money ELSE 0 END AS src_money,
+  d.qty AS src_qty,
+  d.money AS src_money,
   ml.`adjust`
 FROM `suite_amiba_doc_bizs` AS d 
   INNER JOIN  `suite_amiba_modelings` AS m ON m.purpose_id=p_purpose  
@@ -135,6 +135,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     LEFT JOIN  `suite_cbo_traders` AS trader ON  trader.code=d.trader
     LEFT JOIN  `suite_cbo_items` AS item ON  item.code=d.item
     LEFT JOIN  `suite_cbo_item_categories` AS item_category ON  item_category.code=d.item_category
+    LEFT JOIN `suite_cbo_units` AS unit ON unit.code=d.`uom`
   SET
     l.fm_org_id=fm_org.id,
     l.fm_dept_id=fm_dept.id,
@@ -148,6 +149,9 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     
     l.trader_id=trader.id,
     l.item_id=item.id,
+    
+    
+    l.uom_id=u.id,
     l.item_category_id=item_category.id;
   -- 如果模型中指定阿米巴，则直接取阿米巴
   -- UPDATE tml_data_elementing SET fm_group_id=def_group_id WHERE def_group_id IS NOT NULL;
