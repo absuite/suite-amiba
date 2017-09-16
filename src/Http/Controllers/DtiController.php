@@ -25,7 +25,6 @@ class DtiController extends Controller {
 		}
 		$query->orderBy('sequence');
 		$datas = $query->pluck('id')->toArray();
-
 		$query = PeriodAccount::where('from_date', '<=', $request->date)
 			->where('to_date', '>=', $request->date);
 		$query->select(DB::raw('min(from_date) as from_date, max(to_date) as to_date'));

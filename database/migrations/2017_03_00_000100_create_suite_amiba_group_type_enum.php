@@ -16,9 +16,9 @@ class CreateSuiteAmibaGroupTypeEnum extends Migration {
 		$md->string('org')->comment('组织')->default(0);
 		$md->string('dept')->comment('部门')->default(1);
 		$md->string('work')->comment('工作中心')->default(2);
-		$md->string('team')->comment('班组')->default(3);
-		$md->string('item')->comment('料品')->default(4);
-		$md->string('person')->comment('人员')->default(4);
+		// $md->string('team')->comment('班组')->default(3);
+		// $md->string('item')->comment('料品')->default(4);
+		// $md->string('person')->comment('人员')->default(4);
 		$md->build();
 
 	}

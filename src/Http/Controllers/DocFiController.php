@@ -36,7 +36,6 @@ class DocFiController extends Controller {
 			}
 			$query->delete();
 		}
-
 		$datas = $request->input('datas');
 		foreach ($datas as $k => $v) {
 			$data = array_only($v, ['src_doc_id', 'src_doc_type', 'src_key_id', 'src_key_type',

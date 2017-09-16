@@ -149,12 +149,12 @@ export default {
     },
     deleteDti(dti) {
       dti.is_revoked = true;
-      this.$http.post('sys/dti-categories', dti).then(response => {}, response => {
+      this.$http.put('sys/dti-categories', dti).then(response => {}, response => {
         dti.is_revoked = false;
       });
     },
     saveDti() {
-      this.$http.post('sys/dti-categories', this.currentDti).then(response => {
+      this.$http.put('sys/dti-categories', this.currentDti).then(response => {
         this.loadDatas();
         this.$toast(this.$lang.LANG_SAVESUCCESS);
         this.closeDialog('dtiDialog');

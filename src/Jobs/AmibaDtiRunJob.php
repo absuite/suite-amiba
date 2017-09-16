@@ -106,17 +106,15 @@ class AmibaDtiRunJob implements ShouldQueue {
 		]);
 		$result = (string) $res->getBody();
 
-		$result = json_decode($result, false, 512, JSON_BIGINT_AS_STRING);
+		$result = json_decode($result);
 
 		if ($result->d->Error) {
 			Log::error($result->d->Error);
 			throw new \Exception($result->d->Error, 1);
 		}
-
 		$result = $result->d->Datas;
-
 		if ($result) {
-			$result = json_decode($result, false, 512, JSON_BIGINT_AS_STRING);
+			$result = json_decode($result);
 		}
 		return $result;
 	}
@@ -171,6 +169,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']远程调用.开始']);
 			$paramsConfig = $this->getDtiParamConfig($dti);
 			$result = $this->runDtiItem_U9($dti, $paramsConfig);
+
 			$this->callLocalStore($dti, $result, $paramsConfig);
 
 		} catch (\Exception $exception) {
@@ -195,9 +194,11 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$e = false;
 		$apiPath = $dti->local_path;
 		$base_uri = $this->context['local_host'];
+
 		if (empty($apiPath) || empty($data)) {
 			return;
 		}
+
 		if (!ends_with($base_uri, "/")) {
 			$base_uri = $base_uri . '/';
 		}
@@ -224,9 +225,6 @@ class AmibaDtiRunJob implements ShouldQueue {
 			$res = $client->request('POST', $apiPath, [
 				'json' => $input,
 			]);
-			// $res = $client->post($base_uri . $apiPath, [
-			// 	'json' => $input,
-			// ]);
 			$result = (string) $res->getBody();
 
 			$result = json_decode($result);
