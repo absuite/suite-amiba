@@ -155,7 +155,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     l.uom_id=unit.id,
     l.item_category_id=IFNULL(item_category.id,item_category1.id);
     
-  SELECT * FROM tml_data_elementing;
+
   -- 如果模型中指定阿米巴，则直接取阿米巴
   -- UPDATE tml_data_elementing SET fm_group_id=def_group_id WHERE def_group_id IS NOT NULL;
   -- 依据阿米巴定义找来源阿米巴
@@ -190,14 +190,14 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   /*更新模型巴*/
   UPDATE tml_data_elementing AS l 
   SET l.m_fm_group_id=l.fm_group_id,l.m_to_group_id=l.to_group_id
-  WHERE l.match_direction_enum='fm' AND l.fm_group_id!='';
+  WHERE l.match_direction_enum='fm' AND l.fm_group_id!='' AND IFNULL(l.def_group_id,'')!='';
   UPDATE tml_data_elementing AS l 
   SET l.m_fm_group_id=l.to_group_id,l.m_to_group_id=l.fm_group_id
-  WHERE l.match_direction_enum='to' AND l.to_group_id!='';
+  WHERE l.match_direction_enum='to' AND l.to_group_id!='' AND IFNULL(l.def_group_id,'')!='';
    
   
-  DELETE FROM tml_data_elementing WHERE m_fm_group_id!=def_group_id OR m_fm_group_id IS NULL;
-  DELETE FROM tml_data_elementing WHERE m_fm_group_id=m_to_group_id;
+  DELETE FROM tml_data_elementing WHERE IFNULL(l.def_group_id,'')!='' AND (m_fm_group_id!=def_group_id OR m_fm_group_id IS NULL);
+  DELETE FROM tml_data_elementing WHERE IFNULL(l.def_group_id,'')!='' AND (m_fm_group_id=m_to_group_id);
   
   /*如果取数量，则需要从价表里取单价*/
   UPDATE `suite_amiba_prices` AS p

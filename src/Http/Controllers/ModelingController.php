@@ -16,7 +16,7 @@ class ModelingController extends Controller {
 	}
 	public function show(Request $request, string $id) {
 		$query = Models\Modeling::with('purpose', 'group',
-			'lines.element', 'lines.doc_type', 'lines.item_category', 'lines.item', 'lines.trader', 'lines.src_element', 'lines.src_group');
+			'lines.element', 'lines.doc_type', 'lines.item_category', 'lines.item', 'lines.trader', 'lines.match_group', 'lines.to_group');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -42,7 +42,7 @@ class ModelingController extends Controller {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $data->id;
 				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
+				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group']);
 				Models\ModelingLine::create($value);
 			}
 		}
@@ -70,8 +70,8 @@ class ModelingController extends Controller {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $id;
 				$value['ent_id'] = $request->oauth_ent_id;
-				$value['src_group_id'] = '';
-				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
+				$value['match_group_id'] = '';
+				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group']);
 				Models\ModelingLine::create($value);
 			}
 		}

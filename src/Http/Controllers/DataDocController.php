@@ -97,6 +97,7 @@ class DataDocController extends Controller {
 	 */
 	public function destroy(Request $request, $id) {
 		$ids = explode(",", $id);
+		Models\DataDocLine::whereIn('doc_id', $ids)->delete();
 		Models\DataDoc::destroy($ids);
 		return $this->toJson(true);
 	}

@@ -19,8 +19,7 @@ class CreateSuiteAmibaModelingLinesTable extends Migration {
 		$md->entity('modeling', 'suite.amiba.modeling')->nullable()->comment('经营模型');
 		$md->entity('element', 'suite.amiba.element')->nullable()->comment('核算要素');
 		$md->enum('match_direction', 'suite.amiba.modeling.match.direction.enum')->nullable()->comment('匹配方向');
-		$md->entity('src_group', 'suite.amiba.group')->nullable()->comment('来源阿米巴');
-		$md->entity('src_element', 'suite.amiba.element')->nullable()->comment('来源要素');
+		$md->entity('match_group', 'suite.amiba.group')->nullable()->comment('匹配方');
 		$md->enum('biz_type', 'suite.cbo.biz.type.enum')->nullable()->comment('业务类型');
 		$md->entity('doc_type', 'suite.cbo.doc.type')->nullable()->comment('单据类型');
 		$md->entity('item_category', 'suite.cbo.item.category')->nullable()->comment('料品分类');
@@ -36,6 +35,8 @@ class CreateSuiteAmibaModelingLinesTable extends Migration {
 
 		$md->enum('value_type', 'suite.amiba.value.type.enum')->nullable()->comment('取值类型');
 		$md->string('adjust')->nullable()->comment('取值比率');
+
+		$md->entity('to_group', 'suite.amiba.group')->nullable()->comment('交易方');
 		$md->timestamps();
 
 		$md->foreign('modeling_id')->references('id')->on('suite_amiba_modelings')->onDelete('cascade');

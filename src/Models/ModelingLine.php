@@ -12,14 +12,14 @@ class ModelingLine extends Model {
 	protected $fillable = ['id', 'ent_id', 'modeling_id', 'element_id',
 		'biz_type_enum', 'value_type_enum', 'doc_type_id', 'project_code', 'item_category_id', 'account_code', 'trader_id', 'item_id',
 		'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'adjust',
-		'match_direction_enum', 'src_group_id', 'src_element_id'];
+		'match_direction_enum', 'match_group_id', 'to_group_id'];
 	public function element() {
 		return $this->belongsTo('Suite\Amiba\Models\Element');
 	}
-	public function src_element() {
-		return $this->belongsTo('Suite\Amiba\Models\Element');
+	public function match_group() {
+		return $this->belongsTo('Suite\Amiba\Models\Group');
 	}
-	public function src_group() {
+	public function to_group() {
 		return $this->belongsTo('Suite\Amiba\Models\Group');
 	}
 

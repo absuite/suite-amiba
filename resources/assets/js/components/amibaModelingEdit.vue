@@ -32,7 +32,7 @@
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
             <md-input-container>
               <label>阿米巴</label>
-              <md-input-ref required @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.group">
+              <md-input-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.group">
               </md-input-ref>
             </md-input-container>
           </md-layout>
@@ -49,6 +49,7 @@
               <md-table-header>
                 <md-table-row>
                   <md-table-head width="150px">核算要素</md-table-head>
+                  <md-table-head width="150px">匹配方</md-table-head>
                   <md-table-head width="150px">匹配方向</md-table-head>
                   <md-table-head width="150px">业务类型</md-table-head>
                   <md-table-head width="150px">单据类型</md-table-head>
@@ -57,11 +58,10 @@
                   <md-table-head width="150px">会计科目</md-table-head>
                   <md-table-head width="150px">客商</md-table-head>
                   <md-table-head width="150px">物料</md-table-head>
-                  <md-table-head width="150px">因素1</md-table-head>
-                  <md-table-head width="150px">因素2</md-table-head>
-                  <md-table-head width="150px">来源巴</md-table-head>
+                  <md-table-head width="150px">因素</md-table-head>
                   <md-table-head width="150px">取值类型</md-table-head>
                   <md-table-head md-tooltip="100">取值比例%</md-table-head>
+                  <md-table-head width="150px">交易方</md-table-head>
                 </md-table-row>
               </md-table-header>
               <md-table-body>
@@ -69,6 +69,11 @@
                   <md-table-cell>
                     <md-input-container>
                       <md-input-ref @init="init_element_ref" md-ref-id="suite.amiba.element.ref" v-model="row.element"></md-input-ref>
+                    </md-input-container>
+                  </md-table-cell>
+                  <md-table-cell>
+                    <md-input-container>
+                      <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.match_group"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
@@ -118,22 +123,17 @@
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
-                      <md-input v-model="row.factor2"></md-input>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.src_group"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
                       <md-enum md-enum-id="suite.amiba.value.type.enum" v-model="row.value_type_enum"></md-enum>
                     </md-input-container>
                   </md-table-cell>
                   <md-table-cell>
                     <md-input-container>
                       <md-input type="number" v-model="row.adjust"></md-input>
+                    </md-input-container>
+                  </md-table-cell>
+                  <md-table-cell>
+                    <md-input-container>
+                      <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.to_group"></md-input-ref>
                     </md-input-container>
                   </md-table-cell>
                 </md-table-row>
@@ -168,7 +168,7 @@ export default {
   },
   methods: {
     validate(notToast) {
-      var validator = this.$validate(this.model.main, { 'purpose': 'required', 'group': 'required' });
+      var validator = this.$validate(this.model.main, { 'purpose': 'required' });
       var fail = validator.fails();
       if (fail && !notToast) {
         this.$toast(validator.errors.all());
@@ -210,7 +210,15 @@ export default {
     },
     lineRefClose(datas) {
       this._.forEach(datas, (v, k) => {
-        this.model.main.lines.push({ 'element': v, 'biz_type_enum': '', 'match_direction_enum': 'fm', 'src_element': null, 'src_group': null, 'value_type_enum': 'amt', adjust: '100' });
+        this.model.main.lines.push({
+          'element': v,
+          'biz_type_enum': '',
+          'match_direction_enum': 'fm',
+          'match_group': this.model.main.group,
+          'to_group':null,
+          'value_type_enum': 'amt',
+          'adjust': '100'
+        });
       });
     },
     init_group_ref(options) {
