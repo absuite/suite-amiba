@@ -135,6 +135,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     LEFT JOIN  `suite_cbo_traders` AS trader ON  trader.code=d.trader
     LEFT JOIN  `suite_cbo_items` AS item ON  item.code=d.item
     LEFT JOIN  `suite_cbo_item_categories` AS item_category ON  item_category.code=d.item_category
+    LEFT JOIN `suite_cbo_item_categories` AS item_category1 ON  item_category1.id=item.category_id
     LEFT JOIN `suite_cbo_units` AS unit ON unit.code=d.`uom`
   SET
     l.fm_org_id=fm_org.id,
@@ -151,8 +152,10 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
     l.item_id=item.id,
     
     
-    l.uom_id=u.id,
-    l.item_category_id=item_category.id;
+    l.uom_id=unit.id,
+    l.item_category_id=IFNULL(item_category.id,item_category1.id);
+    
+  SELECT * FROM tml_data_elementing;
   -- 如果模型中指定阿米巴，则直接取阿米巴
   -- UPDATE tml_data_elementing SET fm_group_id=def_group_id WHERE def_group_id IS NOT NULL;
   -- 依据阿米巴定义找来源阿米巴

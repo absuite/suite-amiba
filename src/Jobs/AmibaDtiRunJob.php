@@ -192,7 +192,10 @@ class AmibaDtiRunJob implements ShouldQueue {
 	}
 	private function callLocalStore($dti, $data = null) {
 		$e = false;
-		$apiPath = $dti->local_path;
+		$apiPath = false;
+		if ($dti->local && $dti->local->path) {
+			$apiPath = $dti->local->path;
+		}
 		$base_uri = $this->context['local_host'];
 
 		if (empty($apiPath) || empty($data)) {

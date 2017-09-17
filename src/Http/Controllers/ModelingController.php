@@ -70,6 +70,7 @@ class ModelingController extends Controller {
 			foreach ($lines as $key => $value) {
 				$value['modeling_id'] = $id;
 				$value['ent_id'] = $request->oauth_ent_id;
+				$value['src_group_id'] = '';
 				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'src_element', 'src_group']);
 				Models\ModelingLine::create($value);
 			}
