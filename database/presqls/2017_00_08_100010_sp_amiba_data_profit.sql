@@ -1,6 +1,6 @@
-DELIMITER$$
+DELIMITER $$
 
-DROP PROCEDURE IF EXISTS sp_amiba_data_profit$$ 
+DROP PROCEDURE IF EXISTS sp_amiba_data_profit $$ 
 
 
 CREATE PROCEDURE sp_amiba_data_profit(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
@@ -128,6 +128,6 @@ SELECT MD5(REPLACE(UUID(),'-','')) AS id,p_ent,l.purpose_id,l.period_id,l.group_
 FROM tml_amiba_result_profits AS l
 GROUP BY l.purpose_id,l.period_id,l.group_id;
 
-END$$
+END $$
 
 DELIMITER ;

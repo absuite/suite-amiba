@@ -1,6 +1,6 @@
-DELIMITER$$
+DELIMITER $$
 
-DROP PROCEDURE IF EXISTS sp_amiba_data_doc_money$$ 
+DROP PROCEDURE IF EXISTS sp_amiba_data_doc_money $$ 
 
 
 CREATE PROCEDURE sp_amiba_data_doc_money(IN p_doc CHAR(200)) 
@@ -97,6 +97,6 @@ UPDATE suite_amiba_data_docs SET money=v_lines_money WHERE id=p_doc;
 
 END IF;
 
-END$$
+END $$
 
 DELIMITER ;
