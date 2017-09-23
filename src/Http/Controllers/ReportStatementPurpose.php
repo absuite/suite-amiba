@@ -2,11 +2,11 @@
 
 namespace Suite\Amiba\Http\Controllers;
 use DB;
-use Suite\Amiba\Libs\QueryHelper;
-use Gmf\Sys\Database\QueryCase;
 use Gmf\Sys\Http\Controllers\Controller;
+use Gmf\Sys\Query\QueryCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Suite\Amiba\Libs\QueryHelper;
 
 class ReportStatementPurpose extends Controller {
 	public function index(Request $request) {

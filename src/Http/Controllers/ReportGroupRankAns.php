@@ -2,8 +2,8 @@
 
 namespace Suite\Amiba\Http\Controllers;
 use DB;
-use Gmf\Sys\Database\QueryCase;
 use Gmf\Sys\Http\Controllers\Controller;
+use Gmf\Sys\Query\QueryCase;
 use Illuminate\Http\Request;
 
 class ReportGroupRankAns extends Controller {

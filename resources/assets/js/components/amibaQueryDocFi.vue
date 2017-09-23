@@ -50,19 +50,19 @@
   </md-part>
 </template>
 <script>
-  export default {
-    data() {
-      return {
-        selectRows: [],
-        loading:0,
-         model: { period: this.$root.userConfig.period, biz_type: '', doc_type: '', org: '', account: '' }
-      };
+export default {
+  data() {
+    return {
+      selectRows: [],
+      loading: 0,
+      model: { period: this.$root.userConfig.period, biz_type: '', doc_type: '', org: '', account: '' }
+    };
+  },
+  methods: {
+    select(items) {
+      this.selectRows = items;
     },
-    methods: {
-      select(items){
-        this.selectRows=items;
-      },
-      query() {
+    query() {
       this.load();
     },
     initQuery(options) {
@@ -90,9 +90,9 @@
         options.wheres.account = { name: 'account', operator: 'like', value: this.model.account };
       }
     },
-      load(){
-        this.$refs.list.pagination(1);
-      }
+    load() {
+      this.$refs.list.pagination(1);
     }
-  };
+  }
+};
 </script>

@@ -108,12 +108,6 @@ class AmibaMenuSeeder extends Seeder {
 					->uri('amiba.dti')->sequence($this->sequence . '0300')->tag($this->tag);
 			});
 
-			$id = "363c2500631911e7bb298b3e9cf6f7b1";
-			Menu::build(function (Builder $builder) use ($id) {
-				$builder->id($id)->code('amiba.dti.setting')->name('接口配置')->parent('amiba.dti')
-					->uri('amiba.dti.setting')->sequence($this->sequence . '0302')->tag($this->tag);
-			});
-
 			$id = "9e7c24800a1311e780c3352dacd3b79a";
 			Menu::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->code('amiba.dti.run')->name('接口执行')->parent('amiba.dti')

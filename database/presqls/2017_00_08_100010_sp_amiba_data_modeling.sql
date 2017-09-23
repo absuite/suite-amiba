@@ -1,6 +1,5 @@
-DELIMITER $$
 
-DROP PROCEDURE IF EXISTS sp_amiba_data_modeling $$ 
+DROP PROCEDURE IF EXISTS sp_amiba_data_modeling;
 
 
 CREATE PROCEDURE sp_amiba_data_modeling(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
@@ -343,6 +342,4 @@ FROM tml_data_doc;
 INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`qty`,`price`,`money`)
 SELECT `id`,NOW(),p_ent,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`qty`,`price`,`money`
 FROM tml_data_docLine;
-END $$
-
-DELIMITER ;
+END 

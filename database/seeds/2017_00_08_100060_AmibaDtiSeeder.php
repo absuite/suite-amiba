@@ -139,7 +139,7 @@ class AmibaDtiSeeder extends Seeder {
 		//财务数据
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_GL_VOUCHER")->name("财务-凭证")
-				->local('api/cbo/doc-fis/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-fis/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
 		});
 	}
 }

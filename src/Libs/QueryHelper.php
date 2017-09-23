@@ -3,7 +3,7 @@
 namespace Suite\Amiba\Libs;
 use Carbon\Carbon;
 use DB;
-use Gmf\Sys\Database\QueryCase;
+use Gmf\Sys\Query\QueryCase;
 
 class QueryHelper {
 	public static function getPeriod($queryCase) {

@@ -18,7 +18,6 @@ import amibaAllotRuleList from './amibaAllotRuleList.vue';
 
 import amibaDtiLog from './amibaDtiLog.vue';
 import amibaDtiRun from './amibaDtiRun.vue';
-import amibaDtiSetting from './amibaDtiSetting.vue';
 
 import amibaModelingEdit from './amibaModelingEdit.vue';
 import amibaModelingList from './amibaModelingList.vue';
@@ -85,7 +84,6 @@ export default function install(Vue) {
 
   Vue.component('amibaDtiLog', amibaDtiLog);
   Vue.component('amibaDtiRun', amibaDtiRun);
-  Vue.component('amibaDtiSetting', amibaDtiSetting);
 
   Vue.component('amibaAllotMethodEdit', amibaAllotMethodEdit);
   Vue.component('amibaAllotMethodList', amibaAllotMethodList);

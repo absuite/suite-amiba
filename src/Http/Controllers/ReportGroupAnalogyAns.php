@@ -2,11 +2,11 @@
 
 namespace Suite\Amiba\Http\Controllers;
 use DB;
-use Suite\Amiba\Libs\QueryHelper;
 use Gmf\Sys\Builder;
-use Gmf\Sys\Database\QueryCase;
 use Gmf\Sys\Http\Controllers\Controller;
+use Gmf\Sys\Query\QueryCase;
 use Illuminate\Http\Request;
+use Suite\Amiba\Libs\QueryHelper;
 
 class ReportGroupAnalogyAns extends Controller {
 	public function index(Request $request) {
