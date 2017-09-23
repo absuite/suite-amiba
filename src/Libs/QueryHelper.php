@@ -59,6 +59,7 @@ class QueryHelper {
 		return $monthData;
 	}
 	public static function getPeriods($queryCase) {
+
 		$purposeId = false;
 		$fm_period = false;
 		$to_period = false;

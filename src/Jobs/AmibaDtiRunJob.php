@@ -2,6 +2,7 @@
 
 namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
+use Gmf\Ac\Models\User;
 use Gmf\Sys\Models;
 use Gmf\Sys\Uuid;
 use GuzzleHttp;
@@ -187,7 +188,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		}
 	}
 	private function getLocalToken() {
-		$token = Models\User::find($this->context['user_id'])->createToken('api batch local call');
+		$token = User::find($this->context['user_id'])->createToken('api batch local call');
 		return $token->accessToken;
 	}
 	private function callLocalStore($dti, $data = null) {
