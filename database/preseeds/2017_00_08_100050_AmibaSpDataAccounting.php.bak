@@ -1,13 +1,22 @@
+<?php
+use DB;
+use Illuminate\Database\Seeder;
 
+class AmibaSpDataAccounting extends Seeder {
+	/**
+	 * Run the database seeds.
+	 *
+	 * @return void
+	 */
+	public function run() {
+		$this->down();
+		DB::unprepared("
 
-DROP PROCEDURE IF EXISTS sp_amiba_data_accounting;
-
-
-CREATE PROCEDURE sp_amiba_data_accounting(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
+CREATE PROCEDURE sp_amiba_data_accounting(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200))
 BEGIN
 
 /*
-SELECT UUID_SHORT() into v_uid;
+SELECT UUID() into v_uid;
 对于末级阿米巴而言，直接数据、间接数据、调整数据，都是根据每笔发生直接写到“外部发生金额”。
 1、	间接费用分配、考核调整单都是只能到末级阿米巴的，故这2部分数据都是直接写到“外部发生额”；不用考虑其他情况
 2、	【核算数据表】中的直接数据，按阿米巴登记明细记录时，也是直接写到“外部发生额”，不需要区分内部、外部
@@ -54,26 +63,26 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_childGroup1(
 );
 SET v_loop=1;
 /*末级阿米巴单元*/
-INSERT INTO tml_data_childGroup(id,last_id,loops) 
+INSERT INTO tml_data_childGroup(id,last_id,loops)
 SELECT DISTINCT g.id,g.id,v_loop
 FROM suite_amiba_groups AS g
   LEFT JOIN suite_amiba_groups AS child ON child.parent_id=g.id
 WHERE  g.purpose_id=p_purpose
    AND child.id IS NULL;
-   
+
 INSERT INTO tml_data_childGroup1(id,last_id,loops) SELECT id,last_id,loops FROM tml_data_childGroup;
 WHILE v_loop>0 DO
   SET v_loop = v_loop + 1;
   -- 查询所有子最末级节点
   INSERT INTO tml_data_childGroup(id,last_id,loops)
   SELECT g.parent_id,d.last_id,v_loop
-  FROM tml_data_childGroup1 AS d 
+  FROM tml_data_childGroup1 AS d
     INNER JOIN suite_amiba_groups AS g ON d.id=g.id
   WHERE g.parent_id!='';
-  
+
   DELETE FROM tml_data_childGroup1;
   INSERT INTO tml_data_childGroup1(id,last_id,loops) SELECT id,last_id,loops FROM tml_data_childGroup WHERE loops=v_loop;
-  
+
   IF NOT EXISTS(SELECT * FROM tml_data_childGroup1 WHERE loops=v_loop) THEN
     SET v_loop=0;
   END IF;
@@ -86,22 +95,22 @@ INSERT INTO tml_data_childGroup1(id,last_id,loops) SELECT id,last_id,loops FROM 
 INSERT INTO tml_result_accounts(purpose_id,period_id,group_id,element_id,type_enum,money)
 SELECT d.purpose_id,d.period_id,g.id,d.element_id,
   d.use_type_enum,SUM(d.money) AS money
-FROM tml_data_childGroup AS g 
+FROM tml_data_childGroup AS g
 INNER JOIN `suite_amiba_data_docs` AS d ON g.last_id=d.fm_group_id
 WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
   AND d.`fm_group_id`!=''
   AND g.loops=1
   AND d.use_type_enum IN ('direct','allocated')
-GROUP BY d.`purpose_id`, d.`period_id`,g.id,d.`element_id`,d.`use_type_enum`;
+GROUP BY d.`purpose_id`, d.`period_id`,d.`fm_group_id`,d.`element_id`,d.`use_type_enum`;
 
 
 /*核算 非末级*/
 /*外部直接汇总，间接费用直接汇总*/
 INSERT INTO tml_result_accounts(purpose_id,period_id,group_id,element_id,type_enum,money)
-SELECT 
+SELECT
   d.purpose_id,d.period_id,g.id,d.element_id,d.use_type_enum,
   SUM(d.money) AS money
-FROM tml_data_childGroup AS g 
+FROM tml_data_childGroup AS g
 INNER JOIN `suite_amiba_data_docs` AS d ON g.last_id=d.fm_group_id
 WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
   AND d.`fm_group_id`!=''
@@ -110,10 +119,10 @@ WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
 GROUP BY d.purpose_id,d.period_id,g.id,d.element_id,d.use_type_enum;
 
 INSERT INTO tml_result_accounts(purpose_id,period_id,group_id,element_id,type_enum,money)
-SELECT 
+SELECT
   d.purpose_id,d.period_id,g.id,d.element_id,d.use_type_enum,
   SUM(d.money) AS money
-FROM tml_data_childGroup AS g 
+FROM tml_data_childGroup AS g
 INNER JOIN `suite_amiba_data_docs` AS d ON g.last_id=d.fm_group_id
 WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
   AND d.`fm_group_id`!=''
@@ -122,10 +131,10 @@ WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
 GROUP BY d.purpose_id,d.period_id,g.id,d.element_id,d.use_type_enum;
 
 INSERT INTO tml_result_accounts(purpose_id,period_id,group_id,element_id,type_enum,money)
-SELECT 
+SELECT
   d.purpose_id,d.period_id,g.id,d.element_id,d.use_type_enum,
   0-SUM(d.money) AS money
-FROM tml_data_childGroup AS g 
+FROM tml_data_childGroup AS g
 INNER JOIN `suite_amiba_data_docs` AS d ON g.last_id=d.fm_group_id
 WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
   AND d.`fm_group_id`!=''
@@ -140,10 +149,16 @@ DELETE l FROM suite_amiba_result_accounts AS l  WHERE l.ent_id=p_ent AND l.purpo
 -- 插入数据
 
 INSERT INTO `suite_amiba_result_accounts`(id,ent_id,purpose_id,period_id,group_id,element_id,type_enum,is_init,src_id,src_no,created_at,money)
-SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,
+SELECT MD5(REPLACE(UUID(),'-','')) AS id,
   p_ent,purpose_id,period_id,group_id,element_id,l.type_enum,is_init,src_id,src_no,NOW(),
   SUM(money)
 FROM tml_result_accounts AS l
 GROUP BY purpose_id,period_id,group_id,element_id,l.type_enum,is_init,src_id,src_no;
 
 END
+			");
+	}
+	public function down() {
+		DB::unprepared('DROP PROCEDURE IF EXISTS sp_amiba_data_accounting');
+	}
+}

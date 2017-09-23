@@ -119,7 +119,7 @@ INSERT INTO `suite_amiba_result_profits`
 (
  id,ent_id,purpose_id,period_id,group_id,is_init,init_profit,income,cost,bal_profit,time_total,time_profit,time_output
 )
-SELECT MD5(REPLACE(UUID(),'-','')) AS id,p_ent,l.purpose_id,l.period_id,l.group_id,
+SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,p_ent,l.purpose_id,l.period_id,l.group_id,
  MAX(l.is_init),SUM(l.init_profit),SUM(l.income),SUM(l.cost),SUM(l.init_profit+l.income-l.cost),
  SUM(l.time_total) AS time_total,
  CASE WHEN SUM(l.time_total)=0 THEN 0 ELSE SUM(l.init_profit+l.income-l.cost)/SUM(l.time_total) END AS time_profit,

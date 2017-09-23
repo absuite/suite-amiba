@@ -87,12 +87,12 @@ DELETE l FROM suite_amiba_data_docs AS l  WHERE l.ent_id=p_ent AND l.purpose_id=
 
 -- 插入数据
 INSERT INTO `suite_amiba_data_docs`(id,ent_id,doc_no,doc_date,use_type_enum,purpose_id,period_id,fm_group_id,element_id,currency_id,state_enum,money)
-SELECT MD5(REPLACE(UUID(),'-','')) AS id,p_ent,CONCAT('Allocated',DATE_FORMAT(NOW(),'%Y%m%d'),(@rownum:=@rownum+1)+1000),NOW() AS doc_date,'allocated',
+SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,p_ent,CONCAT('Allocated',DATE_FORMAT(NOW(),'%Y%m%d'),(@rownum:=@rownum+1)+1000),NOW() AS doc_date,'allocated',
   a.purpose_id,p_period AS period_id,a.group_id,IFNULL(a.to_element_id,l.element_id) AS element_id,l.currency_id,'approved',
   SUM(l.money*a.rate) AS money
 FROM tml_result_allocated AS l
 INNER JOIN  suite_amiba_allot_line AS a ON l.purpose_id=a.purpose_id AND l.element_id=a.element_id,
 (SELECT @rownum:=0) AS r
-GROUP BY a.purpose_id,a.group_id,IFNULL(a.element_id,l.element_id),l.currency_id;
+GROUP BY a.purpose_id,a.group_id,IFNULL(a.to_element_id,l.element_id),l.currency_id;
 
 END

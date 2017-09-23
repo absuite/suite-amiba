@@ -7,7 +7,7 @@ BEGIN
 DECLARE v_from_date DATETIME;
 DECLARE v_to_date DATETIME;
 /*
-SELECT UUID() into v_uid;
+SELECT UUID_SHORT() into v_uid;
 */
 /*数据对应的要素*/
 DROP TEMPORARY TABLE IF EXISTS tml_data_elementing;
@@ -312,17 +312,17 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
   
   INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`)
-  SELECT MD5(REPLACE(UUID(),'-','')) AS id,l.bizKey,DATE_FORMAT(v_to_date,'%Y%m%d'),v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
+  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,DATE_FORMAT(v_to_date,'%Y%m%d'),v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
   FROM tml_data_elementing AS l
   GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey;
   
   
   INSERT INTO tml_data_docLine(`id`,`bizKey`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`expense_code`,`unit_id`,`qty`,`money`)
-  SELECT MD5(REPLACE(UUID(),'-','')) AS id,l.bizKey,
+  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,
     l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`,l.expense_code,l.unit_id,
     SUM(l.qty),SUM(l.money)
   FROM tml_data_elementing AS l
-  GROUP BY l.bizKey,l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`;
+  GROUP BY l.bizKey,l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`,l.expense_code,l.unit_id;
   
   UPDATE tml_data_docLine SET price=money/qty WHERE qty!=0;
   UPDATE tml_data_docLine AS dl INNER JOIN  tml_data_doc AS d ON d.bizkey=dl.bizkey
