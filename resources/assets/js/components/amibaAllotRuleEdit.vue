@@ -22,33 +22,33 @@
     <md-part-body>
       <md-content class="flex layout-column">
         <md-layout md-gutter>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20"  md-flex-xlarge="20">
             <md-input-container>
               <label>编码</label>
               <md-input required v-model="model.main.code"></md-input>
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20"  md-flex-xlarge="20">
             <md-input-container>
               <label>名称</label>
               <md-input required v-model="model.main.name"></md-input>
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20"  md-flex-xlarge="20">
             <md-input-container>
               <label>核算目的</label>
               <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
               </md-input-ref>
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20"  md-flex-xlarge="20">
             <md-input-container>
               <label>分配方法</label>
               <md-input-ref @init="init_method_ref" required md-ref-id="suite.amiba.allot.method.ref" v-model="model.main.method">
               </md-input-ref>
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20"  md-flex-xlarge="20">
             <md-input-container>
               <label>来源核算要素</label>
               <md-input-ref @init="init_element_ref" required md-ref-id="suite.amiba.element.ref" v-model="model.main.element">
