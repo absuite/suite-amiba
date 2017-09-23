@@ -97,8 +97,8 @@ class ElementController extends Controller {
 		}
 		$oldData = Models\Group::find($id);
 
-		$data = Models\Element::where('id', $id)->update($input);
-
+		Models\Element::where('id', $id)->update($input);
+		$data = Models\Element::find($id);
 		if ($data && $data->id) {
 			$t = Models\Element::where('parent_id', $data->id)->where('id', '!=', $data->id)->first();
 			if ($t) {
