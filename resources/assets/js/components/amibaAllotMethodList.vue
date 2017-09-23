@@ -5,6 +5,7 @@
         <md-button @click.native="create">新增</md-button>
         <md-button @click.native="remove" :disabled="!(selectRows&&selectRows.length)">删除</md-button>
       </md-part-toolbar-group>
+      <span class="flex"></span>
       <md-part-toolbar-group>
         <md-layout md-gutter>
           <md-layout>
@@ -14,7 +15,6 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>分配方法</md-part-toolbar-crumb>
         <md-part-toolbar-crumb>列表</md-part-toolbar-crumb>
@@ -43,6 +43,7 @@ export default {
     },
     doFetch(q) {
       if (this.currentQ != q) {
+        this.currentQ = q;
         this.load();
       }
       this.currentQ = q;
