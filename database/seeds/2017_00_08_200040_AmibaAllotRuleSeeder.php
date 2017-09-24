@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
 
 class AmibaAllotRuleSeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -12,7 +12,12 @@ class AmibaAllotRuleSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		Models\AllotRule::where('ent_id', $this->entId)->delete();
 		Models\AllotRule::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->group("amb0101")->code("FF01")->name("方法1")->element("302")->method("FF01");});

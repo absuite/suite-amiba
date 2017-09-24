@@ -5,7 +5,7 @@ use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
 
 class AmibaPriceSeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -13,7 +13,12 @@ class AmibaPriceSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		$faker = Faker::create();
 		Models\Price::where('ent_id', $this->entId)->delete();

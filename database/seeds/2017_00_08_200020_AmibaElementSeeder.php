@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
 
 class AmibaElementSeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -14,7 +14,12 @@ class AmibaElementSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		$faker = Faker::create();
 		Models\Element::where('ent_id', $this->entId)->delete();

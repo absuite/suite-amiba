@@ -4,7 +4,7 @@ use Gmf\Sys\Models;
 use Illuminate\Database\Seeder;
 
 class AmibaDtiCategorySeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -12,7 +12,12 @@ class AmibaDtiCategorySeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		//DtiCategory
 		Models\DtiCategory::where('ent_id', $this->entId)->delete();

@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
 
 class AmibaTimeSeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -12,7 +12,12 @@ class AmibaTimeSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		Models\DataTime::where('ent_id', $this->entId)->delete();
 

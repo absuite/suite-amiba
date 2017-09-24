@@ -111,7 +111,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 
 		if ($result->d->Error) {
 			Log::error($result->d->Error);
-			throw new \Exception($result->d->Error, 1);
+			throw new \Exception($result->d->Error . ',请查看U9日志', 1);
 		}
 		$result = $result->d->Datas;
 		if ($result) {
@@ -141,8 +141,18 @@ class AmibaDtiRunJob implements ShouldQueue {
 	private function getDtiParamConfig($dti) {
 		$dtiParams = Models\DtiParam::where('dti_id', $dti->id)->get();
 		$dtiCategoryParams = Models\DtiParam::where('category_id', $dti->category_id)->get();
+		$emptyParams = Models\DtiParam::whereNull('category_id')->whereNull('dti_id')->get();
 
 		$params = [];
+		foreach ($emptyParams as $key => $value) {
+			if ($value->type_enum == 'input') {
+				if (!empty($this->context[$value->value])) {
+					$params[$value->code] = $this->context[$value->value];
+				}
+			} else {
+				$params[$value->code] = $value->value;
+			}
+		}
 		foreach ($dtiCategoryParams as $key => $value) {
 			if ($value->type_enum == 'input') {
 				if (!empty($this->context[$value->value])) {

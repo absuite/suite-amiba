@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
 
 class AmibaDataInitSeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -12,7 +12,12 @@ class AmibaDataInitSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		Models\DataInit::where('ent_id', $this->entId)->delete();
 		Models\DataInit::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->period("201701")->currency("CNY")->id("02f31e005e3111e7992ff19c3fee0876");});

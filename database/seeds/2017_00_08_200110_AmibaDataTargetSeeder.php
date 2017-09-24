@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
 
 class AmibaDataTargetSeeder extends Seeder {
-	private $entId = '';
+	public $entId = '';
 
 	/**
 	 * Run the database seeds.
@@ -12,7 +12,12 @@ class AmibaDataTargetSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->entId = config('gmf.ent.id');
+		if (empty($this->entId)) {
+			$this->entId = config('gmf.ent.id');
+		}
+		if (empty($this->entId)) {
+			return;
+		}
 
 		Models\DataTarget::where('ent_id', $this->entId)->delete();
 		Models\DataTarget::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->group("amb0101")->fm_period("201701")->to_period("201712")->id("7207fdc05e3411e7bec6b5699372a30c");});
