@@ -215,6 +215,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$base_uri = $this->context['local_host'];
 
 		if (empty($apiPath) || empty($data)) {
+			Log::error(static::class . ' apiPath is null or data is null,returned!');
 			return;
 		}
 
