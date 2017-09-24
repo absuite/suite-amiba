@@ -119,7 +119,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		if ($result) {
 			$result = json_decode($result);
 		}
-		Log::error(static::class . "dti data from u9 ".. json_encode($result));
+		Log::error(static::class . "dti data from u9 " . json_encode($result));
 		return $result;
 	}
 	private function parseParams($paramStr, $paramsConfig = []) {
