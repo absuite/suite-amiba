@@ -116,11 +116,11 @@ class AmibaDtiRunJob implements ShouldQueue {
 			throw new \Exception($result->d->Error . ',请查看U9日志', 1);
 		}
 		$result = $result->d->Datas;
-		Log::error(static::class . "dti data from u9:" . json_encode($result));
+		//Log::error(static::class . "dti data from u9:" . json_encode($result));
 		if ($result) {
 			$result = json_decode($result);
 		}
-		Log::error(static::class . "dti data from u9 json:" . json_encode($result));
+		//Log::error(static::class . "dti data from u9 json:" . json_encode($result));
 		return $result;
 	}
 	private function parseParams($paramStr, $paramsConfig = []) {
@@ -206,6 +206,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		return $token->accessToken;
 	}
 	private function callLocalStore($dti, $data = null) {
+		Log::error(static::class . ' callLocalStore call:');
 		$e = false;
 		$apiPath = false;
 		if ($dti->local && $dti->local->path) {
@@ -239,7 +240,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 
 		try {
 			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始']);
-			Log::error($base_uri . $apiPath);
+			Log::error(static::class . ' callLocalStore post:' . $base_uri . $apiPath);
 			$res = $client->request('POST', $apiPath, [
 				'json' => $input,
 			]);
