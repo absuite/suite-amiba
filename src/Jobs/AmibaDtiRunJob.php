@@ -43,7 +43,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			$dt = Carbon::now();
 			$this->sessionId = $dt->toDateString() . '' . Uuid::generate(1, 'gmf', Uuid::NS_DNS, "");
 			//日志
-			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'runing', 'memo' => '接口程序处理.开始']);
+			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'runing', 'memo' => '接口程序处理.开始，上下文：' . json_encode($this->context)]);
 
 			$query = Models\Dti::with('category');
 			$query->whereIn('id', $this->dtis);
