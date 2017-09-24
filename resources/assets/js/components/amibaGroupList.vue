@@ -21,7 +21,7 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <md-query @init="init_model_query" @select="select" @dblclick="edit" ref="list" md-query-id="suite.amiba.group.list"></md-query>
+      <md-query @init="initQuery" @select="select" @dblclick="edit" ref="list" md-query-id="suite.amiba.group.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
@@ -58,6 +58,7 @@ export default {
           ]
         };
       }
+      options.orders[0] = { name: 'code' };
     },
     remove() {
       if (!this.selectRows || !this.selectRows.length) {
@@ -80,9 +81,6 @@ export default {
     },
     load() {
       this.$refs.list.pagination(1);
-    },
-    init_model_query(options) {
-      options.orders[0] = { name: 'code' };
     },
   }
 };

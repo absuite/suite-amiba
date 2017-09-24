@@ -21,7 +21,7 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <md-query @select="select" @dblclick="edit" ref="list" md-query-id="suite.amiba.price.adjust.list"></md-query>
+      <md-query @select="select" @init="initQuery" @dblclick="edit" ref="list" md-query-id="suite.amiba.price.adjust.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
