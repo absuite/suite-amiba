@@ -116,10 +116,11 @@ class AmibaDtiRunJob implements ShouldQueue {
 			throw new \Exception($result->d->Error . ',请查看U9日志', 1);
 		}
 		$result = $result->d->Datas;
+		Log::error(static::class . "dti data from u9:" . json_encode($result));
 		if ($result) {
 			$result = json_decode($result);
 		}
-		Log::error(static::class . "dti data from u9 " . json_encode($result));
+		Log::error(static::class . "dti data from u9 json:" . json_encode($result));
 		return $result;
 	}
 	private function parseParams($paramStr, $paramsConfig = []) {
