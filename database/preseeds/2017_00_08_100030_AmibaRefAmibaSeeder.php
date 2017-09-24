@@ -26,6 +26,7 @@ class AmibaRefAmibaSeeder extends Seeder {
 				$builder->id($id)->name('suite.amiba.element.ref')->entity('suite.amiba.element')->matchs('code;name')
 					->fields(['id', 'code', 'name', 'memo', 'type_enum', 'direction_enum', 'parent.name', 'purpose.name']);
 				$builder->orders(['code', 'created_at' => 'desc']);
+				$builder->filter('a0.ent_id=#{entId}#');
 			});
 
 			$id = "52e850a0110111e7b55ff5148cfd2ab5";
@@ -33,6 +34,7 @@ class AmibaRefAmibaSeeder extends Seeder {
 				$builder->id($id)->name('suite.amiba.purpose.ref')->entity('suite.amiba.purpose')->matchs('code;name')
 					->fields(['id', 'code', 'name', 'memo', 'calendar_id' => ['hide' => 1]]);
 				$builder->orders(['code', 'created_at' => 'desc']);
+				$builder->filter('a0.ent_id=#{entId}#');
 			});
 
 			$id = "52e85170110111e79ab1336ee3e6bcd5";
@@ -40,12 +42,15 @@ class AmibaRefAmibaSeeder extends Seeder {
 				$builder->id($id)->name('suite.amiba.group.ref')->entity('suite.amiba.group')->matchs('code;name')
 					->fields(['id', 'code', 'name', 'purpose.name', 'parent.name', 'employees']);
 				$builder->orders(['purpose.code' => 'asc', 'code' => 'asc', 'created_at' => 'desc']);
+				$builder->filter('a0.ent_id=#{entId}#');
 			});
+
 			$id = "9784376017f911e7b88a199bb2283b45";
 			Models\Query::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->name('suite.amiba.modeling.ref')->entity('suite.amiba.modeling')
 					->fields(['id', 'code', 'name']);
 				$builder->orders(['code', 'created_at' => 'desc']);
+				$builder->filter('a0.ent_id=#{entId}#');
 			});
 
 			$id = "1fc56380129f11e79b5533ff7b5a42d5";
@@ -53,12 +58,15 @@ class AmibaRefAmibaSeeder extends Seeder {
 				$builder->id($id)->name('suite.amiba.allot.method.ref')->entity('suite.amiba.allot.method')->matchs('code;name')
 					->fields(['id', 'code' => '编码', 'name' => '名称']);
 				$builder->orders(['code', 'created_at' => 'desc']);
+				$builder->filter('a0.ent_id=#{entId}#');
 			});
+
 			$id = "1fc56420129f11e7b1a1855e942d9500";
 			Models\Query::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->name('suite.amiba.allot.rule.ref')->entity('suite.amiba.allot.rule')->matchs('code;name')
 					->fields(['id', 'code' => '编码', 'name' => '名称']);
 				$builder->orders(['code', 'created_at' => 'desc']);
+				$builder->filter('a0.ent_id=#{entId}#');
 			});
 
 		});

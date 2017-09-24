@@ -15,13 +15,13 @@ class AmibaDtiLocalSeeder extends Seeder {
 		//业务数据
 		Models\DtiLocal::build(function (Builder $b) {
 			$b->method_enum('post')->code("api/amiba/doc-bizs/batch")->name("业务数据")->path('api/amiba/doc-bizs/batch');
-			$b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+			$b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 
 		//财务数据
 		Models\DtiLocal::build(function (Builder $b) {
 			$b->method_enum('post')->code("api/amiba/doc-fis/batch")->name("财务数据")->path('api/cbo/doc-fis/batch');
-			$b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+			$b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 	}
 }

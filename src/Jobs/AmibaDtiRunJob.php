@@ -130,7 +130,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 				foreach ($paramsObj as $pk => $pv) {
 					$parseValue = $pv;
 					foreach ($paramsConfig as $key => $value) {
-						if ($pv == '${' . $key . '}') {
+						if ($pv == '#{' . $key . '}#') {
 							$parseValue = $value;
 							break;
 						}

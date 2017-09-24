@@ -91,60 +91,60 @@ class AmibaDtiSeeder extends Seeder {
 		//业务数据
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_MISCRCV")->name("业务-杂收")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_MISCSHIP")->name("业务-杂发")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_TRANSIN")->name("业务-库存调入")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_TRANSOUT")->name("业务-库存调出")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_MOCOMPLETE")->name("业务-生产完工")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_MOISSUE")->name("业务-生产领料")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_RCV")->name("业务-采购收货")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_RCVRTN")->name("业务-采购退货")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_SHIP")->name("业务-销售出货")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_SHIPRTN")->name("业务-销售退货")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_AP_APBILL")->name("业务-应付")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_ER_EXPENSEPLAN")->name("业务-费用预算")
-				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-bizs/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 
 		//财务数据
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_TRADE_GL_VOUCHER")->name("财务-凭证")
-				->local('api/amiba/doc-fis/batch'); $b->body('{"FromDate":"${fm_date}","toDate":"${to_date}"}');
+				->local('api/amiba/doc-fis/batch'); $b->body('{"FromDate":"#{fm_date}#","toDate":"#{to_date}#"}');
 		});
 	}
 }
