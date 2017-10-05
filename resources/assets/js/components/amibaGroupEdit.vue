@@ -114,7 +114,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
-    <md-ref :md-ref-id="lineRefID" ref="lineRef" @close="lineRefClose"></md-ref>
+    <md-ref :md-ref-id="lineRefID" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>

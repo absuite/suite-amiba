@@ -114,7 +114,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
-    <md-ref md-ref-id="suite.amiba.group.ref" ref="lineRef" @close="lineRefClose"></md-ref>
+    <md-ref md-ref-id="suite.amiba.group.ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>
