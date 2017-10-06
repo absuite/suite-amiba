@@ -19,7 +19,7 @@ class AmibaDtiSeeder extends Seeder {
 			return;
 		}
 
-		Models\Dti::where('ent_id', $this->entId)->delete();
+		//Models\Dti::where('ent_id', $this->entId)->delete();
 
 		Models\Dti::build(function (Builder $b) {
 			$b->ent_id($this->entId)->category('u9')->code("P_ISV_TRANSDATA_CBO_ORG")->name("组织")

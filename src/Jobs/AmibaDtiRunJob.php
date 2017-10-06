@@ -17,6 +17,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 	protected $dtis = [];
 	protected $context;
+	protected $ent_id;
 	protected $sessionId;
 	public $timeout = 12000;
 	/**
@@ -27,6 +28,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 	public function __construct(Array $context = [], Array $dtis = []) {
 		$this->context = $context;
 		$this->dtis = $dtis;
+		if (!empty($this->context['ent_id'])) {
+			$this->ent_id = $this->context['ent_id'];
+		}
 	}
 
 	/**
@@ -38,12 +42,15 @@ class AmibaDtiRunJob implements ShouldQueue {
 		if (empty($this->dtis)) {
 			return;
 		}
+		if (!empty($this->context['ent_id'])) {
+			$this->ent_id = $this->context['ent_id'];
+		}
 		$e = false;
 		try {
 			$dt = Carbon::now();
 			$this->sessionId = $dt->toDateString() . '' . Uuid::generate(1, 'gmf', Uuid::NS_DNS, "");
 			//日志
-			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'runing', 'memo' => '接口程序处理.开始，上下文：' . json_encode($this->context)]);
+			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'runing', 'memo' => '接口程序处理.开始，上下文：' . json_encode($this->context)]);
 
 			$query = Models\Dti::with('category');
 			$query->whereIn('id', $this->dtis);
@@ -67,9 +74,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 			Models\Dti::whereIn('id', $this->dtis)->update(['is_running' => 0, 'end_date' => new Carbon]);
 			//日志
 			if ($e) {
-				Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'failed', 'memo' => '接口程序处理.结束', 'content' => $e->getMessage()]);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'failed', 'memo' => '接口程序处理.结束', 'content' => $e->getMessage()]);
 			} else {
-				Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'succeed', 'memo' => '接口程序处理.结束']);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'succeed', 'memo' => '接口程序处理.结束']);
 			}
 		}
 		if ($e) {
@@ -181,7 +188,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$e = false;
 		$result = false;
 		try {
-			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']远程调用.开始']);
+			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']远程调用.开始']);
 			$paramsConfig = $this->getDtiParamConfig($dti);
 			$result = $this->runDtiItem_U9($dti, $paramsConfig);
 
@@ -192,9 +199,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 			Log::error($e);
 		} finally {
 			if ($e) {
-				Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'failed', 'memo' => '接口程序[' . $dti->name . ']远程调用.结束', 'content' => $e->getMessage()]);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'failed', 'memo' => '接口程序[' . $dti->name . ']远程调用.结束', 'content' => $e->getMessage()]);
 			} else {
-				Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'succeed', 'memo' => '接口程序[' . $dti->name . ']远程调用.结束']);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'succeed', 'memo' => '接口程序[' . $dti->name . ']远程调用.结束']);
 			}
 		}
 		if ($e) {
@@ -213,9 +220,12 @@ class AmibaDtiRunJob implements ShouldQueue {
 			$apiPath = $dti->local->path;
 		}
 		$base_uri = $this->context['local_host'];
-
-		if (empty($apiPath) || empty($data)) {
-			Log::error(static::class . ' apiPath is null or data is null,returned!');
+		if (empty($apiPath)) {
+			Log::error(static::class . ' callLocalStore apiPath is null');
+			return;
+		}
+		if (empty($data)) {
+			Log::error(static::class . ' callLocalStore data is null,returned!');
 			return;
 		}
 
@@ -240,7 +250,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		];
 
 		try {
-			Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始']);
+			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始']);
 			Log::error(static::class . ' callLocalStore post:' . $base_uri . $apiPath);
 			$res = $client->request('POST', $apiPath, [
 				'json' => $input,
@@ -255,9 +265,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 			Log::error($e);
 		} finally {
 			if ($e) {
-				Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'failed', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.结束', 'content' => $e->getMessage()]);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'failed', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.结束', 'content' => $e->getMessage()]);
 			} else {
-				Models\DtiLog::create(['session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'succeed', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.结束']);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'succeed', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.结束']);
 			}
 		}
 		if ($e) {

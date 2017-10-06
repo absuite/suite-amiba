@@ -19,7 +19,7 @@ class AmibaDtiParamSeeder extends Seeder {
 			return;
 		}
 
-		Models\DtiParam::where('ent_id', $this->entId)->delete();
+		//Models\DtiParam::where('ent_id', $this->entId)->delete();
 
 		Models\DtiParam::build(function (Builder $b) {
 			$b->ent_id($this->entId)->code('date')->name("日期")->type_enum('input')->value('date');
