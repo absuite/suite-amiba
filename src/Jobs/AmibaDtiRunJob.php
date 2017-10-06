@@ -247,7 +247,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 
 			$collection = collect($data);
 
-			$chunks = $collection->chunk(1000);
+			$chunks = $collection->chunk(5000);
 
 			$batchItems = $chunks->toArray();
 			$i = 1;
