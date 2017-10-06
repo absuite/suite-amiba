@@ -56,7 +56,9 @@ class AmibaComponentSeeder extends Seeder {
 			Models\Component::build(function (Builder $builder) {
 				$builder->code('amibaDtiRun')->name('接口执行')->path('amibaDtiRun');
 			});
-
+			Models\Component::build(function (Builder $builder) {
+				$builder->code('amibaDtiModelingEdit')->name('数据建模')->path('amibaDtiModelingEdit');
+			});
 			Models\Component::build(function (Builder $builder) {
 				$builder->code('amibaModelingEdit')->name('经营模型')->path('amibaModelingEdit');
 			});

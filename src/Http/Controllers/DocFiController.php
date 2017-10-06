@@ -20,6 +20,8 @@ class DocFiController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		$batch = 1;
+		$batch = intval($request->input('batch', $batch));
 		$entId = $request->oauth_ent_id;
 		$data_src_identity = '';
 		if (!empty($input['data_src_identity'])) {
@@ -34,7 +36,10 @@ class DocFiController extends Controller {
 			if (!empty($input['to_date'])) {
 				$query->where('doc_date', '<=', $input['to_date']);
 			}
-			$query->delete();
+			if ($batch <= 1) {
+				$query->delete();
+			}
+
 		}
 		$datas = $request->input('datas');
 		foreach ($datas as $k => $v) {
