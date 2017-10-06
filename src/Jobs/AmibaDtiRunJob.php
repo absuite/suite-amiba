@@ -252,7 +252,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			$batchItems = $chunks->toArray();
 			$i = 1;
 			foreach ($batchItems as $key => $value) {
-				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始' . $i]);
+				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始 ' . count($value) . ':' . $i . '/' . count($batchItems)]);
 				Log::error(static::class . ' callLocalStore post ' . $i . ':' . $base_uri . $apiPath);
 
 				$input = [
