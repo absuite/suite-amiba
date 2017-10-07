@@ -31,11 +31,11 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_elementing(
 `data_type`  NVARCHAR(100),
 `use_type_enum` NVARCHAR(100),
 `value_type_enum` NVARCHAR(100),
-`src_qty` DECIMAL(30,9) DEFAULT 0,
-`src_money` DECIMAL(30,9) DEFAULT 0,
+`src_qty` DECIMAL(30,2) DEFAULT 0,
+`src_money` DECIMAL(30,2) DEFAULT 0,
 `adjust` NVARCHAR(100),
-`qty` DECIMAL(30,9) DEFAULT 0,
-`money` DECIMAL(30,9) DEFAULT 0,
+`qty` DECIMAL(30,2) DEFAULT 0,
+`money` DECIMAL(30,2) DEFAULT 0,
 `bizkey` NVARCHAR(500),
 `fm_org_id`  NVARCHAR(100),
 `fm_dept_id`  NVARCHAR(100),
@@ -73,7 +73,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_doc(
 `to_group_id` NVARCHAR(100),
 `element_id` NVARCHAR(100),
 `currency_id` NVARCHAR(100),
-`money` DECIMAL(30,9),
+`money` DECIMAL(30,2),
 `bizkey` NVARCHAR(500)
 );
 DROP TEMPORARY TABLE IF EXISTS tml_data_docLine;
@@ -88,9 +88,9 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_docLine(
 `unit_id` NVARCHAR(100),
 `expense_code` NVARCHAR(100),
 `account_code` NVARCHAR(100),
-`qty` DECIMAL(30,9),
-`price` DECIMAL(30,9),
-`money` DECIMAL(30,9),
+`qty` DECIMAL(30,2),
+`price` DECIMAL(30,2),
+`money` DECIMAL(30,2),
 `bizkey` NVARCHAR(500)
 );
 /*期间的开始时间和结束时间*/
@@ -259,8 +259,8 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   WHERE l.match_direction_enum='to' AND l.to_group_id!='' AND IFNULL(l.match_group_id,'')!='';
   /*更新交易方*/
   UPDATE tml_data_elementing AS l 
-  SET l.to_group_id=l.def_to_group_id
-  WHERE IFNULL(l.fm_group_id,'')!='' AND IFNULL(l.def_to_group_id,'')!='';
+  SET l.m_to_group_id=l.def_to_group_id
+  WHERE IFNULL(l.m_fm_group_id,'')!='' AND IFNULL(l.def_to_group_id,'')!='';
    
   /*如果模型行定义了巴：1、与数据巴不对应时，需要删除，2、数据为空时，需要删除*/
   DELETE FROM tml_data_elementing WHERE IFNULL(match_group_id,'')!='' AND (m_fm_group_id!=match_group_id OR m_fm_group_id IS NULL);
@@ -337,9 +337,9 @@ WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose 
 
 /*将数据更新到考核数据表*/
 INSERT INTO `suite_amiba_data_docs`(`id`,`created_at`,`ent_id`,`src_type_enum`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`,`state_enum`)
-SELECT `id`,NOW(),p_ent,'interface',`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`,'approved'
+SELECT `id`,NOW(),p_ent,'interface',`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,IFNULL(`money`,0),'approved'
 FROM tml_data_doc;
-INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`qty`,`price`,`money`)
-SELECT `id`,NOW(),p_ent,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`qty`,`price`,`money`
+INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`qty`,`price`,`money`)
+SELECT `id`,NOW(),p_ent,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,IFNULL(`qty`,0),IFNULL(`price`,0),IFNULL(`money`,0)
 FROM tml_data_docLine;
 END 
