@@ -10,7 +10,7 @@ class AmibaDtiLocalSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		Models\DtiLocal::where('code', 'like', 'api/amiba%')->delete();
+		//Models\DtiLocal::where('code', 'like', 'api/amiba%')->delete();
 
 		//业务数据
 		Models\DtiLocal::build(function (Builder $b) {
