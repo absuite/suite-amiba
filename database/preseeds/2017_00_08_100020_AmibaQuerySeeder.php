@@ -133,7 +133,7 @@ class AmibaQuerySeeder extends Seeder {
 			Models\Query::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->name('suite.amiba.data.doc.list')->entity('suite.amiba.data.doc')
 					->fields(['id', 'doc_no', 'doc_date', 'purpose.name', 'period.name', 'use_type_enum', 'fm_group.name', 'to_group.name', 'element.name', 'money']);
-				$builder->orders(['purpose.code', 'period.name', 'fm_group.name', 'element.code', 'doc_date' => 'desc', 'created_at' => 'desc']);
+				$builder->orders(['purpose.code', 'period.name', 'fm_group.code', 'element.code', 'doc_date' => 'desc', 'created_at' => 'desc']);
 				$builder->filter('a0.ent_id=#{entId}#');
 			});
 
