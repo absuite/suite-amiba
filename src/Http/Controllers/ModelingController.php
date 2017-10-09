@@ -55,7 +55,7 @@ class ModelingController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->only(['purpose', 'group']);
+		$input = $request->only(['code', 'name']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',

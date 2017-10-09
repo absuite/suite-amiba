@@ -48,7 +48,7 @@ class AmibaRefAmibaSeeder extends Seeder {
 			$id = "9784376017f911e7b88a199bb2283b45";
 			Models\Query::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->name('suite.amiba.modeling.ref')->entity('suite.amiba.modeling')
-					->fields(['id', 'code', 'name']);
+					->fields(['id', 'code', 'name', 'purpose.name', 'group.name']);
 				$builder->orders(['code', 'created_at' => 'desc']);
 				$builder->filter('a0.ent_id=#{entId}#');
 			});

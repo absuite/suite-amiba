@@ -24,9 +24,8 @@ class CreateSuiteAmibaElementsTable extends Migration {
 		$md->enum('factor', 'suite.amiba.element.factor.enum')->nullable()->comment('性质');
 		$md->enum('scope', 'suite.amiba.element.scope.enum')->nullable()->comment('范围');
 		$md->string('code')->nullable()->comment('编码');
-
+		$md->string('name')->nullable()->comment('名称');
 		$md->boolean('is_manual')->default(0)->comment('是否人工');
-		$md->string('name')->comment('名称');
 		$md->text('memo')->nullable()->comment('备注');
 		$md->boolean('is_leaf')->default(1)->comment('叶子');
 		$md->timestamps();

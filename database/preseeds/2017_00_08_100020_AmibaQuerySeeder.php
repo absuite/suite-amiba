@@ -44,8 +44,8 @@ class AmibaQuerySeeder extends Seeder {
 			$id = "9784348017f911e7bc30bf7975a72311";
 			Models\Query::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->name('suite.amiba.modeling.list')->entity('suite.amiba.modeling')
-					->fields(['id', 'purpose.name', 'group.name']);
-				$builder->orders(['purpose.code' => 'asc', 'group.code' => 'asc', 'created_at' => 'desc']);
+					->fields(['id', 'code', 'name', 'purpose.name', 'group.name']);
+				$builder->orders(['purpose.code', 'code', 'group.code', 'created_at' => 'desc']);
 				$builder->filter('a0.ent_id=#{entId}#');
 			});
 

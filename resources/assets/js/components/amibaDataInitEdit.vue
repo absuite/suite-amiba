@@ -106,7 +106,7 @@
     mixins: [model],
     computed: {
       canSave() {
-        return this.validate(true);
+        return true;//this.validate(true);
       }
     },
     methods: {

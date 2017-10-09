@@ -11,7 +11,7 @@ class Modeling extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_modelings';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'purpose_id', 'group_id', 'memo'];
+	protected $fillable = ['id', 'ent_id', 'purpose_id', 'group_id', 'code', 'name', 'memo'];
 
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
@@ -27,7 +27,7 @@ class Modeling extends Model {
 		tap(new Builder, function ($builder) use ($callback) {
 			$callback($builder);
 
-			$data = array_only($builder->toArray(), ['id', 'ent_id', 'purpose_id', 'group_id', 'memo']);
+			$data = array_only($builder->toArray(), ['id', 'ent_id', 'purpose_id', 'group_id', 'code', 'name', 'memo']);
 
 			$tmpItem = false;
 			if (!empty($builder->purpose)) {
