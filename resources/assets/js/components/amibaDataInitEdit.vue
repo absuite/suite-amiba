@@ -45,50 +45,28 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-table-card class="flex">
-            <md-table @select="onTableSelect" class="flex">
-              <md-table-header>
-                <md-table-row>
-                  <md-table-head>阿米巴</md-table-head>
-                  <md-table-head>利润</md-table-head>
-                </md-table-row>
-              </md-table-header>
-              <md-table-body>
-                <md-table-row v-for="(row, rowIndex) in model.main.lines" 
-                  :key="rowIndex" 
-                  :md-item="row" 
-                  md-selection>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="row.group"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.profit"></md-input>
-                    </md-input-container>
-                  </md-table-cell>
-                </md-table-row>
-              </md-table-body>
-            </md-table>
-            <md-table-tool>
-              <md-table-action 
-                md-insert
-                @onAdd="onLineAdd"
-                @onRemove="onLineRemove"
-                ></md-table-action>
-              <md-layout class="flex"></md-layout>
-              <md-table-pagination
-                  md-size="5"
-                  md-total="10"
-                  md-page="1"
-                  md-label="Rows"
-                  md-separator="of"
-                  :md-page-options="[5, 10, 25, 50]"
-                  @pagination="onTablePagination">
-              </md-table-pagination>
-            </md-table-tool>
-          </md-table-card>
+          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="阿米巴" width="300px">
+              <template scope="row">
+                {{ row.group&&row.group.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="row.group"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="利润" width="150px">
+              <template scope="row">
+                {{ row.profit }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input v-model="row.profit"></md-input>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+          </md-grid>
         </md-layout>
       </md-content>
     </md-part-body>
@@ -135,25 +113,8 @@
       list() {
         this.$router.push({ name: 'module', params: { module: 'amiba.data.init.list' }});
       },
-      onTablePagination(page){
-         
-      },
-      onTableSelect(items){
-        this.selectedRows=[];
-        Object.keys(items).forEach((row, index) =>{
-          this.selectedRows[index]=items[row];
-        });
-      },
       onLineAdd(){
         this.$refs['lineRef'].open();
-      },
-      onLineRemove(){
-        this._.forEach(this.selectedRows,(v,k)=>{
-          var idx=this.model.main.lines.indexOf(v);
-          if(idx>=0){
-            this.model.main.lines.splice(idx,1);
-          }
-        });
       },
       lineRefClose(datas){
         this._.forEach(datas,(v,k)=>{

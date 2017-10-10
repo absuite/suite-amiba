@@ -50,108 +50,148 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-table-card class="flex">
-            <md-table @select="onTableSelect" class="flex">
-              <md-table-header>
-                <md-table-row>
-                  <md-table-head width="150px">核算要素</md-table-head>
-                  <md-table-head width="150px">匹配方</md-table-head>
-                  <md-table-head width="150px">匹配方向</md-table-head>
-                  <md-table-head width="150px">业务类型</md-table-head>
-                  <md-table-head width="150px">单据类型</md-table-head>
-                  <md-table-head width="150px">料品分类</md-table-head>
-                  <md-table-head width="150px">费用项目</md-table-head>
-                  <md-table-head width="150px">会计科目</md-table-head>
-                  <md-table-head width="150px">客商</md-table-head>
-                  <md-table-head width="150px">物料</md-table-head>
-                  <md-table-head width="150px">因素</md-table-head>
-                  <md-table-head width="150px">取值类型</md-table-head>
-                  <md-table-head md-tooltip="100">取值比例%</md-table-head>
-                  <md-table-head width="150px">交易方</md-table-head>
-                </md-table-row>
-              </md-table-header>
-              <md-table-body>
-                <md-table-row v-for="(row, rowIndex) in model.main.lines" :key="rowIndex" :md-item="row" md-selection>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref @init="init_element_ref" md-ref-id="suite.amiba.element.ref" v-model="row.element"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.match_group"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-enum md-enum-id="suite.amiba.modeling.match.direction.enum" v-model="row.match_direction_enum"></md-enum>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-enum md-enum-id="suite.cbo.biz.type.enum" v-model="row.biz_type_enum"></md-enum>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref @init="init_doc_type_ref" md-ref-id="suite.cbo.doc.type.ref" v-model="row.doc_type"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.item.category.ref" v-model="row.item_category"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.project_code"></md-input>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.account_code"></md-input>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.trader.ref" v-model="row.trader"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.factor1"></md-input>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-enum md-enum-id="suite.amiba.value.type.enum" v-model="row.value_type_enum"></md-enum>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input type="number" v-model="row.adjust"></md-input>
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.to_group"></md-input-ref>
-                    </md-input-container>
-                  </md-table-cell>
-                </md-table-row>
-              </md-table-body>
-            </md-table>
-            <md-table-tool>
-              <md-table-action md-insert @onAdd="onLineAdd" @onRemove="onLineRemove"></md-table-action>
-              <md-layout class="flex"></md-layout>
-              <md-table-pagination md-size="5" md-total="10" md-page="1" md-label="Rows" md-separator="of" :md-page-options="[5, 10, 25, 50]" @pagination="onTablePagination">
-              </md-table-pagination>
-            </md-table-tool>
-          </md-table-card>
+          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="核算要素" width="150px">
+              <template scope="row">
+                {{ row.element&&row.element.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref @init="init_element_ref" md-ref-id="suite.amiba.element.ref" v-model="row.element"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="匹配方" width="150px">
+              <template scope="row">
+                {{ row.match_group&&row.match_group.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.match_group"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="匹配方向" width="150px">
+              <template scope="row">
+                {{ row.match_direction_enum}}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-enum md-enum-id="suite.amiba.modeling.match.direction.enum" v-model="row.match_direction_enum"></md-enum>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="业务类型" width="150px">
+              <template scope="row">
+                {{ row.biz_type_enum }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-enum md-enum-id="suite.cbo.biz.type.enum" v-model="row.biz_type_enum"></md-enum>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="单据类型" width="150px">
+              <template scope="row">
+                {{ row.doc_type&&row.doc_type.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref @init="init_doc_type_ref" md-ref-id="suite.cbo.doc.type.ref" v-model="row.doc_type"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="料品分类" width="150px">
+              <template scope="row">
+                {{ row.item_category&&row.item_category.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.item.category.ref" v-model="row.item_category"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="费用项目" width="150px">
+              <template scope="row">
+                {{ row.project_code }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input v-model="row.project_code"></md-input>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="会计科目" width="150px">
+              <template scope="row">
+                {{ row.account_code}}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input v-model="row.account_code"></md-input>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="客商" width="150px">
+              <template scope="row">
+                {{ row.trader&&row.trader.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.trader.ref" v-model="row.trader"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="物料" width="150px">
+              <template scope="row">
+                {{ row.item&&row.item.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="因素" width="150px">
+              <template scope="row">
+                {{ row.factor1 }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input v-model="row.factor1"></md-input>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="取值类型" width="150px">
+              <template scope="row">
+                {{ row.value_type_enum }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-enum md-enum-id="suite.amiba.value.type.enum" v-model="row.value_type_enum"></md-enum>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="取值比例%" width="100px">
+              <template scope="row">
+                {{ row.adjust}}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input type="number" v-model="row.adjust"></md-input>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="交易方" width="150px">
+              <template scope="row">
+                {{ row.to_group&&row.to_group.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.to_group"></md-input-ref>
+                </md-input-container>
+              </template>
+            </md-grid-column>
+          </md-grid>
         </md-layout>
       </md-content>
     </md-part-body>
@@ -195,25 +235,8 @@ export default {
     list() {
       this.$router.push({ name: 'module', params: { module: 'amiba.modeling.list' } });
     },
-    onTablePagination(page) {
-
-    },
-    onTableSelect(items) {
-      this.selectedRows = [];
-      Object.keys(items).forEach((row, index) => {
-        this.selectedRows[index] = items[row];
-      });
-    },
     onLineAdd() {
       this.$refs['lineRef'].open();
-    },
-    onLineRemove() {
-      this._.forEach(this.selectedRows, (v, k) => {
-        var idx = this.model.main.lines.indexOf(v);
-        if (idx >= 0) {
-          this.model.main.lines.splice(idx, 1);
-        }
-      });
     },
     lineRefClose(datas) {
       this._.forEach(datas, (v, k) => {
