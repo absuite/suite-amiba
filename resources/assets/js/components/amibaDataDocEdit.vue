@@ -22,61 +22,61 @@
     <md-part-body>
       <md-content class="flex layout-column">
         <md-layout md-gutter>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>单据编号</label>
               <md-input required v-model="model.main.doc_no" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>单据日期</label>
               <md-date required v-model="model.main.doc_date" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>核算目的</label>
               <md-input-ref md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>期间</label>
               <md-input-ref @init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>核算要素</label>
               <md-input-ref @init="init_element_ref" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>数据用途</label>
               <md-enum md-enum-id="suite.amiba.doc.use.type.enum" v-model="model.main.use_type_enum" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>阿米巴</label>
               <md-input-ref @init="init_fm_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>对方阿米巴</label>
               <md-input-ref @init="init_to_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>考核金额</label>
               <md-input type="number" required v-model="model.main.money" />
             </md-input-container>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>单据状态</label>
               <md-enum md-enum-id="suite.amiba.doc.state.enum" v-model="model.main.state_enum" />
@@ -84,84 +84,54 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-table-card class="flex">
-            <md-table @select="onTableSelect" class="flex">
-              <md-table-header>
-                <md-table-row>
-                  <md-table-head>客商</md-table-head>
-                  <md-table-head>料品分类</md-table-head>
-                  <md-table-head>料品</md-table-head>
-                  <md-table-head>描述</md-table-head>
-                  <md-table-head>费用项目</md-table-head>
-                  <md-table-head>科目</md-table-head>
-                  <md-table-head>计量单位</md-table-head>
-                  <md-table-head>数量</md-table-head>
-                  <md-table-head>单价</md-table-head>
-                  <md-table-head>金额</md-table-head>
-                </md-table-row>
-              </md-table-header>
-              <md-table-body>
-                <md-table-row v-for="(row, rowIndex) in modelLines.datas" :key="rowIndex" :md-item="row" md-selection>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.trader.ref" v-model="row.trader" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.item.category.ref" v-model="row.item_category" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.memo" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.expense_code" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.account_code" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input-ref md-ref-id="suite.cbo.unit.ref" v-model="row.unit" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.qty" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.price" />
-                    </md-input-container>
-                  </md-table-cell>
-                  <md-table-cell>
-                    <md-input-container>
-                      <md-input v-model="row.money" />
-                    </md-input-container>
-                  </md-table-cell>
-                </md-table-row>
-              </md-table-body>
-            </md-table>
-            <md-table-tool>
-              <md-table-action md-insert @onAdd="onLineAdd" @onRemove="onLineRemove"></md-table-action>
-              <md-layout class="flex"></md-layout>
-              <md-table-pagination :md-size="modelLines.pager.size" :md-total="modelLines.pager.total" :md-page="modelLines.pager.page" :md-page-options="[5, 10, 25, 50]" @pagination="onTablePagination">
-              </md-table-pagination>
-            </md-table-tool>
-          </md-table-card>
+          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="客商" width="300px">
+              <template scope="row">
+                {{ row.trader&&row.trader.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.trader.ref" v-model="row.trader" />
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="料品分类" width="300px">
+              <template scope="row">
+                {{ row.item_category&&row.item_category.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.item.category.ref" v-model="row.item_category" />
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="料品" width="300px">
+              <template scope="row">
+                {{ row.item&&row.item.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item" />
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="描述" width="150px" editable field="memo" />
+            <md-grid-column label="费用项目" width="150px" editable field="expense_code" />
+            <md-grid-column label="科目" width="150px" editable field="account_code" />
+            <md-grid-column label="计量单位" width="300px">
+              <template scope="row">
+                {{ row.unit&&row.unit.name||'' }}
+              </template>
+              <template slot="editor" scope="row">
+                <md-input-container>
+                  <md-input-ref md-ref-id="suite.cbo.unit.ref" v-model="row.unit" />
+                </md-input-container>
+              </template>
+            </md-grid-column>
+            <md-grid-column label="数量" width="150px" editable field="qty" />
+            <md-grid-column label="单价" width="150px" editable field="price" />
+            <md-grid-column label="金额" width="150px" editable field="money" />
+          </md-grid>
         </md-layout>
       </md-content>
     </md-part-body>
@@ -175,7 +145,7 @@ export default {
       selectedRows: [],
       modelLines: {
         datas: [],
-        pager:{page:1,size:10}
+        pager: { page: 1, size: 10 }
       }
     };
   },
@@ -219,15 +189,15 @@ export default {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.doc.list' } });
     },
     load_extend(id) {
-      this.modelLines.pager.page=1;
+      this.modelLines.pager.page = 1;
       this.onTablePagination(this.modelLines.pager);
     },
-    copy_extend(){
-      this.modelLines.datas=[];
+    copy_extend() {
+      this.modelLines.datas = [];
     },
     onTablePagination(pager) {
-      this.$http.get(this.route + '/' + this.model.main.id + '/lines',{ params: { page: pager.page,size: pager.size} }).then(response => {
-        this.modelLines.datas = response.data.data||[];
+      this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: { page: pager.page, size: pager.size } }).then(response => {
+        this.modelLines.datas = response.data.data || [];
         this.modelLines.pager = response.data.pager;
       });
     },
