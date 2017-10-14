@@ -30,6 +30,7 @@
           <md-button class="md-raised md-accent" @click.native="save" :disabled="!canSave">核算</md-button>
         </md-layout>
       </md-content>
+      <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
 </template>
