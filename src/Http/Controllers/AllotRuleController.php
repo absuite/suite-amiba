@@ -16,7 +16,7 @@ class AllotRuleController extends Controller {
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
-		$query = Models\AllotRuleLine::with('group');
+		$query = Models\AllotRuleLine::with('group', 'element');
 		$query->where('rule_id', $id);
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);

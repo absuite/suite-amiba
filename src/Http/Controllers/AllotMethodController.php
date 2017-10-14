@@ -16,7 +16,7 @@ class AllotMethodController extends Controller {
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
-		$query = Models\AllotMethod::with('group', 'element');
+		$query = Models\AllotMethod::with('group');
 		$query->where('method_id', $id);
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
@@ -71,7 +71,7 @@ class AllotMethodController extends Controller {
 	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
 		$fillable = ['rate'];
-		$entityable = ['group', 'element'];
+		$entityable = ['group'];
 
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
