@@ -49,47 +49,11 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="对方阿米巴" width="300px">
-              <template scope="row">
-                {{ row.group&&row.group.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="row.group" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="价格类型" width="150px">
-              <template scope="row">
-                {{ row.type_enum }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-enum md-enum-id="suite.amiba.price.type.enum" v-model="row.type_enum" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="料品" width="150px">
-              <template scope="row">
-                {{ row.item&&row.item.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="价格" width="150px">
-              <template scope="row">
-                {{ row.cost_price}}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input v-model="row.cost_price" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="对方阿米巴" field="group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" width="300px" editable/>
+            <md-grid-column label="价格类型" field="type_enum" dataType="enum" editable ref-id="suite.amiba.price.type.enum" />
+            <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="300px" editable/>
+            <md-grid-column label="价格" field="cost_price" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -133,8 +97,7 @@ export default {
           'name': '',
           'memo': '',
           purpose: this.$root.userConfig.purpose,
-          group: null,
-          'lines': []
+          group: null
         }
       }
     },
@@ -142,11 +105,32 @@ export default {
       this.$router.push({ name: 'module', params: { module: 'amiba.price.list' } });
     },
     onLineAdd() {
-      this.model.main.lines.push({});
+      this.$refs.grid && this.$refs.grid.addDatas({});
+    },
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave() {
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     lineRefClose(datas) {
       this._.forEach(datas, (v, k) => {
-        this.model.main.lines.push({ group: v, cost_price: 0 });
+        this.model.main.lines.push({ group: v });
       });
     },
     init_group_ref(options) {

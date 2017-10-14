@@ -14,8 +14,15 @@ class AllotMethodController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\AllotMethod::with('group');
+		$query->where('method_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
-		$query = Models\AllotMethod::with('purpose', 'lines', 'lines.group');
+		$query = Models\AllotMethod::with('purpose');
 		$data = $query->where('id', $id)->orWhere('code', $id)->first();
 		return $this->toJson($data);
 	}
@@ -37,15 +44,8 @@ class AllotMethodController extends Controller {
 		}
 		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\AllotMethod::create($input);
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['method_id'] = $data->id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['group']);
-				Models\AllotMethodLine::create($value);
-			}
-		}
+
+		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
 	}
 	/**
@@ -64,20 +64,36 @@ class AllotMethodController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		if (!Models\AllotMethod::where('id', $id)->update($input)) {
-			return $this->toError('没有更新任何数据 !');
-		}
+		Models\AllotMethod::where('id', $id)->update($input);
+		$this->storeLines($request, $id);
+		return $this->show($request, $id);
+	}
+	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
-		Models\AllotMethodLine::where('method_id', $id)->delete();
+		$fillable = ['rate'];
+		$entityable = ['group'];
+
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
-				$value['method_id'] = $id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['group']);
-				Models\AllotMethodLine::create($value);
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['method_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\AllotMethodLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\AllotMethodLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\AllotMethodLine::destroy($value['id']);
+					continue;
+				}
 			}
 		}
-		return $this->show($request, $id);
 	}
 	/**
 	 * DELETE
@@ -88,7 +104,7 @@ class AllotMethodController extends Controller {
 	public function destroy(Request $request, $id) {
 
 		$ids = explode(",", $id);
-		Models\AllotMethodLine::whereIn('mark_id', $ids)->delete();
+		Models\AllotMethodLine::whereIn('method_id', $ids)->delete();
 
 		Models\AllotMethod::destroy($ids);
 		return $this->toJson(true);

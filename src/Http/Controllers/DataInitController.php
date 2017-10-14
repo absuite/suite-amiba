@@ -9,14 +9,21 @@ use Validator;
 
 class DataInitController extends Controller {
 	public function index(Request $request) {
-		$query = Models\DataInit::with('purpose', 'period', 'currency', 'lines.group');
+		$query = Models\DataInit::with('purpose', 'period', 'currency');
 
 		$data = $query->get();
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\DataInitLine::with('group');
+		$query->where('rule_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
-		$query = Models\DataInit::with('purpose', 'period', 'currency', 'lines.group');
+		$query = Models\DataInit::with('purpose', 'period', 'currency');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -39,16 +46,7 @@ class DataInitController extends Controller {
 		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataInit::create($input);
 
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['init_id'] = $data->id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['group']);
-				Models\DataInitLine::create($value);
-			}
-		}
-
+		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
 	}
 	/**
@@ -72,19 +70,37 @@ class DataInitController extends Controller {
 		}
 		Models\DataInit::where('id', $id)->update($input);
 
-		$lines = $request->input('lines');
-
-		Models\DataInitLine::where('init_id', $id)->delete();
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['init_id'] = $id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['group']);
-				Models\DataInitLine::create($value);
-			}
-		}
+		$this->storeLines($request, $id);
 
 		return $this->show($request, $id);
+	}
+	private function storeLines(Request $request, $headId) {
+		$lines = $request->input('lines');
+		$fillable = ['income', 'cost', 'profit', 'ext_income', 'ext_cost', 'ext_profit'];
+		$entityable = ['group'];
+
+		if ($lines && count($lines)) {
+			foreach ($lines as $key => $value) {
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['init_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\DataInitLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\DataInitLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\DataInitLine::destroy($value['id']);
+					continue;
+				}
+			}
+		}
 	}
 	/**
 	 * DELETE
@@ -94,6 +110,7 @@ class DataInitController extends Controller {
 	 */
 	public function destroy(Request $request, $id) {
 		$ids = explode(",", $id);
+		Models\DataInitLine::whereIn('init_id', $ids)->delete();
 		Models\DataInit::destroy($ids);
 		return $this->toJson(true);
 	}

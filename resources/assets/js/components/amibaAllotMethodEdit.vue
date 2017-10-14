@@ -43,27 +43,9 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="阿米巴" width="150px">
-              <template scope="row">
-                {{ row.group&&row.group.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="row.group"></md-input-ref>
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="基数" width="150px">
-              <template scope="row">
-                {{ row.rate}}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input v-model="row.rate"></md-input>
-                </md-input-container>
-              </template>
-            </md-grid-column>
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="阿米巴" field="group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" width="200px" editable/>
+            <md-grid-column label="基数" field="rate" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -104,8 +86,7 @@ export default {
           'code': '',
           'name': '',
           'memo': '',
-          purpose: this.$root.userConfig.purpose,
-          'lines': []
+          purpose: this.$root.userConfig.purpose
         }
       }
     },
@@ -117,8 +98,29 @@ export default {
     },
     lineRefClose(datas) {
       this._.forEach(datas, (v, k) => {
-        this.model.main.lines.push({ group: v, rate: 0 });
+        this.$refs.grid && this.$refs.grid.addDatas({ group: v, rate: 0 });
       });
+    },
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave() {
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     init_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };

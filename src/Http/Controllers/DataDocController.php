@@ -59,7 +59,7 @@ class DataDocController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->only(['doc_no', 'doc_date', 'state_enum', 'memo', 'biz_type_enum', 'is_outside', 'qty', 'money']);
+		$input = $request->only(['doc_no', 'doc_date', 'state_enum', 'money', 'use_type_enum', 'created_by', 'src_type_enum', 'src_id', 'src_no', 'memo']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'fm_group', 'to_group', 'period', 'element', 'currency']);
 
 		$validator = Validator::make($input, [
@@ -75,15 +75,29 @@ class DataDocController extends Controller {
 		return $this->show($request, $id);
 	}
 	private function storeLines(Request $request, $headId) {
-		Models\DataDocLine::where('doc_id', $headId)->delete();
 		$lines = $request->input('lines');
+		$fillable = ['qty', 'price', 'money', 'expense_code', 'subject_code', 'memo'];
+		$entityable = ['trader', 'item_category', 'item', 'mfc', 'project', 'unit'];
+
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
-				$value['doc_id'] = $headId;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['trader', 'item_category', 'item', 'mfc', 'project', 'unit']);
-
-				Models\DataDocLine::create($value);
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['doc_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\DataDocLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\DataDocLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\DataDocLine::destroy($value['id']);
+					continue;
+				}
 			}
 		}
 		$job = new Jobs\AmibaDataDocMoneyJob($headId);

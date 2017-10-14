@@ -57,27 +57,9 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="目的阿米巴" width="150px">
-              <template scope="row">
-                {{ row.group&&row.group.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="row.group"></md-input-ref>
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="目的核算要素" width="150px">
-              <template scope="row">
-                {{ row.element&&row.element.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref @init="init_element_ref" md-ref-id="suite.amiba.element.ref" v-model="row.element"></md-input-ref>
-                </md-input-container>
-              </template>
-            </md-grid-column>
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="目的阿米巴" field="group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" width="200px" editable/>
+            <md-grid-column label="目的核算要素" field="element" dataType="entity" ref-id="suite.amiba.element.ref" :ref-init="init_element_ref" width="200px" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -129,25 +111,30 @@ export default {
     list() {
       this.$router.push({ name: 'module', params: { module: 'amiba.allot.rule.list' } });
     },
-    onTablePagination(page) {
 
-    },
-    onTableSelect(items) {
-      this.selectedRows = [];
-      Object.keys(items).forEach((row, index) => {
-        this.selectedRows[index] = items[row];
-      });
-    },
     onLineAdd() {
-      this.model.main.lines.push({ 'group': {}, 'element': {}, rate: '0' });
+      this.$refs.grid && this.$refs.grid.addDatas({ 'group': {}, 'element': {}, rate: '0' });
     },
-    onLineRemove() {
-      this._.forEach(this.selectedRows, (v, k) => {
-        var idx = this.model.main.lines.indexOf(v);
-        if (idx >= 0) {
-          this.model.main.lines.splice(idx, 1);
-        }
-      });
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave() {
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     init_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };

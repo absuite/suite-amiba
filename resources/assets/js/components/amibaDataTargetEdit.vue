@@ -52,47 +52,11 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="指标类型" width="300px">
-              <template scope="row">
-                {{ row.type_enum }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-enum md-enum-id="suite.amiba.data.target.type.enum" v-model="row.type_enum" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="基准核算要素" width="150px">
-              <template scope="row">
-                {{ row.element&&row.element.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.amiba.element.ref" v-model="row.element"></md-input-ref>
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="目标额度" width="150px">
-              <template scope="row">
-                {{ row.money}}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input v-model="row.money"></md-input>
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="目标比率" width="150px">
-              <template scope="row">
-                {{ row.rate}}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input v-model="row.rate"></md-input>
-                </md-input-container>
-              </template>
-            </md-grid-column>
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="指标类型" field="type_enum" dataType="enum" editable ref-id="suite.amiba.data.target.type.enum" />
+            <md-grid-column label="基准核算要素" field="element" dataType="entity" ref-id="suite.amiba.element.ref" width="200px" editable/>
+            <md-grid-column label="目标额度" field="money" editable/>
+            <md-grid-column label="目标比率" field="rate" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -134,8 +98,7 @@ export default {
           'purpose': this.$root.userConfig.purpose,
           'group': null,
           fm_period: this.$root.userConfig.period,
-          to_period: this.$root.userConfig.period,
-          'lines': []
+          to_period: this.$root.userConfig.period
         }
       }
     },
@@ -143,7 +106,28 @@ export default {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.target.list' } });
     },
     onLineAdd() {
-      this.model.main.lines.push({ element: null });
+      this.$refs.grid && this.$refs.grid.addDatas({ element: null });
+    },
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave() {
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     init_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };

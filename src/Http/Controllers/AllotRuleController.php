@@ -14,8 +14,15 @@ class AllotRuleController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\AllotRuleLine::with('group');
+		$query->where('rule_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
-		$query = Models\AllotRule::with('purpose', 'method', 'element', 'group', 'lines', 'lines.group', 'lines.element');
+		$query = Models\AllotRule::with('purpose', 'method', 'element', 'group');
 		$data = $query->where('id', $id)->orWhere('code', $id)->first();
 		return $this->toJson($data);
 	}
@@ -37,15 +44,7 @@ class AllotRuleController extends Controller {
 		}
 		$data['ent_id'] = $request->oauth_ent_id;
 		$data = Models\AllotRule::create($input);
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$ldata = ['rule_id' => $data->id, 'rate' => $value['rate']];
-				$ldata['ent_id'] = $request->oauth_ent_id;
-				$ldata = InputHelper::fillEntity($ldata, $value, ['element', 'group']);
-				Models\AllotRuleLine::create($ldata);
-			}
-		}
+		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
 	}
 	/**
@@ -64,20 +63,36 @@ class AllotRuleController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		if (!Models\AllotRule::where('id', $id)->update($input)) {
-			return $this->toError('没有更新任何数据 !');
-		}
+		Models\AllotRule::where('id', $id)->update($input)
+		$this->storeLines($request, $id);
+		return $this->show($request, $id);
+	}
+	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
-		Models\AllotRuleLine::where('rule_id', $id)->delete();
+		$fillable = ['rate'];
+		$entityable = ['group','element'];
+
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
-				$ldata = ['rule_id' => $id, 'rate' => $value['rate']];
-				$ldata = InputHelper::fillEntity($ldata, $value, ['element', 'group']);
-				$ldata['ent_id'] = $request->oauth_ent_id;
-				Models\AllotRuleLine::create($ldata);
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['rule_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\AllotRuleLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\AllotRuleLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\AllotRuleLine::destroy($value['id']);
+					continue;
+				}
 			}
 		}
-		return $this->show($request, $id);
 	}
 	/**
 	 * DELETE

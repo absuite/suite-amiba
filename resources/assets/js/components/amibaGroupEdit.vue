@@ -74,17 +74,8 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="构成" width="300px">
-              <template scope="row">
-                {{ row.data&&row.data.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref :md-ref-id="lineRefID" v-model="row.data"></md-input-ref>
-                </md-input-container>
-              </template>
-            </md-grid-column>
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="构成" field="data" dataType="entity" :ref-id="lineRefID" width="300px" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -151,7 +142,6 @@ export default {
           'code': '',
           'name': '',
           'memo': '',
-          'lines': [],
           'type_enum': ''
         }
       }
@@ -164,8 +154,29 @@ export default {
     },
     lineRefClose(datas) {
       this._.forEach(datas, (v, k) => {
-        this.model.main.lines.push({ data: v, id: v.id });
+        this.$refs.grid && this.$refs.grid.addDatas({ data: v, id: v.id });
       });
+    },
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave() {
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     initParentGroupRef(options) {
       if (this.model.main.purpose) {

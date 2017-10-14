@@ -84,53 +84,17 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="客商" width="300px">
-              <template scope="row">
-                {{ row.trader&&row.trader.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.cbo.trader.ref" v-model="row.trader" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="料品分类" width="300px">
-              <template scope="row">
-                {{ row.item_category&&row.item_category.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.cbo.item.category.ref" v-model="row.item_category" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="料品" width="300px">
-              <template scope="row">
-                {{ row.item&&row.item.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.cbo.item.ref" v-model="row.item" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="描述" width="150px" editable field="memo" />
-            <md-grid-column label="费用项目" width="150px" editable field="expense_code" />
-            <md-grid-column label="科目" width="150px" editable field="account_code" />
-            <md-grid-column label="计量单位" width="300px">
-              <template scope="row">
-                {{ row.unit&&row.unit.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.cbo.unit.ref" v-model="row.unit" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="数量" width="150px" editable field="qty" />
-            <md-grid-column label="单价" width="150px" editable field="price" />
-            <md-grid-column label="金额" width="150px" editable field="money" />
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" width="200px" editable/>
+            <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" width="200px" editable/>
+            <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="200px" editable/>
+            <md-grid-column label="描述" editable field="memo" />
+            <md-grid-column label="费用项目" editable field="expense_code" />
+            <md-grid-column label="科目" editable field="account_code" />
+            <md-grid-column label="计量单位" field="unit" dataType="entity" ref-id="suite.cbo.unit.ref" width="200px" editable/>
+            <md-grid-column label="数量" field="qty" editable/>
+            <md-grid-column label="单价" field="price" editable/>
+            <md-grid-column label="金额" field="money" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -142,11 +106,7 @@ import model from '../../gmf-sys/core/mixin/model';
 export default {
   data() {
     return {
-      selectedRows: [],
-      modelLines: {
-        datas: [],
-        pager: { page: 1, size: 10 }
-      }
+      selectedRows: []
     };
   },
   mixins: [model],
@@ -188,35 +148,30 @@ export default {
     list() {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.doc.list' } });
     },
-    load_extend(id) {
-      this.modelLines.pager.page = 1;
-      this.onTablePagination(this.modelLines.pager);
-    },
-    copy_extend() {
-      this.modelLines.datas = [];
-    },
-    onTablePagination(pager) {
-      this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: { page: pager.page, size: pager.size } }).then(response => {
-        this.modelLines.datas = response.data.data || [];
-        this.modelLines.pager = response.data.pager;
-      });
-    },
-    onTableSelect(items) {
-      this.selectedRows = [];
-      Object.keys(items).forEach((row, index) => {
-        this.selectedRows[index] = items[row];
-      });
-    },
     onLineAdd() {
-      this.modelLines.datas.push({ data_type_enum: '' });
+      this.$refs.grid && this.$refs.grid.addDatas({ data_type_enum: '' });
     },
-    onLineRemove() {
-      this._.forEach(this.selectedRows, (v, k) => {
-        var idx = this.modelLines.datas.indexOf(v);
-        if (idx >= 0) {
-          this.modelLines.datas.splice(idx, 1);
-        }
-      });
+
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave(){
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData(){
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     init_fm_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };

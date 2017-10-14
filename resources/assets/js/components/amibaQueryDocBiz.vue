@@ -63,7 +63,7 @@ export default {
       this.selectRows = items;
     },
     query() {
-      this.load();
+      this.loadData();
     },
     initQuery(options) {
       options.wheres.fm_date = false;
@@ -90,7 +90,7 @@ export default {
         options.wheres.item = { name: 'item', operator: 'like', value: this.model.item };
       }
     },
-    load() {
+    loadData() {
       this.$refs.list.pagination(1);
     }
   }

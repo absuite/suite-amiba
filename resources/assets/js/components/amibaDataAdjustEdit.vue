@@ -54,49 +54,12 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="model.main.lines" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="调出核算要素" width="300px">
-              <template scope="row">
-                {{ row.fm_element&&row.fm_element.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.amiba.element.ref" v-model="row.fm_element" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="调入核算要素" width="300px">
-              <template scope="row">
-                {{ row.to_element&&row.to_element.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.amiba.element.ref" v-model="row.to_element" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="调出阿米巴" width="300px">
-              <template scope="row">
-                {{ row.fm_gGroup&&row.fm_gGroup.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.fm_gGroup" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="调入阿米巴" width="300px">
-              <template scope="row">
-                {{ row.to_group&&row.to_group.name||'' }}
-              </template>
-              <template slot="editor" scope="row">
-                <md-input-container>
-                  <md-input-ref md-ref-id="suite.amiba.group.ref" v-model="row.to_group" />
-                </md-input-container>
-              </template>
-            </md-grid-column>
-            <md-grid-column label="调整金额" width="150px" editable field="money">
-            </md-grid-column>
+          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+            <md-grid-column label="调出核算要素" field="fm_element" dataType="entity" ref-id="suite.amiba.element.ref" width="200px" editable/>
+            <md-grid-column label="调入核算要素" field="to_element" dataType="entity" ref-id="suite.amiba.element.ref" width="200px" editable/>
+            <md-grid-column label="调出阿米巴" field="fm_gGroup" dataType="entity" ref-id="suite.amiba.group.ref" width="200px" editable/>
+            <md-grid-column label="调入阿米巴" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" width="200px" editable/>
+            <md-grid-column label="调整金额" field="money" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -131,8 +94,7 @@ export default {
         main: {
           'purpose': this.$root.userConfig.purpose,
           'period': this.$root.userConfig.period,
-          'memo': '',
-          'lines': []
+          'memo': ''
         }
       }
     },
@@ -140,7 +102,28 @@ export default {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.adjust.list' } });
     },
     onLineAdd() {
-      this.model.main.lines.push({});
+      this.$refs.grid && this.$refs.grid.addDatas({ });
+    },
+    async loadLineDatas({ pager }) {
+      if (!this.model.main.id) {
+        return [];
+      }
+      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
+    },
+    beforeSave() {
+      if (this.$refs.grid) {
+        this.$refs.grid.endEdit();
+        this.model.main.lines = this.$refs.grid.getPostDatas();
+      }
+    },
+    afterLoadData() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCreate() {
+      this.$refs.grid && this.$refs.grid.refresh();
+    },
+    afterCopy() {
+      this.$refs.grid && this.$refs.grid.refresh();
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {

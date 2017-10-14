@@ -14,9 +14,15 @@ class ModelingController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\DataTargetLine::with('element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group');
+		$query->where('modeling_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
-		$query = Models\Modeling::with('purpose', 'group',
-			'lines.element', 'lines.doc_type', 'lines.item_category', 'lines.item', 'lines.trader', 'lines.match_group', 'lines.to_group');
+		$query = Models\Modeling::with('purpose', 'group');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -37,15 +43,7 @@ class ModelingController extends Controller {
 		}
 		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\Modeling::create($input);
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['modeling_id'] = $data->id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group']);
-				Models\ModelingLine::create($value);
-			}
-		}
+		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
 	}
 	/**
@@ -64,18 +62,37 @@ class ModelingController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		Models\Modeling::where('id', $id)->update($input);
+		$this->storeLines($request, $id);
+		return $this->show($request, $id);
+	}
+	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
-		Models\ModelingLine::where('modeling_id', $id)->delete();
+		$fillable = ['biz_type_enum', 'value_type_enum', 'project_code', 'account_code',
+			'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'adjust',
+			'match_direction_enum'];
+		$entityable = ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group'];
+
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
-				$value['modeling_id'] = $id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value['match_group_id'] = '';
-				$value = InputHelper::fillEntity($value, $value, ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group']);
-				Models\ModelingLine::create($value);
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['modeling_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\ModelingLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\ModelingLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\ModelingLine::destroy($value['id']);
+					continue;
+				}
 			}
 		}
-		return $this->show($request, $id);
 	}
 	/**
 	 * DELETE

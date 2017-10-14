@@ -36,7 +36,7 @@
         this.loading++;
         const ids=this._.map(this.selectRows,'id').toString();
         this.$http.delete('amiba/data-accountings/'+ids).then(response => {
-          this.load();
+          this.loadData();
           this.loading--;
           this.$toast(this.$lang.LANG_DELETESUCCESS);
         }, response => {

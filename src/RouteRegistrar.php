@@ -36,8 +36,12 @@ class RouteRegistrar {
 			$router->resource('elements', 'ElementController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 			$router->resource('purposes', 'PurposeController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+			$router->get('/groups/{id}/lines', ['uses' => 'GroupController@showLines']);
 			$router->get('/groups/all', ['uses' => 'GroupController@all']);
 			$router->resource('groups', 'GroupController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+			$router->get('/modelings/{id}/lines', ['uses' => 'ModelingController@showLines']);
 			$router->resource('modelings', 'ModelingController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 			$router->post('dtis/run', ['uses' => 'DtiController@run']);
@@ -45,21 +49,36 @@ class RouteRegistrar {
 
 			$router->resource('dti-modelings', 'DtiModelingController', ['only' => ['index', 'store', 'destroy']]);
 
+			$router->get('/allot-methods/{id}/lines', ['uses' => 'AllotMethodController@showLines']);
 			$router->resource('allot-methods', 'AllotMethodController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+			$router->get('/allot-rules/{id}/lines', ['uses' => 'AllotRuleController@showLines']);
 			$router->resource('allot-rules', 'AllotRuleController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
+			$router->get('/data-inits/{id}/lines', ['uses' => 'DataInitController@showLines']);
 			$router->resource('data-inits', 'DataInitController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
 			$router->get('/data-docs/{id}/lines', ['uses' => 'DataDocController@showLines']);
 			$router->resource('data-docs', 'DataDocController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+			$router->get('/data-times/{id}/lines', ['uses' => 'DataTimeController@showLines']);
 			$router->resource('data-times', 'DataTimeController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
 			$router->resource('data-closes', 'DataCloseController', ['only' => ['index', 'store', 'destroy']]);
 
 			$router->resource('data-distributes', 'DataDistributeController', ['only' => ['index', 'store', 'destroy']]);
 			$router->resource('data-accountings', 'DataAccountingController', ['only' => ['index', 'store', 'destroy']]);
+
+			$router->get('/data-adjusts/{id}/lines', ['uses' => 'DataAdjustController@showLines']);
 			$router->resource('data-adjusts', 'DataAdjustController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+			$router->get('/data-targets/{id}/lines', ['uses' => 'DataTargetController@showLines']);
 			$router->resource('data-targets', 'DataTargetController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
+			$router->get('/prices/{id}/lines', ['uses' => 'PriceController@showLines']);
 			$router->resource('prices', 'PriceController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+			$router->get('/price-adjusts/{id}/lines', ['uses' => 'PriceAdjustController@showLines']);
 			$router->resource('price-adjusts', 'PriceAdjustController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 			$router->resource('result-accounts', 'ResultAccountController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);

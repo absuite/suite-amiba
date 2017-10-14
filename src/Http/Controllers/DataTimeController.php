@@ -15,8 +15,15 @@ class DataTimeController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\DataTimeLine::with('group');
+		$query->where('time_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
-		$query = Models\DataTime::with('purpose', 'period', 'lines.group');
+		$query = Models\DataTime::with('purpose', 'period');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -42,26 +49,6 @@ class DataTimeController extends Controller {
 		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
 	}
-	private function storeLines(Request $request, $headId) {
-		Models\DataTimeLine::where('time_id', $headId)->delete();
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['time_id'] = $headId;
-				if (empty($value['nor_time'])) {
-					$value['nor_time'] = 0;
-				}
-				if (empty($value['over_time'])) {
-					$value['over_time'] = 0;
-				}
-				$value['total_time'] = $value['nor_time'] + $value['over_time'];
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['group']);
-
-				Models\DataTimeLine::create($value);
-			}
-		}
-	}
 	/**
 	 * PUT/PATCH
 	 * @param  Request $request [description]
@@ -81,6 +68,49 @@ class DataTimeController extends Controller {
 		$this->storeLines($request, $id);
 		return $this->show($request, $id);
 	}
+	private function storeLines(Request $request, $headId) {
+		$lines = $request->input('lines');
+		$fillable = ['nor_time', 'over_time', 'total_time'];
+		$entityable = ['group'];
+
+		if ($lines && count($lines)) {
+			foreach ($lines as $key => $value) {
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['time_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					if (empty($data['nor_time'])) {
+						$data['nor_time'] = 0;
+					}
+					if (empty($data['over_time'])) {
+						$data['over_time'] = 0;
+					}
+					$data['total_time'] = $data['nor_time'] + $data['over_time'];
+
+					Models\DataTimeLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					if (empty($data['nor_time'])) {
+						$data['nor_time'] = 0;
+					}
+					if (empty($data['over_time'])) {
+						$data['over_time'] = 0;
+					}
+					$data['total_time'] = $data['nor_time'] + $data['over_time'];
+
+					Models\DataTimeLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\DataTimeLine::destroy($value['id']);
+					continue;
+				}
+			}
+		}
+	}
 	/**
 	 * DELETE
 	 * @param  Request $request [description]
@@ -89,6 +119,7 @@ class DataTimeController extends Controller {
 	 */
 	public function destroy(Request $request, $id) {
 		$ids = explode(",", $id);
+		Models\DataTimeLine::whereIn('time_id', $ids)->delete();
 		Models\DataTime::destroy($ids);
 		return $this->toJson(true);
 	}

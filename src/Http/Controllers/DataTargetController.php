@@ -15,8 +15,15 @@ class DataTargetController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\DataTargetLine::with('element');
+		$query->where('target_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
-		$query = Models\DataTarget::with('purpose', 'group', 'fm_period', 'to_period', 'lines.element');
+		$query = Models\DataTarget::with('purpose', 'group', 'fm_period', 'to_period');
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
@@ -40,15 +47,7 @@ class DataTargetController extends Controller {
 		}
 		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataTarget::create($input);
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['target_id'] = $data->id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['element']);
-				Models\DataTargetLine::create($value);
-			}
-		}
+		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
 	}
 	/**
@@ -70,19 +69,36 @@ class DataTargetController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		Models\DataTarget::where('id', $id)->update($input);
-
-		$lines = $request->input('lines');
-		Models\DataTargetLine::where('target_id', $id)->delete();
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['target_id'] = $id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['element']);
-				Models\DataTargetLine::create($value);
-			}
-		}
+		$this->storeLines($request, $id);
 
 		return $this->show($request, $id);
+	}
+	private function storeLines(Request $request, $headId) {
+		$lines = $request->input('lines');
+		$fillable = ['rate'];
+		$entityable = ['element'];
+
+		if ($lines && count($lines)) {
+			foreach ($lines as $key => $value) {
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['target_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\DataTargetLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\DataTargetLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\DataTargetLine::destroy($value['id']);
+					continue;
+				}
+			}
+		}
 	}
 	/**
 	 * DELETE
@@ -92,6 +108,7 @@ class DataTargetController extends Controller {
 	 */
 	public function destroy(Request $request, $id) {
 		$ids = explode(",", $id);
+		Models\DataTargetLine::whereIn('target_id', $ids)->delete();
 		Models\DataTarget::destroy($ids);
 		return $this->toJson(true);
 	}

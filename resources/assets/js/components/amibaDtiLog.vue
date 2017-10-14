@@ -40,7 +40,7 @@ export default {
     doFetch(q) {
       if (this.currentQ != q) {
         this.currentQ = q;
-        this.load();
+        this.loadData();
       }
       this.currentQ = q;
     },
@@ -60,7 +60,7 @@ export default {
     select(items) {
       this.selectRows = items;
     },
-    load() {
+    loadData() {
       this.$refs.list.pagination(1);
     }
   }

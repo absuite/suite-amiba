@@ -16,6 +16,13 @@ class DataAdjustController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function showLines(Request $request, string $id) {
+		$pageSize = $request->input('size', 10);
+		$query = Models\DataAdjustLine::with('fm_group', 'to_group', 'fm_element', 'to_element');
+		$query->where('method_id', $id);
+		$data = $query->paginate($pageSize);
+		return $this->toJson($data);
+	}
 	public function show(Request $request, string $id) {
 		$query = Models\DataAdjust::with('purpose', 'period');
 		$data = $query->where('id', $id)->first();
@@ -41,17 +48,7 @@ class DataAdjustController extends Controller {
 		MonthClose::check($request, $input['period_id'], $input['purpose_id']);
 		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\DataAdjust::create($input);
-
-		$lines = $request->input('lines');
-		if ($lines && count($lines)) {
-			foreach ($lines as $key => $value) {
-				$value['adjust_id'] = $data->id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['fm_group', 'to_group', 'fm_element', 'to_element']);
-
-				Models\DataAdjustLine::create($value);
-			}
-		}
+		$this->storeLines($request, $data->id);
 
 		return $this->show($request, $data->id);
 	}
@@ -76,17 +73,35 @@ class DataAdjustController extends Controller {
 
 		Models\DataAdjust::where('id', $id)->update($input);
 
+		$this->storeLines($request, $id);
+		return $this->show($request, $id);
+	}
+	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
+		$fillable = ['money'];
+		$entityable = ['fm_group', 'to_group', 'fm_element', 'to_element'];
+
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {
-				$value['adjust_id'] = $id;
-				$value['ent_id'] = $request->oauth_ent_id;
-				$value = InputHelper::fillEntity($value, $value, ['fm_group', 'to_group', 'fm_element', 'to_element']);
-
-				Models\DataAdjustLine::create($value);
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'c') {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					$data['adjust_id'] = $headId;
+					$data['ent_id'] = $request->oauth_ent_id;
+					Models\DataAdjustLine::create($data);
+					continue;
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+					$data = array_only($value, $fillable);
+					$data = InputHelper::fillEntity($data, $value, $entityable);
+					Models\DataAdjustLine::where('id', $value['id'])->update($data);
+				}
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {
+					Models\DataAdjustLine::destroy($value['id']);
+					continue;
+				}
 			}
 		}
-		return $this->show($request, $id);
 	}
 	/**
 	 * DELETE
@@ -96,6 +111,7 @@ class DataAdjustController extends Controller {
 	 */
 	public function destroy(Request $request, $id) {
 		$ids = explode(",", $id);
+		Models\DataAdjustLine::whereIn('adjust_id', $ids)->delete();
 		Models\DataAdjust::destroy($ids);
 		return $this->toJson(true);
 	}
