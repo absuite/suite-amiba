@@ -64,6 +64,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
+    <md-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>
@@ -107,9 +108,13 @@ export default {
     list() {
       this.$router.push({ name: 'module', params: { module: 'amiba.allot.rule.list' } });
     },
-
     onLineAdd() {
-      this.$refs.grid && this.$refs.grid.addDatas({ 'group': {}, 'element': {}, rate: '0' });
+      this.$refs['lineRef'].open();
+    },
+    lineRefClose(datas) {
+      this._.forEach(datas, (v, k) => {
+        this.$refs.grid && this.$refs.grid.addDatas({ 'group': v, 'element': this.model.main.element, rate: '0' });
+      });
     },
     init_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };

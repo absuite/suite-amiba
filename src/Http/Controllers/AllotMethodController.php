@@ -16,7 +16,7 @@ class AllotMethodController extends Controller {
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
-		$query = Models\AllotMethod::with('group');
+		$query = Models\AllotMethodLine::with('group');
 		$query->where('method_id', $id);
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
