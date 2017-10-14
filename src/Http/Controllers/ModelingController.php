@@ -16,7 +16,7 @@ class ModelingController extends Controller {
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
-		$query = Models\DataTargetLine::with('element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group');
+		$query = Models\ModelingLine::with('element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group');
 		$query->where('modeling_id', $id);
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
