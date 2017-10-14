@@ -62,7 +62,7 @@
             <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" editable/>
             <md-grid-column label="物料" field="item" dataType="entity" ref-id="suite.cbo.item.ref"  editable/>
             <md-grid-column label="因素" field="factor1" editable/>
-            <md-grid-column label="取值类型" field="value_type_enum" dataType="enum" editable ref-id="row.value_type_enum" />
+            <md-grid-column label="取值类型" field="value_type_enum" dataType="enum" editable ref-id="suite.amiba.value.type.enum" />
             <md-grid-column label="取值比例%" field="adjust" editable/>
             <md-grid-column label="交易方" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref"  editable/>
           </md-grid>
