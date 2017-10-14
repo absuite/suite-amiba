@@ -42,7 +42,7 @@ class AllotRuleController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$data['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = $request->oauth_ent_id;
 		$data = Models\AllotRule::create($input);
 		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
