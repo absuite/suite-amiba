@@ -160,6 +160,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET `qty`=(`src_qty`*`adjust`/100) WHERE adjust IS NOT NULL AND src_qty!=0;
   UPDATE tml_data_elementing SET `money`=(`src_money`*`adjust`/100) WHERE adjust IS NOT NULL AND src_money!=0;
   
+  UPDATE tml_data_elementing SET `money`=`qty` WHERE value_type_enum='qty';
 
   UPDATE tml_data_elementing AS l 
     INNER JOIN suite_amiba_doc_bizs AS d ON l.data_id=d.id
