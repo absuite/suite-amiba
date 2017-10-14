@@ -82,7 +82,7 @@ class ModelingController extends Controller {
 					Models\ModelingLine::create($data);
 					continue;
 				}
-				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
+				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && !empty($value['id'])) {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					Models\ModelingLine::where('id', $value['id'])->update($data);

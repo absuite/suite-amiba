@@ -52,19 +52,19 @@
         <md-layout class="flex">
           <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="核算要素" field="element" dataType="entity" ref-id="suite.amiba.element.ref" :ref-init="init_element_ref" editable/>
-            <md-grid-column label="匹配方" field="match_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref"  editable/>
+            <md-grid-column label="匹配方" field="match_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" editable/>
             <md-grid-column label="匹配方向" field="match_direction_enum" dataType="enum" editable ref-id="suite.amiba.modeling.match.direction.enum" />
             <md-grid-column label="业务类型" field="biz_type_enum" dataType="enum" editable ref-id="suite.cbo.biz.type.enum" />
-            <md-grid-column label="单据类型" field="doc_type" dataType="entity" ref-id="suite.cbo.doc.type.ref" :ref-init="init_doc_type_ref"  editable/>
-            <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref"  editable/>
+            <md-grid-column label="单据类型" field="doc_type" dataType="entity" ref-id="suite.cbo.doc.type.ref" :ref-init="init_doc_type_ref" editable/>
+            <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" editable/>
             <md-grid-column label="费用项目" field="project_code" editable/>
             <md-grid-column label="会计科目" field="account_code" editable/>
             <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" editable/>
-            <md-grid-column label="物料" field="item" dataType="entity" ref-id="suite.cbo.item.ref"  editable/>
+            <md-grid-column label="物料" field="item" dataType="entity" ref-id="suite.cbo.item.ref" editable/>
             <md-grid-column label="因素" field="factor1" editable/>
             <md-grid-column label="取值类型" field="value_type_enum" dataType="enum" editable ref-id="suite.amiba.value.type.enum" />
             <md-grid-column label="取值比例%" field="adjust" editable/>
-            <md-grid-column label="交易方" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref"  editable/>
+            <md-grid-column label="交易方" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" editable/>
           </md-grid>
         </md-layout>
       </md-content>
@@ -74,13 +74,9 @@
 </template>
 <script>
 import model from '../../gmf-sys/core/mixin/model';
+import modelGrid from '../../gmf-sys/core/mixin/modelGrid';
 export default {
-  data() {
-    return {
-      selectedRows: [],
-    };
-  },
-  mixins: [model],
+  mixins: [model, modelGrid],
   computed: {
     canSave() {
       return this.validate(true);
@@ -123,27 +119,6 @@ export default {
           'adjust': '100'
         });
       });
-    },
-    async loadLineDatas({ pager }) {
-      if (!this.model.main.id) {
-        return [];
-      }
-      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
-    },
-    beforeSave() {
-      if (this.$refs.grid) {
-        this.$refs.grid.endEdit();
-        this.model.main.lines = this.$refs.grid.getPostDatas();
-      }
-    },
-    afterLoadData() {
-      this.$refs.grid && this.$refs.grid.refresh();
-    },
-    afterCreate() {
-      this.$refs.grid && this.$refs.grid.refresh();
-    },
-    afterCopy() {
-      this.$refs.grid && this.$refs.grid.refresh();
     },
     init_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };

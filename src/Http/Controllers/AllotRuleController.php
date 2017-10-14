@@ -63,14 +63,14 @@ class AllotRuleController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		Models\AllotRule::where('id', $id)->update($input)
+		Models\AllotRule::where('id', $id)->update($input);
 		$this->storeLines($request, $id);
 		return $this->show($request, $id);
 	}
 	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
 		$fillable = ['rate'];
-		$entityable = ['group','element'];
+		$entityable = ['group', 'element'];
 
 		if ($lines && count($lines)) {
 			foreach ($lines as $key => $value) {

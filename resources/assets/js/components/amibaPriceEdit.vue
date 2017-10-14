@@ -63,13 +63,9 @@
 </template>
 <script>
 import model from '../../gmf-sys/core/mixin/model';
+import modelGrid from '../../gmf-sys/core/mixin/modelGrid';
 export default {
-  data() {
-    return {
-      selectedRows: [],
-    };
-  },
-  mixins: [model],
+  mixins: [model, modelGrid],
   computed: {
     canSave() {
       return this.validate(true);
@@ -81,8 +77,7 @@ export default {
         'code': 'required',
         'name': 'required',
         'purpose': 'required',
-        'group': 'required',
-        'lines': 'required|min:1'
+        'group': 'required'
       });
       var fail = validator.fails();
       if (fail && !notToast) {
@@ -106,27 +101,6 @@ export default {
     },
     onLineAdd() {
       this.$refs.grid && this.$refs.grid.addDatas({});
-    },
-    async loadLineDatas({ pager }) {
-      if (!this.model.main.id) {
-        return [];
-      }
-      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
-    },
-    beforeSave() {
-      if (this.$refs.grid) {
-        this.$refs.grid.endEdit();
-        this.model.main.lines = this.$refs.grid.getPostDatas();
-      }
-    },
-    afterLoadData() {
-      this.$refs.grid && this.$refs.grid.refresh();
-    },
-    afterCreate() {
-      this.$refs.grid && this.$refs.grid.refresh();
-    },
-    afterCopy() {
-      this.$refs.grid && this.$refs.grid.refresh();
     },
     lineRefClose(datas) {
       this._.forEach(datas, (v, k) => {

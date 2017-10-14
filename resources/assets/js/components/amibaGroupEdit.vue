@@ -86,13 +86,14 @@
 <script>
 import model from '../../gmf-sys/core/mixin/model';
 import common from '../../gmf-sys/core/utils/common';
+import modelGrid from '../../gmf-sys/core/mixin/modelGrid';
 export default {
   data() {
     return {
       lineRefID: ''
     };
   },
-  mixins: [model],
+  mixins: [model,modelGrid],
   computed: {
     canSave() {
       return this.validate(true);
@@ -156,27 +157,6 @@ export default {
       this._.forEach(datas, (v, k) => {
         this.$refs.grid && this.$refs.grid.addDatas({ data: v, id: v.id });
       });
-    },
-    async loadLineDatas({ pager }) {
-      if (!this.model.main.id) {
-        return [];
-      }
-      return await this.$http.get(this.route + '/' + this.model.main.id + '/lines', { params: pager });
-    },
-    beforeSave() {
-      if (this.$refs.grid) {
-        this.$refs.grid.endEdit();
-        this.model.main.lines = this.$refs.grid.getPostDatas();
-      }
-    },
-    afterLoadData() {
-      this.$refs.grid && this.$refs.grid.refresh();
-    },
-    afterCreate() {
-      this.$refs.grid && this.$refs.grid.refresh();
-    },
-    afterCopy() {
-      this.$refs.grid && this.$refs.grid.refresh();
     },
     initParentGroupRef(options) {
       if (this.model.main.purpose) {
