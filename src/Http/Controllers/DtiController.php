@@ -38,6 +38,9 @@ class DtiController extends Controller {
 		if ($dates) {
 			$context['fm_date'] = $dates->from_date;
 			$context['to_date'] = $dates->to_date;
+		} else {
+			$context['fm_date'] = $request->date;
+			$context['to_date'] = $request->date;
 		}
 		$context['local_host'] = $request->getSchemeAndHttpHost() . '/';
 

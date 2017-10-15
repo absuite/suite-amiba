@@ -259,6 +259,8 @@ class AmibaDtiRunJob implements ShouldQueue {
 					'server_name' => $dti->code,
 					'data_src_identity' => $dti->code,
 					'date' => $this->context['date'],
+					'fm_date' => $this->context['fm_date'],
+					'to_date' => $this->context['to_date'],
 					'datas' => $value,
 					'batch' => $i,
 				];
