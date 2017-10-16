@@ -86,7 +86,10 @@ class RouteRegistrar {
 			$router->resource('result-profits', 'ResultProfitController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 			$router->post('/doc-bizs/batch', ['uses' => 'DocBizController@batchStore']);
+			$router->resource('doc-bizs', 'DocBizController', ['only' => ['destroy']]);
+
 			$router->post('/doc-fis/batch', ['uses' => 'DocFiController@batchStore']);
+			$router->resource('doc-fis', 'DocFiController', ['only' => ['destroy']]);
 
 			//reports
 			$router->get('/reports/period-info', ['uses' => 'ReportController@getPeriodInfo']);

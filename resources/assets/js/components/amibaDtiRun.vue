@@ -18,33 +18,18 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <md-table-card class="flex md-query">
-        <md-table @select="onTableSelect" class="flex">
-          <md-table-header>
-            <md-table-row>
-              <md-table-head>分类</md-table-head>
-              <md-table-head>名称</md-table-head>
-              <md-table-head>开始时间</md-table-head>
-              <md-table-head>结束时间</md-table-head>
-              <md-table-head>状态</md-table-head>
-              <md-table-head>消息</md-table-head>
-            </md-table-row>
-          </md-table-header>
-          <md-table-body>
-            <md-table-row v-for="item in datas" :key="item.id" :md-item="item" :md-selection="true">
-              <md-table-cell>{{ item.category.name }}</md-table-cell>
-              <md-table-cell>{{ item.name}}</md-table-cell>
-              <md-table-cell>{{ item.begin_date}}</md-table-cell>
-              <md-table-cell>{{ item.end_date}}</md-table-cell>
-              <md-table-cell>{{ item.is_running?'正在执行':'等待中'}}</md-table-cell>
-              <md-table-cell>{{ item.msg}}</md-table-cell>
-            </md-table-row>
-          </md-table-body>
-        </md-table>
-        <md-table-tool>
-          <span class="flex"></span>
-        </md-table-tool>
-      </md-table-card>
+      <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true">
+        <md-grid-column label="分类" field="category" dataType="entity" />
+        <md-grid-column label="名称" field="name" />
+        <md-grid-column label="开始时间" field="begin_date" />
+        <md-grid-column label="结束时间" field="begin_date" />
+        <md-grid-column label="状态">
+          <template scope="row">
+            {{ row.is_running?'正在执行':'等待中'}}
+          </template>
+        </md-grid-column>
+        <md-grid-column label="消息" field="msg" width="500px" multiple/>
+      </md-grid>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
@@ -58,53 +43,46 @@ export default {
         date: this.$root.userConfig.date,
       },
       loading: 0,
-      is_running: 0,
-      datas: [],
-      selectItems: []
+      is_running: 0
     };
   },
   methods: {
-    loadDatas() {
-      this.$http.get('sys/dtis', { params: { date: this.model.date } }).then(response => {
-        this.datas = response.data.data;
-      });
-    },
-    onTableSelect(items) {
-      this.selectItems = [];
-      Object.keys(items).forEach((row, index) => {
-        this.selectItems[index] = items[row];
-      });
+    async loadDatas({ pager }) {
+      const params = this._.extend({}, pager, { date: this.model.date });
+      return await this.$http.get('sys/dtis', { params: params })
     },
     runAll() {
-      for (var i = 0; i < this.selectItems.length; i++) {
-        this.runItem(this.selectItems[i]);
-      }
+      const rows = this.$refs.grid.getSelectedDatas(true);
+      rows && rows.forEach(item => {
+        this.runItem(item);
+      });
     },
     runItem(item) {
+      if (!item) return;
       item.is_running = true;
       const datas = {
         date: this.model.date,
         dtis: item.id
       };
       this.is_running++;
-      item.begin_date=common.now();
-      item.end_date='';
+      item.begin_date = common.now();
+      item.end_date = '';
       this.$http.post('amiba/dtis/run', datas).then(response => {
         this.is_running--;
-        item.end_date=common.now();
+        item.end_date = common.now();
         this.$toast(item.name + '执行成功!');
-        item.msg='执行成功';
+        item.msg = '执行成功';
         item.is_running = false
       }, response => {
         this.is_running--;
-        item.end_date=common.now();
+        item.end_date = common.now();
 
         if (response && response.response && response.response.data) {
           this.$toast(response.response.data.msg);
-          item.msg=response.response.data.msg;
+          item.msg = response.response.data.msg;
         } else {
           this.$toast(response.message);
-          item.msg=response.message;
+          item.msg = response.message;
         }
         item.is_running = false
       });
@@ -114,7 +92,7 @@ export default {
 
   },
   mounted() {
-    this.loadDatas();
+
   },
 };
 </script>

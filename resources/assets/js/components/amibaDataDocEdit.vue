@@ -84,7 +84,7 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+          <md-grid :datas="fetchLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" width="200px" editable/>
             <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" width="200px" editable/>
             <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="200px" editable/>

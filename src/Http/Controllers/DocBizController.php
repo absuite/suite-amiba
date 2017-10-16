@@ -58,4 +58,15 @@ class DocBizController extends Controller {
 		}
 		return $this->toJson(true);
 	}
+	/**
+	 * DELETE
+	 * @param  Request $request [description]
+	 * @param  [type]  $id      [description]
+	 * @return [type]           [description]
+	 */
+	public function destroy(Request $request, $id) {
+		$ids = explode(",", $id);
+		AmibaModels\DocBiz::destroy($ids);
+		return $this->toJson(true);
+	}
 }

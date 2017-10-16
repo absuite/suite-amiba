@@ -50,7 +50,7 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+          <md-grid :datas="fetchLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="核算要素" field="element" dataType="entity" ref-id="suite.amiba.element.ref" :ref-init="init_element_ref" editable/>
             <md-grid-column label="匹配方" field="match_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" editable/>
             <md-grid-column label="匹配方向" field="match_direction_enum" dataType="enum" editable ref-id="suite.amiba.modeling.match.direction.enum" />

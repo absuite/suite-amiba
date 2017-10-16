@@ -51,7 +51,7 @@
       select(items){
         this.selectRows=items;
       },
-      load(){
+      loadData(){
         this.$refs.list.pagination(1);
       }
     }

@@ -52,7 +52,7 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="loadLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+          <md-grid :datas="fetchLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="指标类型" field="type_enum" dataType="enum" editable ref-id="suite.amiba.data.target.type.enum" />
             <md-grid-column label="基准核算要素" field="element" dataType="entity" ref-id="suite.amiba.element.ref" width="200px" editable/>
             <md-grid-column label="目标额度" field="money" editable/>

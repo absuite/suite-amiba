@@ -1,6 +1,9 @@
 <template>
   <md-part>
     <md-part-toolbar>
+      <md-part-toolbar-group>
+        <md-button @click.native="remove" :disabled="!(selectRows&&selectRows.length)">删除</md-button>
+      </md-part-toolbar-group>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
@@ -64,6 +67,22 @@ export default {
     },
     query() {
       this.loadData();
+    },
+    remove() {
+      if (!this.selectRows || !this.selectRows.length) {
+        this.$toast(this.$lang.LANG_NODELETEDATA);
+        return;
+      }
+      this.loading++;
+      const ids = this._.map(this.selectRows, 'id').toString();
+      this.$http.delete('amiba/doc-fis/' + ids).then(response => {
+        this.loadData();
+        this.loading--;
+        this.$toast(this.$lang.LANG_DELETESUCCESS);
+      }, response => {
+        this.$toast(this.$lang.LANG_DELETEFAIL);
+        this.loading--;
+      });
     },
     initQuery(options) {
       options.wheres.fm_date = false;
