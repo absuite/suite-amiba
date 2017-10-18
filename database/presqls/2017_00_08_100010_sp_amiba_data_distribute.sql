@@ -1,5 +1,5 @@
-
-DROP PROCEDURE IF EXISTS sp_amiba_data_distribute;
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_amiba_data_distribute$$
 
 
 CREATE PROCEDURE sp_amiba_data_distribute(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
@@ -95,4 +95,6 @@ INNER JOIN  suite_amiba_allot_line AS a ON l.purpose_id=a.purpose_id AND l.eleme
 (SELECT @rownum:=0) AS r
 GROUP BY a.purpose_id,a.group_id,IFNULL(a.to_element_id,l.element_id),l.currency_id;
 
-END
+END$$
+
+DELIMITER ;

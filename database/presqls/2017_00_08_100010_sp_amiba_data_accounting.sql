@@ -1,6 +1,6 @@
+DELIMITER $$
 
-
-DROP PROCEDURE IF EXISTS sp_amiba_data_accounting;
+DROP PROCEDURE IF EXISTS sp_amiba_data_accounting$$
 
 
 CREATE PROCEDURE sp_amiba_data_accounting(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
@@ -146,4 +146,6 @@ SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,
 FROM tml_result_accounts AS l
 GROUP BY purpose_id,period_id,group_id,element_id,l.type_enum,is_init,src_id,src_no;
 
-END
+END$$
+
+DELIMITER ;
