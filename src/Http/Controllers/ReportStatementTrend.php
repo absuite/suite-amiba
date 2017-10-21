@@ -34,7 +34,7 @@ class ReportStatementTrend extends Controller {
 			$query->addSelect('l.type_enum as dataType');
 			foreach ($periods as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $mv->id . "' THEN 1  ELSE 0 END * l.money) AS money_m_" . $mv->name));
-				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . " and p.month<=" . $mv->month . "' THEN 1 ELSE 0 END * l.money) AS money_y_" . $mv->name));
+				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . "' and p.month<='" . $mv->month . "' THEN 1 ELSE 0 END * l.money) AS money_y_" . $mv->name));
 
 				$dataCategories[] = $mv->name;
 
@@ -61,7 +61,7 @@ class ReportStatementTrend extends Controller {
 
 			foreach ($periods as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $mv->id . "' THEN 1  ELSE 0 END * l.total_time) AS time_m_" . $mv->name));
-				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . " and p.month<=" . $mv->month . "' THEN 1 ELSE 0 END * l.total_time) AS time_y_" . $mv->name));
+				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . "' and p.month<='" . $mv->month . "' THEN 1 ELSE 0 END * l.total_time) AS time_y_" . $mv->name));
 			}
 			foreach ($qc->wheres as $key => $value) {
 				if ($value->name == 'group_id') {
@@ -81,7 +81,7 @@ class ReportStatementTrend extends Controller {
 
 			foreach ($periods as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $mv->id . "' THEN 1  ELSE 0 END * l.money) AS manual_m_" . $mv->name));
-				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . " and p.month<=" . $mv->month . "' THEN 1 ELSE 0 END * l.money) AS manual_y_" . $mv->name));
+				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . "' and p.month<='" . $mv->month . "' THEN 1 ELSE 0 END * l.money) AS manual_y_" . $mv->name));
 			}
 			foreach ($qc->wheres as $key => $value) {
 				if ($value->name == 'group_id') {

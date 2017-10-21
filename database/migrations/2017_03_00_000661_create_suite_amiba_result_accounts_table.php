@@ -25,9 +25,9 @@ class CreateSuiteAmibaResultAccountsTable extends Migration {
 		$md->enum('type', 'suite.amiba.data.type.enum')->nullable()->comment('业务类型');
 		$md->boolean('is_init')->default(0)->comment('是否期初');
 		$md->boolean('is_outside')->default(0)->comment('外部交易');
-
+		$md->decimal('init_money', 30, 2)->default(0)->comment('期初金额');
 		$md->decimal('money', 30, 2)->default(0)->comment('金额');
-
+		$md->decimal('bal_money', 30, 2)->default(0)->comment('结存金额');
 		$md->string('src_id')->nullable()->comment('来源ID');
 		$md->string('src_no')->nullable()->comment('来源单据号');
 

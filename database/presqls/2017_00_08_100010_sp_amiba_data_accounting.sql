@@ -23,6 +23,7 @@ SELECT UUID_SHORT() into v_uid;
 */
 
 DECLARE v_loop INT DEFAULT 1;
+DECLARE v_lastPeriod CHAR(200) DEFAULT '';
 
 /*核算结果表*/
 DROP TEMPORARY TABLE IF EXISTS tml_result_accounts;
@@ -34,7 +35,9 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_result_accounts(
   `element_id` NVARCHAR(100),
   `type_enum` NVARCHAR(100),
   `is_init` BOOLEAN DEFAULT 0,
+  `init_money` DECIMAL(30,9) DEFAULT 0,  
   `money` DECIMAL(30,9) DEFAULT 0,
+  `bal_money` DECIMAL(30,9) DEFAULT 0,
   `src_id` NVARCHAR(500),
   `src_no` NVARCHAR(500)
 );
@@ -52,6 +55,14 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_childGroup1(
   `last_id` NVARCHAR(100),
   `loops` INT
 );
+/*计算上个期间*/
+SELECT pre.id INTO v_lastPeriod FROM `suite_cbo_period_accounts` AS l
+INNER JOIN `suite_cbo_period_accounts` AS pre ON l.calendar_id=pre.calendar_id
+WHERE l.id=p_period AND l.ent_id=pre.ent_id AND l.fomdate>pre.fromdate
+ORDER BY pre.from_date DESC LIMIT 1;
+
+
+
 SET v_loop=1;
 /*末级阿米巴单元*/
 INSERT INTO tml_data_childGroup(id,last_id,loops) 
@@ -137,14 +148,27 @@ GROUP BY d.purpose_id,d.period_id,g.id,d.element_id,d.use_type_enum;
 -- 先删除
 DELETE l FROM suite_amiba_result_accounts AS l  WHERE l.ent_id=p_ent AND l.purpose_id=p_purpose AND l.period_id=p_period;
 
--- 插入数据
 
-INSERT INTO `suite_amiba_result_accounts`(id,ent_id,purpose_id,period_id,group_id,element_id,type_enum,is_init,src_id,src_no,created_at,money)
+/*期初数据*/
+INSERT INTO tml_result_accounts(purpose_id,period_id,group_id,element_id,type_enum,init_money)
+SELECT l.purpose_id,p_period,l.group_id,l.element_id,l.type_enum,l.`bal_money` 
+FROM suite_amiba_result_accounts AS l
+WHERE l.ent_id=p_ent AND l.`purpose_id`=p_purpose AND l.period_id=v_lastPeriod;
+
+-- 插入数据
+INSERT INTO `suite_amiba_result_accounts`(
+id,ent_id,purpose_id,period_id,group_id,element_id,type_enum,is_init,src_id,src_no,created_at
+,money
+,init_money
+,bal_money
+)
 SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,
-  p_ent,purpose_id,period_id,group_id,element_id,l.type_enum,is_init,src_id,src_no,NOW(),
-  SUM(money)
+  p_ent,purpose_id,period_id,group_id,element_id,l.type_enum,NOW()
+  ,SUM(init_money)
+  ,SUM(money)
+  ,SUM(init_money+money)
 FROM tml_result_accounts AS l
-GROUP BY purpose_id,period_id,group_id,element_id,l.type_enum,is_init,src_id,src_no;
+GROUP BY purpose_id,period_id,group_id,element_id,l.type_enum;
 
 END$$
 

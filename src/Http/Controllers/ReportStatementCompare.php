@@ -61,7 +61,7 @@ class ReportStatementCompare extends Controller {
 
 			foreach ($groups as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.total_time) AS time_m_" . $mk));
-				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.year='" . $period->year . " and p.month<=" . $period->month . "' THEN 1 ELSE 0 END * l.total_time) AS time_y_" . $mk));
+				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.year='" . $period->year . "' and p.month<='" . $period->month . "' THEN 1 ELSE 0 END * l.total_time) AS time_y_" . $mk));
 			}
 			foreach ($qc->wheres as $key => $value) {
 				if ($value->name == 'group_id') {
@@ -81,7 +81,7 @@ class ReportStatementCompare extends Controller {
 
 			foreach ($groups as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.money) AS manual_m_" . $mk));
-				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.year='" . $period->year . " and p.month<=" . $period->month . "' THEN 1 ELSE 0 END * l.money) AS manual_y_" . $mk));
+				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.year='" . $period->year . "' and p.month<='" . $period->month . "' THEN 1 ELSE 0 END * l.money) AS manual_y_" . $mk));
 			}
 			foreach ($qc->wheres as $key => $value) {
 				if ($value->name == 'group_id') {
