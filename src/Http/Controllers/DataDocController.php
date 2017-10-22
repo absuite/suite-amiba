@@ -70,6 +70,10 @@ class DataDocController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
+		if (empty($input['money'])) {
+			$input['money'] = 0;
+		}
+
 		Models\DataDoc::where('id', $id)->update($input);
 		$this->storeLines($request, $id);
 		return $this->show($request, $id);
@@ -92,6 +96,15 @@ class DataDocController extends Controller {
 				if (!empty($value['sys_state']) && $value['sys_state'] == 'u' && $value['id']) {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
+					if (empty($data['money'])) {
+						$data['money'] = 0;
+					}
+					if (empty($data['price'])) {
+						$data['price'] = 0;
+					}
+					if (empty($data['qty'])) {
+						$data['qty'] = 0;
+					}
 					Models\DataDocLine::where('id', $value['id'])->update($data);
 				}
 				if (!empty($value['sys_state']) && $value['sys_state'] == 'd' && !empty($value['id'])) {

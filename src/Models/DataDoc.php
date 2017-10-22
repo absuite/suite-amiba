@@ -2,12 +2,12 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
-use Suite\Cbo\Models as CboModels;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Models\Entity;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Suite\Cbo\Models as CboModels;
 
 class DataDoc extends Model {
 	use Snapshotable, HasGuard;
@@ -17,6 +17,11 @@ class DataDoc extends Model {
 		'purpose_id', 'fm_group_id', 'to_group_id', 'period_id', 'element_id', 'currency_id',
 		'qty', 'money', 'use_type_enum', 'created_by', 'src_type_enum', 'src_id', 'src_no', 'memo'];
 
+	public function validate() {
+		if (empty($this->money)) {
+			$this->money = 0;
+		}
+	}
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}
