@@ -78,12 +78,11 @@ export default {
         item.end_date = common.now();
 
         if (response && response.response && response.response.data) {
-          this.$toast(response.response.data.msg);
           item.msg = response.response.data.msg;
         } else {
-          this.$toast(response.message);
           item.msg = response.message;
         }
+        this.$toast(response);
         item.is_running = false
       });
     },

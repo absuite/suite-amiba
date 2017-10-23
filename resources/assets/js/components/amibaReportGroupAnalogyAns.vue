@@ -158,7 +158,7 @@ export default {
         this.updateOption(response.data.data);
         this.updateTableOptions(response.data.data);
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     selectGroups(nodes) {
@@ -175,7 +175,7 @@ export default {
         this.groups = response.data.data;
         this.model.group=[];
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     loadPeriodInfo(){

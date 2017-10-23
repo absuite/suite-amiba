@@ -111,7 +111,7 @@ export default {
       this.$http.post('amiba/reports/statement-compare', queryCase).then(response => {
         this.updateTableOptions(response.data);
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     selectGroups(nodes) {
@@ -128,7 +128,7 @@ export default {
         this.groups = response.data.data;
         this.model.group=[];
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     updateTableOptions(data) {

@@ -63,7 +63,7 @@
             this.loading--;
             this.$toast(this.$lang.LANG_JOBSUCCESS);
         }, response => {
-            this.$toast(this.$lang.LANG_JOBFAIL);
+            this.$toast(response);
             this.loading--;
         });
       },

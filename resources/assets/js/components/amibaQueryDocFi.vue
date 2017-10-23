@@ -80,7 +80,7 @@ export default {
         this.loading--;
         this.$toast(this.$lang.LANG_DELETESUCCESS);
       }, response => {
-        this.$toast(this.$lang.LANG_DELETEFAIL);
+        this.$toast(response);
         this.loading--;
       });
     },

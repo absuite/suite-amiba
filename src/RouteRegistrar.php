@@ -28,7 +28,7 @@ class RouteRegistrar {
 	 * @return void
 	 */
 	public function all() {
-		$this->router->group(['prefix' => 'amiba', 'middleware' => ['api', 'auth:api', 'visitor', 'ent_check']], function ($router) {
+		$this->router->group(['prefix' => 'amiba', 'middleware' => ['api', 'auth:api', 'lns_check:amiba']], function ($router) {
 
 			$router->resource('docs', 'DocController', ['only' => ['index']]);
 

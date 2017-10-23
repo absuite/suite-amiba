@@ -138,7 +138,7 @@ export default {
         this.updateOption(response.data.data);
         this.updateTableOptions(response.data.data);
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     updateOption(data) {

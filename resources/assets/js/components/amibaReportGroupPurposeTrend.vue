@@ -145,7 +145,7 @@ export default {
         this.groups = response.data.data;
         this.model.group=null;
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     loadPeriodInfo(){
@@ -177,7 +177,7 @@ export default {
         this.updateOption(response.data.data);
         this.updateTableOptions(response.data.data);
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     updateOption(data) {

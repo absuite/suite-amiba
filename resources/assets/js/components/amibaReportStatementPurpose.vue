@@ -97,7 +97,7 @@ export default {
       this.$http.post('amiba/reports/statement-purpose', queryCase).then(response => {
         this.updateTableOptions(response.data.data);
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     focusGroup(group) {
@@ -113,7 +113,7 @@ export default {
         this.groups = response.data.data;
         this.model.group=null;
       }, response => {
-        console.log(response);
+        this.$toast(response);
       });
     },
     loadPeriodInfo(){
