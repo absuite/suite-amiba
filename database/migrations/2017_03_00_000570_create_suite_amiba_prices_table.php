@@ -4,7 +4,7 @@ use Gmf\Sys\Database\Metadata;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSuiteAmibaPricesTable extends Migration {
-	private $mdID = "4bbd5dc018cf11e7bb3b9d54706c1965";
+	public $mdID = "4bbd5dc018cf11e7bb3b9d54706c1965";
 	/**
 	 * Run the migrations.
 	 *

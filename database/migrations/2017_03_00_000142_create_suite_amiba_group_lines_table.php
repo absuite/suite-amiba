@@ -4,7 +4,7 @@ use Gmf\Sys\Database\Metadata;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSuiteAmibaGroupLinesTable extends Migration {
-	private $mdID = "260c785010ed11e7908829e4468497b2";
+	public $mdID = "260c785010ed11e7908829e4468497b2";
 	/**
 	 * Run the migrations.
 	 *

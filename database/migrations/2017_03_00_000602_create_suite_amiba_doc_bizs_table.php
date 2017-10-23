@@ -4,7 +4,7 @@ use Gmf\Sys\Database\Metadata;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSuiteAmibaDocBizsTable extends Migration {
-	private $mdID = "be47d560209511e7a995398957d7d24f";
+	public $mdID = "be47d560209511e7a995398957d7d24f";
 	/**
 	 * Run the migrations.
 	 *
