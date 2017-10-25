@@ -143,7 +143,9 @@ export default {
           'code': '',
           'name': '',
           'memo': '',
-          'type_enum': ''
+          'parent':null,
+          'type_enum': '',
+          'factor_enum':''
         }
       }
     },
