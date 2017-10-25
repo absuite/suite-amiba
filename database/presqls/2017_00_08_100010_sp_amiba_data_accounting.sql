@@ -58,7 +58,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_childGroup1(
 /*计算上个期间*/
 SELECT pre.id INTO v_lastPeriod FROM `suite_cbo_period_accounts` AS l
 INNER JOIN `suite_cbo_period_accounts` AS pre ON l.calendar_id=pre.calendar_id
-WHERE l.id=p_period AND l.ent_id=pre.ent_id AND l.fomdate>pre.fromdate
+WHERE l.id=p_period AND l.ent_id=pre.ent_id AND l.from_date>pre.from_date
 ORDER BY pre.from_date DESC LIMIT 1;
 
 
@@ -157,7 +157,7 @@ WHERE l.ent_id=p_ent AND l.`purpose_id`=p_purpose AND l.period_id=v_lastPeriod;
 
 -- 插入数据
 INSERT INTO `suite_amiba_result_accounts`(
-id,ent_id,purpose_id,period_id,group_id,element_id,type_enum,is_init,src_id,src_no,created_at
+id,ent_id,purpose_id,period_id,group_id,element_id,type_enum,created_at
 ,money
 ,init_money
 ,bal_money
