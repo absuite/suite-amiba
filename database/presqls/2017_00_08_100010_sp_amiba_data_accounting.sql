@@ -164,8 +164,8 @@ id,ent_id,purpose_id,period_id,group_id,element_id,type_enum,created_at
 )
 SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,
   p_ent,purpose_id,period_id,group_id,element_id,l.type_enum,NOW()
-  ,SUM(init_money)
   ,SUM(money)
+  ,SUM(init_money)
   ,SUM(init_money+money)
 FROM tml_result_accounts AS l
 GROUP BY purpose_id,period_id,group_id,element_id,l.type_enum;
