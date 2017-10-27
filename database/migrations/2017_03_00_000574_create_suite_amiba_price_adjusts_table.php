@@ -22,6 +22,7 @@ class CreateSuiteAmibaPriceAdjustsTable extends Migration {
 		$md->string('code')->nullable()->comment('编码');
 		$md->string('name')->comment('名称');
 		$md->text('memo')->nullable()->comment('备注');
+		$md->enum('state', 'suite.cbo.data.state.enum')->nullable()->comment('状态');
 		$md->timestamps();
 
 		$md->entity('lines', 'suite.amiba.price.adjust.line')->nullable()->collection()->comment('明细行');

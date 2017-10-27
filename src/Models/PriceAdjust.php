@@ -2,17 +2,17 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
-use Suite\Cbo\Models as CboModels;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Suite\Cbo\Models as CboModels;
 
 class PriceAdjust extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_price_adjusts';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'purpose_id', 'period_id', 'group_id', 'code', 'name', 'memo'];
+	protected $fillable = ['id', 'ent_id', 'purpose_id', 'period_id', 'group_id', 'code', 'name', 'memo', 'state_enum'];
 
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
