@@ -16,7 +16,7 @@ class PriceController extends Controller {
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
-		$query = Models\PriceLine::with('group_id', 'item');
+		$query = Models\PriceLine::with('group', 'item');
 		$query->where('price_id', $id);
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
@@ -56,8 +56,8 @@ class PriceController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->only(['code', 'name']);
-		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period', 'state_enum']);
+		$input = $request->only(['code', 'name', 'state_enum']);
+		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',
 			'group_id' => 'required',

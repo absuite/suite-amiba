@@ -10,6 +10,10 @@
         <md-button @click.native="copy" :disabled="!canCopy">复制</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
+        <md-button @click.native="approve" :disabled="!canApprove">审核</md-button>
+        <md-button @click.native="unapprove" :disabled="!canUnapprove">弃审</md-button>
+      </md-part-toolbar-group>
+      <md-part-toolbar-group>
         <md-button @click.native="list">列表</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
@@ -25,31 +29,37 @@
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>编码</label>
-              <md-input required v-model="model.main.code"></md-input>
+              <md-input required :disabled="isApproved" v-model="model.main.code"></md-input>
             </md-input-container>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>名称</label>
-              <md-input required v-model="model.main.name"></md-input>
+              <md-input required :disabled="isApproved" v-model="model.main.name"></md-input>
             </md-input-container>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>核算目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
+              <md-input-ref required :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
               </md-input-ref>
             </md-input-container>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>阿米巴</label>
-              <md-input-ref required md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
+              <md-input-ref required :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
+            </md-input-container>
+          </md-layout>
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
+            <md-input-container>
+              <label>状态</label>
+              <md-enum md-enum-id="suite.cbo.data.state.enum" disabled v-model="model.main.state_enum" />
             </md-input-container>
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="fetchLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
+          <md-grid :datas="fetchLineDatas" :readonly="isApproved" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="对方阿米巴" field="group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" width="300px" editable/>
             <md-grid-column label="价格类型" field="type_enum" dataType="enum" editable ref-id="suite.amiba.price.type.enum" />
             <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="300px" editable/>
@@ -68,7 +78,16 @@ export default {
   mixins: [model, modelGrid],
   computed: {
     canSave() {
-      return this.validate(true);
+      return this.model && this.model.main && this.model.main.state_enum === 'opened' && this.validate(true);
+    },
+    canApprove() {
+      return this.model && this.model.main && this.model.main.id && this.model.main.state_enum === 'opened' && this.validate(true);
+    },
+    canUnapprove() {
+      return this.model && this.model.main && this.model.main.state_enum === 'approved';
+    },
+    isApproved() {
+      return this.model && this.model.main && this.model.main.state_enum === 'approved';
     }
   },
   methods: {
@@ -92,9 +111,27 @@ export default {
           'name': '',
           'memo': '',
           purpose: this.$root.userConfig.purpose,
-          group: null
+          group: null,
+          'state_enum': 'opened'
         }
       }
+    },
+    approve() {
+      const oldState = this.model.main.state_enum;
+      this.model.main.state_enum = 'approved';
+      if (!this.serverStore()) {
+        this.model.main.state_enum = oldState;
+      }
+    },
+    unapprove() {
+      const oldState = this.model.main.state_enum;
+      this.model.main.state_enum = 'opened';
+      if (!this.serverStore()) {
+        this.model.main.state_enum = oldState;
+      }
+    },
+    afterCopy() {
+      this.model.main.state_enum = 'opened';
     },
     list() {
       this.$router.push({ name: 'module', params: { module: 'amiba.price.adjust.list' } });
