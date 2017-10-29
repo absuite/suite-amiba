@@ -59,7 +59,7 @@
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-input-container>
               <label>数据用途</label>
-              <md-enum :disabled="isApproved"  md-enum-id="suite.amiba.doc.use.type.enum" v-model="model.main.use_type_enum" />
+              <md-enum :disabled="isApproved" md-enum-id="suite.amiba.doc.use.type.enum" v-model="model.main.use_type_enum" />
             </md-input-container>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
@@ -150,9 +150,13 @@ export default {
           fm_group: null,
           to_group: null,
           'state_enum': 'opened',
-          use_type_enum: '',
+          'use_type_enum': '',
+          'doc_no': '',
         }
       }
+    },
+    async afterInitData() {
+      this.model.main.doc_no = await this.$root.issueUid('suite.amiba.data.doc');
     },
     approve() {
       const oldState = this.model.main.state_enum;

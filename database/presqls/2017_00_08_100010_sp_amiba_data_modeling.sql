@@ -6,6 +6,8 @@ CREATE PROCEDURE sp_amiba_data_modeling(IN p_ent CHAR(200),IN p_purpose CHAR(200
 BEGIN
 DECLARE v_from_date DATETIME;
 DECLARE v_to_date DATETIME;
+DECLARE v_id_start BIGINT;
+DECLARE v_id_count BIGINT;
 /*
 SELECT UUID_SHORT() into v_uid;
 */
@@ -93,6 +95,9 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_docLine(
 `money` DECIMAL(30,2),
 `bizkey` NVARCHAR(500)
 );
+
+
+  
 /*期间的开始时间和结束时间*/
 SELECT from_date,to_date INTO v_from_date,v_to_date FROM `suite_cbo_period_accounts` WHERE id=p_period;
 /*业务数据*/
@@ -313,9 +318,15 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   -- 更新业务主键
   UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
   
-  INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`)
-  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,DATE_FORMAT(v_to_date,'%Y%m%d'),v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
-  FROM tml_data_elementing AS l
+  SET @len=1; 
+  SELECT COUNT(0) INTO @len FROM tml_data_elementing AS l;
+  CALL sp_gmf_sys_uid('suite.amiba.data.doc',@len);
+  
+  INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,
+	`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`)
+  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,(@rownum := @rownum+1),
+	v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
+  FROM tml_data_elementing AS l,(SELECT @rownum:=@len) r
   GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey;
   
   
