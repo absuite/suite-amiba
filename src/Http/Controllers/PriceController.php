@@ -16,8 +16,18 @@ class PriceController extends Controller {
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
-		$query = Models\PriceLine::with('group', 'item');
+
+		$withs = ['group', 'item'];
+
+		$query = Models\PriceLine::with($withs);
 		$query->where('price_id', $id);
+
+		$sortField = $request->input('sortField');
+		$sortOrder = $request->input('sortOrder', 'asc');
+		if ($sortField) {
+			$query->orderBy(in_array($sortField, $withs) ? $sortField . '_id' : $sortField, $sortOrder);
+		}
+
 		$data = $query->paginate($pageSize);
 		return $this->toJson($data);
 	}
