@@ -18,8 +18,9 @@ class AmibaPurposeSeeder extends Seeder {
 		if (empty($this->entId)) {
 			return;
 		}
-
-		Models\Purpose::where('ent_id', $this->entId)->delete();
+		if (Models\Purpose::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 
 		Models\Purpose::build(function (Builder $b) {$b->ent_id($this->entId)->code("ob01")->name("主核算目的")->currency("CNY")->calendar("month");});
 	}

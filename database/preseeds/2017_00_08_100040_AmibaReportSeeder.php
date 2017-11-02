@@ -13,8 +13,6 @@ class AmibaReportSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->down();
-
 		$exception = DB::transaction(function () {
 
 			$id = "a0a059e0706611e79920d1cd3cd298a2";
@@ -174,14 +172,5 @@ class AmibaReportSeeder extends Seeder {
 			});
 
 		});
-	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-		Models\Query::where('name', 'like', 'suite.amiba.%.report')->delete();
 	}
 }

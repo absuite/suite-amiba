@@ -13,7 +13,6 @@ class AmibaQuerySeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->down();
 
 		$exception = DB::transaction(function () {
 
@@ -209,12 +208,4 @@ class AmibaQuerySeeder extends Seeder {
 		});
 	}
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-		Models\Query::where('name', 'like', 'suite.amiba.%.list')->delete();
-	}
 }

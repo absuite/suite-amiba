@@ -2,11 +2,11 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
-use Suite\Cbo\Models as CboModels;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Suite\Cbo\Models as CboModels;
 
 class Purpose extends Model {
 	use Snapshotable, HasGuard;
@@ -44,7 +44,9 @@ class Purpose extends Model {
 			if ($tmpItem) {
 				$data['currency_id'] = $tmpItem->id;
 			}
-			static::create($data);
+			$find = array_only($data, ['code', 'ent_id']);
+
+			static::updateOrCreate($find, $data);
 		});
 	}
 }

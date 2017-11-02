@@ -11,6 +11,9 @@ class ServiceProvider extends BaseServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
+		$this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+		$this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+
 		if ($this->app->runningInConsole()) {
 			$this->registerMigrations();
 
@@ -56,8 +59,7 @@ class ServiceProvider extends BaseServiceProvider {
 	 * @return void
 	 */
 	protected function registerMigrations() {
-		if (Amiba::$runsMigrations) {
-			$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-		}
+		$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
 	}
 }

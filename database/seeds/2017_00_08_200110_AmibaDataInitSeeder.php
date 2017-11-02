@@ -19,7 +19,10 @@ class AmibaDataInitSeeder extends Seeder {
 			return;
 		}
 
-		Models\DataInit::where('ent_id', $this->entId)->delete();
+		if (Models\DataInit::where('ent_id', $this->entId)->count()) {
+			return;
+		}
+
 		Models\DataInit::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->period("201701")->currency("CNY")->id(md5($this->entId . "02f31e005e3111e7992ff19c3fee0876"));});
 
 		Models\DataInitLine::where('ent_id', $this->entId)->delete();

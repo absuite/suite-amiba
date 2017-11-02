@@ -13,8 +13,6 @@ class AmibaRefAmibaSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->down();
-
 		$exception = DB::transaction(function () {
 			// $id = "52e84c70110111e7802a993ddf50c88a";
 			// Models\Query::build(function (Builder $builder) use ($id) {
@@ -70,14 +68,5 @@ class AmibaRefAmibaSeeder extends Seeder {
 			});
 
 		});
-	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-		Models\Query::where('name', 'like', 'suite.amiba.%.ref')->delete();
 	}
 }

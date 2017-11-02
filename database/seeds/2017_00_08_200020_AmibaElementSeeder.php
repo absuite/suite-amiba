@@ -1,6 +1,5 @@
 <?php
 
-use Faker\Factory as Faker;
 use Gmf\Sys\Builder;
 use Illuminate\Database\Seeder;
 use Suite\Amiba\Models;
@@ -21,9 +20,9 @@ class AmibaElementSeeder extends Seeder {
 			return;
 		}
 
-		$faker = Faker::create();
-		Models\Element::where('ent_id', $this->entId)->delete();
-
+		if (Models\Element::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 		Models\Element::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->parent("")->code("101")->name("总收入")->direction_name("增项")->type_name("收入")->factor_name("")->is_manual("");});
 		Models\Element::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->parent("101")->code("10101")->name("外部收入")->direction_name("增项")->type_name("收入")->factor_name("")->is_manual("");});
 		Models\Element::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->parent("101")->code("10102")->name("内部收入")->direction_name("增项")->type_name("收入")->factor_name("")->is_manual("");});

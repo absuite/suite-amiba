@@ -14,7 +14,6 @@ class AmibaMenuSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->down();
 
 		$exception = DB::transaction(function () {
 			$id = "78398ae00a1311e7bab8c7e04ea89a28";
@@ -269,12 +268,4 @@ class AmibaMenuSeeder extends Seeder {
 		});
 	}
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-		Menu::where('code', 'like', 'amiba%')->delete();
-	}
 }

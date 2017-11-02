@@ -21,8 +21,10 @@ class AmibaGroupSeeder extends Seeder {
 		}
 
 		$faker = Faker::create();
-		Models\Group::where('ent_id', $this->entId)->delete();
-		Models\GroupLine::where('ent_id', $this->entId)->delete();
+
+		if (Models\Group::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 
 		Models\Group::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->parent("")->code("amb01")->name("集团公司")->type_name("")->factor_name("")->employees("")->is_leaf("0");});
 		Models\Group::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->parent("amb01")->code("amb0101")->name("集团财务")->type_name("部门")->factor_name("服务")->employees("8")->is_leaf("1");});

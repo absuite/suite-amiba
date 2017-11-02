@@ -19,6 +19,9 @@ class AmibaPriceSeeder extends Seeder {
 		if (empty($this->entId)) {
 			return;
 		}
+		if (Models\Price::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 
 		$faker = Faker::create();
 		Models\Price::where('ent_id', $this->entId)->delete();

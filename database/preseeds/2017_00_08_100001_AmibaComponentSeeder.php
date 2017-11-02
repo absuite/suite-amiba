@@ -13,7 +13,6 @@ class AmibaComponentSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->down();
 		$exception = DB::transaction(function () {
 			Models\Component::build(function (Builder $builder) {
 				$builder->code('amibaElementEdit')->name('核算要素')->path('amibaElementEdit');
@@ -171,12 +170,4 @@ class AmibaComponentSeeder extends Seeder {
 		});
 	}
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-		Models\Component::where('code', 'like', 'amiba.%')->delete();
-	}
 }

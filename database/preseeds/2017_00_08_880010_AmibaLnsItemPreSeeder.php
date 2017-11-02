@@ -16,13 +16,4 @@ class AmibaLnsItemPreSeeder extends Seeder {
 			$b->type(Group::class)->code('amiba')->name('阿米巴数');
 		});
 	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-
-	}
 }

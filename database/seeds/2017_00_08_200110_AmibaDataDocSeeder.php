@@ -18,6 +18,9 @@ class AmibaDataDocSeeder extends Seeder {
 		if (empty($this->entId)) {
 			return;
 		}
+		if (Models\DataDoc::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 
 		Models\DataDoc::where('ent_id', $this->entId)->delete();
 

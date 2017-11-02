@@ -18,7 +18,9 @@ class AmibaDataTargetSeeder extends Seeder {
 		if (empty($this->entId)) {
 			return;
 		}
-
+		if (Models\DataTarget::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 		Models\DataTarget::where('ent_id', $this->entId)->delete();
 		Models\DataTarget::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->group("amb0101")->fm_period("201701")->to_period("201712")->id(md5($this->entId . "7207fdc05e3411e7bec6b5699372a30c"));});
 		Models\DataTarget::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->group("amb0102")->fm_period("201701")->to_period("201712")->id(md5($this->entId . "7207fdc05e3411e7bec6b5699372a30d"));});

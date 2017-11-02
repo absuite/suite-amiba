@@ -18,7 +18,9 @@ class AmibaTimeSeeder extends Seeder {
 		if (empty($this->entId)) {
 			return;
 		}
-
+		if (Models\DataTime::where('ent_id', $this->entId)->count()) {
+			return;
+		}
 		Models\DataTime::where('ent_id', $this->entId)->delete();
 
 		Models\DataTime::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->period("201701")->id(md5($this->entId . "f8f6b5d05e3211e7a562d9926787cf6b"));});

@@ -19,10 +19,12 @@ class AmibaAllotMethodSeeder extends Seeder {
 			return;
 		}
 
-		Models\AllotMethod::where('ent_id', $this->entId)->delete();
+		if (Models\AllotMethod::where('ent_id', $this->entId)->count()) {
+			return;
+		}
+
 		Models\AllotMethod::build(function (Builder $b) {$b->ent_id($this->entId)->purpose("ob01")->code("FF01")->name("方法1");});
 
-		Models\AllotMethodLine::where('ent_id', $this->entId)->delete();
 		Models\AllotMethodLine::build(function (Builder $b) {$b->ent_id($this->entId)->method("FF01")->group("amb0103")->rate("9");});
 		Models\AllotMethodLine::build(function (Builder $b) {$b->ent_id($this->entId)->method("FF01")->group("amb0201")->rate("6");});
 		Models\AllotMethodLine::build(function (Builder $b) {$b->ent_id($this->entId)->method("FF01")->group("amb0402")->rate("30");});

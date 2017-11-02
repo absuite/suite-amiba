@@ -1,19 +1,29 @@
 {
-    "name": "absuite/suite-amiba",
-    "description": "suite amiba model for laravel5",
-	"license": "MIT",
-    "authors": [
-        {
-            "name": "absuite",
-            "email": "absuite@163.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-    },
-    "autoload": {
-        "psr-4": {
-            "Suite\\Amiba\\": "src/"
-        }
+  "name": "absuite/suite-amiba",
+  "description": "suite amiba model for laravel5",
+  "license": "MIT",
+  "authors": [
+  {
+    "name": "absuite",
+    "email": "absuite@163.com"
+  }],
+  "minimum-stability": "dev",
+  "require":
+  {},
+  "extra":
+  {
+    "laravel":
+    {
+      "providers": [
+        "Suite\\Amiba\\ServiceProvider"
+      ]
     }
+  },
+  "autoload":
+  {
+    "psr-4":
+    {
+      "Suite\\Amiba\\": "src/"
+    }
+  }
 }

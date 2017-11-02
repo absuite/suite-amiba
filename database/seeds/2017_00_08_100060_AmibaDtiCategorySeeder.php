@@ -19,9 +19,6 @@ class AmibaDtiCategorySeeder extends Seeder {
 			return;
 		}
 
-		//DtiCategory
-		//Models\DtiCategory::where('ent_id', $this->entId)->delete();
-
 		Models\DtiCategory::build(function (Builder $b) {
 			$b->ent_id($this->entId)->code('u8')->name("用友U8");
 		});

@@ -45,13 +45,4 @@ class AmibaRolePreSeeder extends Seeder {
 			}
 		}
 	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down() {
-
-	}
 }
