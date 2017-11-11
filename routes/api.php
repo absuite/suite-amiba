@@ -29,6 +29,7 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api', 'lns_check:amiba'])->
 	Route::get('/data-inits/{id}/lines', 'DataInitController@showLines');
 	Route::resource('data-inits', 'DataInitController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
+	Route::post('/data-docs/import', 'DataDocController@import');
 	Route::get('/data-docs/{id}/lines', 'DataDocController@showLines');
 	Route::resource('data-docs', 'DataDocController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 

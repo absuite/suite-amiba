@@ -1,9 +1,12 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use Excel;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
+use Gmf\Sys\Models\File;
 use Illuminate\Http\Request;
+use Storage;
 use Suite\Amiba\Jobs;
 use Suite\Amiba\Models;
 use Validator;
@@ -35,7 +38,24 @@ class DataDocController extends Controller {
 		$data = $query->where('id', $id)->first();
 		return $this->toJson($data);
 	}
+	public function import(Request $request) {
+		if ($request->has('files')) {
+			$files = File::storage($request, $request->input('files'), 'import', 'local');
+			if ($files) {
+				foreach ($files as $key => $file) {
+					$disk = Storage::disk($file->disk);
+					$path = storage_path('app\\' . str_replace('/', '\\', $file->path));
 
+					Excel::load($path, function ($reader) {
+						$results = $reader->all();
+
+					});
+				}
+
+			}
+		}
+		return $this->toJson(true);
+	}
 	/**
 	 * POST
 	 * @param  Request $request [description]

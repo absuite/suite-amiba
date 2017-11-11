@@ -49,7 +49,7 @@
             <md-grid-column label="正常工作时间" width="150px" editable field="nor_time" />
             <md-grid-column label="加班时间" width="150px" editable field="over_time" />
             <md-grid-column label="总劳动时间" width="150px">
-              <template scope="row">
+              <template slot-scope="row">
                 {{ row.nor_time+row.over_time}}
               </template>
             </md-grid-column>

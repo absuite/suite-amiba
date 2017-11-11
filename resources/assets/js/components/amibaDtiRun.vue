@@ -24,7 +24,7 @@
         <md-grid-column label="开始时间" field="begin_date" />
         <md-grid-column label="结束时间" field="begin_date" />
         <md-grid-column label="状态">
-          <template scope="row">
+          <template slot-scope="row">
             {{ row.is_running?'正在执行':'等待中'}}
           </template>
         </md-grid-column>
