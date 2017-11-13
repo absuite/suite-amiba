@@ -1,11 +1,11 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
-use Suite\Amiba\Models as AmibaModels;
-use Suite\Cbo\Models as CboModels;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Suite\Amiba\Models as AmibaModels;
+use Suite\Cbo\Models as CboModels;
 
 class ReportController extends Controller {
 	public function getPeriodInfo(Request $request) {
@@ -23,9 +23,14 @@ class ReportController extends Controller {
 				$calendar_id = $tmp->calendar_id;
 			}
 		}
-
+		$date = AmibaModels\DataDoc::where('ent_id', $request->oauth_ent_id)
+			->where('doc_date', '<=', date('Y-m-d'))
+			->max('doc_date');
 		//当前期间
-		$date = date('Y-m-d');
+		if (empty($date)) {
+			$date = date('Y-m-d');
+		}
+
 		$item = false;
 		$tmp = CboModels\PeriodAccount::where('calendar_id', $calendar_id)
 			->where('from_date', '<=', $date)
