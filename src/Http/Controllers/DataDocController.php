@@ -43,26 +43,33 @@ class DataDocController extends Controller {
 	private function importData(Request $request, $rows, $columns) {
 		$collect = collect($rows);
 		$grouped = $collect->reject(function ($item) {
-			return empty($item['id']);
+			return empty($item['doc_no']);
 		})->map(function ($item) {
-			$item['id'] = $item['id'] . '';
+			$item['doc_no'] = $item['doc_no'] . '';
 			return $item;
-		})->groupBy('id')
+		})->groupBy('doc_no')
 			->toArray();
 		foreach ($grouped as $gk => $items) {
 			$head = $this->importHeadData($request, $items[0]);
 			if (!$head) {
 				continue;
 			}
+			$hasLines = false;
 			foreach ($items as $ik => $item) {
 				$line = collect($item)->filter(function ($v, $k) {
 					return starts_with($k, 'line.');
 				})->mapWithKeys(function ($item, $key) {
 					return [str_after($key, 'line.') => $item];
 				})->all();
-				if (count($line)) {
+
+				if (count($line) && !(empty($item['qty']) && empty($item['money']))) {
 					$this->importLineData($request, $head, $line);
+					$hasLines = true;
 				}
+			}
+			if ($hasLines) {
+				$job = new Jobs\AmibaDataDocMoneyJob($head->id);
+				$job->handle();
 			}
 		}
 	}
@@ -70,7 +77,6 @@ class DataDocController extends Controller {
 		$input = array_only($data, ['doc_no', 'doc_date', 'money', 'src_id', 'src_no', 'memo']);
 
 		$input = InputHelper::fillEnum($input, $data, [
-			'state' => 'suite.cbo.data.state.enum',
 			'use_type' => 'suite.amiba.doc.use.type.enum',
 			'src_type' => 'suite.amiba.doc.src.type.enum',
 		]);
@@ -145,10 +151,11 @@ class DataDocController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$input['ent_id'] = $ent_id;
+		$input['state_enum'] = 'opened';
 		return Models\DataDoc::create($input);
 	}
 	private function importLineData(Request $request, $head, $data) {
-		$input = array_only($data, ['qty', 'price', 'money', 'expense_code', 'subject_code', 'memo']);
+		$input = array_only($data, ['qty', 'price', 'money', 'expense_code', 'account_code', 'memo']);
 
 		$ent_id = $request->oauth_ent_id;
 		$input = InputHelper::fillEntity($input, $data, [
@@ -209,6 +216,15 @@ class DataDocController extends Controller {
 		]);
 		$input['doc_id'] = $head->id;
 		$input['ent_id'] = $ent_id;
+		if (empty($input['money'])) {
+			$input['money'] = 0;
+		}
+		if (empty($input['price'])) {
+			$input['price'] = 0;
+		}
+		if (empty($input['qty'])) {
+			$input['qty'] = 0;
+		}
 		return Models\DataDocLine::create($input);
 	}
 	public function import(Request $request) {
@@ -287,7 +303,7 @@ class DataDocController extends Controller {
 	}
 	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
-		$fillable = ['qty', 'price', 'money', 'expense_code', 'subject_code', 'memo'];
+		$fillable = ['qty', 'price', 'money', 'expense_code', 'account_code', 'memo'];
 		$entityable = ['trader', 'item_category', 'item', 'mfc', 'project', 'unit'];
 
 		if ($lines && count($lines)) {

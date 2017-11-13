@@ -1,6 +1,6 @@
 <?php
 $ns = 'Suite\Amiba\Http\Controllers';
-Route::prefix('api/amiba')->middleware(['api', 'auth:api', 'lns_check:amiba'])->namespace($ns)->group(function () {
+Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->group(function () {
 	Route::resource('docs', 'DocController', ['only' => ['index']]);
 
 	Route::get('/elements/all', 'ElementController@all');
