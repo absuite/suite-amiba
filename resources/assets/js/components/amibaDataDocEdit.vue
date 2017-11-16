@@ -106,6 +106,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
+    <md-ref :md-ref-id="lineRefID" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>
@@ -113,7 +114,14 @@ import model from '../../gmf-sys/core/mixin/model';
 import modelGrid from '../../gmf-sys/core/mixin/modelGrid';
 export default {
   mixins: [model, modelGrid],
+  data() {
+    return {
+      lineRefID: '',
+      lineRefField: ''
+    };
+  },
   computed: {
+
     canSave() {
       return this.model && this.model.main && this.model.main.state_enum === 'opened' && this.validate(true);
     },
@@ -182,7 +190,37 @@ export default {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.doc.list' } });
     },
     onLineAdd() {
+      if (this.$refs.grid && this.$refs.grid.focusCell && this.$refs.grid.focusCell.column) {
+        this.lineRefField = this.$refs.grid.focusCell.column.field;
+        this.lineRefID = this.$refs.grid.focusCell.column.refId;
+        if (this.lineRefField == 'item' ||
+          this.lineRefField == 'trader' ||
+          this.lineRefField == 'item_category') {
+          this.$nextTick(() => {
+            this.$refs['lineRef'].open();
+          });
+          return;
+        }
+      }
       this.$refs.grid && this.$refs.grid.addDatas({ data_type_enum: '' });
+    },
+    lineRefClose(datas) {
+      if (!datas || !datas.length || !this.lineRefField ||
+        !this.$refs.grid || !this.$refs.grid.focusCell ||
+        !this.$refs.grid.focusCell.row ||
+        !this.$refs.grid.focusCell.row.data) {
+        return;
+      }
+      if (!this.$refs.grid.focusCell.getValue()) {
+        this.$refs.grid.focusCell.setValue(datas[0]);
+        datas.splice(0, 1);
+      }
+      this._.forEach(datas, (v, k) => {
+        let row = {};
+        row[this.lineRefField] = v;
+        row['data_type_enum'] = '';
+        this.$refs.grid.addDatas(row);
+      });
     },
     init_fm_group_ref(options) {
       options.wheres.leaf = { name: 'is_leaf', value: '1' };
