@@ -220,8 +220,6 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   WHERE l.data_type='fi';
     
 
-  -- 如果模型中指定阿米巴，则直接取阿米巴
-  -- UPDATE tml_data_elementing SET fm_group_id=def_fm_group_id WHERE def_fm_group_id IS NOT NULL;
   -- 依据阿米巴定义找来源阿米巴
   UPDATE tml_data_elementing AS l 
     INNER JOIN `suite_amiba_groups` AS g ON g.`purpose_id`=p_purpose
@@ -254,7 +252,10 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   
 
   
-  /*更新模型巴
+  /*
+  匹配方：与原始业务数据中的巴进行匹配，并将匹配结果作为表头巴的建模成果。
+  交易方：标识表头巴的交易对方巴是谁，当交易方为空时，使用原始业务数据匹配的巴，如果指定了，则直接使用交易巴。  
+  更新模型巴
   如果模型行定义了匹配方，则按匹配方更新巴
   */
   UPDATE tml_data_elementing AS l 
@@ -264,13 +265,18 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing AS l 
   SET l.m_fm_group_id=l.to_group_id,l.m_to_group_id=l.fm_group_id
   WHERE l.match_direction_enum='to' AND l.to_group_id!='' AND IFNULL(l.match_group_id,'')!='';
+    
   /*更新交易方*/
-  UPDATE tml_data_elementing AS l 
-  SET l.m_to_group_id=l.def_to_group_id
+  UPDATE tml_data_elementing AS l SET l.m_to_group_id=l.def_to_group_id
   WHERE IFNULL(l.m_fm_group_id,'')!='' AND IFNULL(l.def_to_group_id,'')!='';
    
   /*如果模型行定义了巴：1、与数据巴不对应时，需要删除，2、数据为空时，需要删除*/
   DELETE FROM tml_data_elementing WHERE IFNULL(match_group_id,'')!='' AND (m_fm_group_id!=match_group_id OR m_fm_group_id IS NULL);
+  
+  /*更新本方巴*/
+  UPDATE tml_data_elementing AS l SET l.m_fm_group_id=l.def_fm_group_id
+  WHERE IFNULL(l.m_fm_group_id,'')!='' AND IFNULL(l.def_fm_group_id,'')!='';
+  
   /*数据巴的来源和去向相同时，则需要删除*/
   DELETE FROM tml_data_elementing WHERE IFNULL(match_group_id,'')!='' AND (m_fm_group_id=m_to_group_id);
   
