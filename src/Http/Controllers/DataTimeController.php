@@ -95,7 +95,7 @@ class DataTimeController extends Controller {
 					if (empty($data['over_time'])) {
 						$data['over_time'] = 0;
 					}
-					$data['total_time'] = $data['nor_time'] + $data['over_time'];
+					$data['total_time'] = floatval($data['nor_time']) + floatval($data['over_time']);
 
 					Models\DataTimeLine::create($data);
 					continue;
@@ -109,7 +109,7 @@ class DataTimeController extends Controller {
 					if (empty($data['over_time'])) {
 						$data['over_time'] = 0;
 					}
-					$data['total_time'] = $data['nor_time'] + $data['over_time'];
+					$data['total_time'] = floatval($data['nor_time']) + floatval($data['over_time']);
 
 					Models\DataTimeLine::where('id', $value['id'])->update($data);
 				}

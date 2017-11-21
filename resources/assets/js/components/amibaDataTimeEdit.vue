@@ -50,7 +50,7 @@
             <md-grid-column label="加班时间" width="150px" editable field="over_time" />
             <md-grid-column label="总劳动时间" width="150px">
               <template slot-scope="row">
-                {{ row.nor_time+row.over_time}}
+                {{ parseFloat(row.nor_time)+parseFloat(row.over_time)}}
               </template>
             </md-grid-column>
           </md-grid>
