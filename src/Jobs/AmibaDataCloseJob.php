@@ -2,12 +2,12 @@
 
 namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
-use Suite\Amiba\Models\DataClose;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Suite\Amiba\Models\DataClose;
 
 class AmibaDataCloseJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -37,7 +37,7 @@ class AmibaDataCloseJob implements ShouldQueue {
 		try {
 			$m = DataClose::find($this->model->id);
 			$m->succeed = false;
-			$m->revoked = $this->revoked;
+			$m->revoked = $this->revoked ? '1' : '0';
 			$m->start_time = new Carbon;
 			$m->end_time = null;
 			$m->msg = null;

@@ -18,6 +18,7 @@ class MonthClose {
 						$query->where('p.from_date', '>=', $date)->where('p.to_date', '<=', $date);
 					});
 			});
+		$query->where('l.revoked', '0');
 		if ($purposeId) {
 			$query->where('purpose_id', $purposeId);
 		}

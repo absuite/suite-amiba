@@ -19,7 +19,7 @@
         </md-input-container>
         <md-input-container>
           <label>期间</label>
-          <md-input-ref @init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
+          <md-input-ref multiple @init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
           </md-input-ref>
         </md-input-container>
         <md-input-container>
