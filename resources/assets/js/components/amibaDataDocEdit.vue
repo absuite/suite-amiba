@@ -30,64 +30,64 @@
       <md-content class="flex layout-column">
         <md-layout md-gutter>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>单据编号</label>
               <md-input required :disabled="isApproved" v-model="model.main.doc_no" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>单据日期</label>
               <md-date required :disabled="isApproved" v-model="model.main.doc_date" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>核算目的</label>
               <md-input-ref :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>期间</label>
               <md-input-ref @init="init_period_ref" :disabled="isApproved" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>核算要素</label>
               <md-input-ref @init="init_element_ref" :disabled="isApproved" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>数据用途</label>
               <md-enum :disabled="isApproved" md-enum-id="suite.amiba.doc.use.type.enum" v-model="model.main.use_type_enum" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>阿米巴</label>
               <md-input-ref @init="init_fm_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>对方阿米巴</label>
               <md-input-ref @init="init_to_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>考核金额</label>
               <md-input type="number" required :disabled="isApproved" v-model="model.main.money" />
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>状态</label>
               <md-enum md-enum-id="suite.cbo.data.state.enum" disabled v-model="model.main.state_enum" />
-            </md-input-container>
+            </md-field>
           </md-layout>
         </md-layout>
         <md-layout class="flex">
@@ -110,8 +110,8 @@
   </md-part>
 </template>
 <script>
-import model from '../../gmf-sys/core/mixin/model';
-import modelGrid from '../../gmf-sys/core/mixin/modelGrid';
+import model from 'gmf/core/mixins/MdModel/MdModel';
+import modelGrid from 'gmf/core/mixins/MdModel/MdModelGrid';
 export default {
   mixins: [model, modelGrid],
   data() {

@@ -2,10 +2,10 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-input-container class="md-inset">
+        <md-field class="md-inset">
           <label>日期</label>
           <md-date required v-model="model.date"></md-date>
-        </md-input-container>
+        </md-field>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button class="md-primary md-raised" @click.native="runAll" :disabled="is_running>0">
@@ -35,7 +35,7 @@
   </md-part>
 </template>
 <script>
-import common from '../../gmf-sys/core/utils/common';
+import common from 'gmf/core/utils/common';
 export default {
   data() {
     return {

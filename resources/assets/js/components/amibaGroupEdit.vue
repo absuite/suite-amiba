@@ -23,54 +23,54 @@
       <md-content class="flex layout-column">
         <md-layout md-gutter>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>编码</label>
               <md-input required v-model="model.main.code"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>名称</label>
               <md-input required v-model="model.main.name"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>核算目的</label>
               <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
               </md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>上级阿米巴单元</label>
               <md-input-ref @init="initParentGroupRef" md-ref-id="suite.amiba.group.ref" v-model="model.main.parent">
               </md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>类型</label>
               <md-enum md-enum-id="suite.amiba.group.type.enum" v-model="model.main.type_enum"></md-enum>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>经营体类型</label>
               <md-enum md-enum-id="suite.amiba.group.factor.enum" v-model="model.main.factor_enum"></md-enum>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>员工人数</label>
               <md-input required type="number" v-model="model.main.employees"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>备注</label>
               <md-textarea v-model="model.main.memo"></md-textarea>
-            </md-input-container>
+            </md-field>
           </md-layout>
         </md-layout>
         <md-layout class="flex">
@@ -84,9 +84,9 @@
   </md-part>
 </template>
 <script>
-import model from '../../gmf-sys/core/mixin/model';
-import common from '../../gmf-sys/core/utils/common';
-import modelGrid from '../../gmf-sys/core/mixin/modelGrid';
+import model from 'gmf/core/mixins/MdModel/MdModel';
+import common from 'gmf/core/utils/common';
+import modelGrid from 'gmf/core/mixins/MdModel/MdModelGrid';
 export default {
   data() {
     return {

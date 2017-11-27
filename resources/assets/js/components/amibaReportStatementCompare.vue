@@ -4,16 +4,16 @@
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
           <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>目的</label>
               <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>期间</label>
               <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -61,7 +61,7 @@
   </md-part>
 </template>
 <script>
-import common from '../../gmf-sys/core/utils/common';
+import common from 'gmf/core/utils/common';
 
 export default {
   data() {

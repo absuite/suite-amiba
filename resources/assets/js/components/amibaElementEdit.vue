@@ -23,58 +23,58 @@
       <md-content class="flex layout-column">
         <md-layout md-gutter>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>编码</label>
               <md-input required  v-model="model.main.code"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>名称</label>
               <md-input required v-model="model.main.name"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>核算目的</label>
               <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>上级核算要素</label>
               <md-input-ref @init="initParentElementRef" md-ref-id="suite.amiba.element.ref" v-model="model.main.parent"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>类型</label>
               <md-enum required md-enum-id="suite.amiba.element.type.enum" :disabled="!!model.main.parent" v-model="model.main.type_enum"></md-enum>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>方向</label>
               <md-enum required md-enum-id="suite.amiba.element.direction.enum" :disabled="!!model.main.parent" v-model="model.main.direction_enum"></md-enum>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>性质</label>
               <md-enum required md-enum-id="suite.amiba.element.factor.enum" v-model="model.main.factor_enum"></md-enum>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <label>范围</label>
               <md-enum required md-enum-id="suite.amiba.element.scope.enum" v-model="model.main.scope_enum"></md-enum>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-input-container>
+            <md-field>
               <md-checkbox required v-model="model.main.is_manual">是否人工</md-checkbox>
-            </md-input-container>
+            </md-field>
           </md-layout>
         </md-layout>
       </md-content>
@@ -83,7 +83,7 @@
   </md-part>
 </template>
 <script>
-  import model from '../../gmf-sys/core/mixin/model';
+  import model from 'gmf/core/mixins/MdModel/MdModel';
   export default {
     data() {
       return {

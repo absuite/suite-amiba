@@ -1,4 +1,6 @@
-@include layout-small-and-up {
+@import "~gmf/components/MdAnimation/variables";
+@import "~gmf/components/MdLayout/mixins";
+@include md-layout-small-and-up {
   .md-refs-dialog,
   .md-query {
     .md-table .md-table-cell {

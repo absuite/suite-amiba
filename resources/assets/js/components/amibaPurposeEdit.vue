@@ -21,33 +21,33 @@
     </md-part-toolbar>
     <md-part-body>
       <md-content>
-        <md-input-container>
+        <md-field>
           <label>编码</label>
           <md-input required v-model="model.main.code"></md-input>
-        </md-input-container>
-        <md-input-container>
+        </md-field>
+        <md-field>
           <label>名称</label>
           <md-input required v-model="model.main.name"></md-input>
-        </md-input-container>
-        <md-input-container>
+        </md-field>
+        <md-field>
           <label>日历</label>
           <md-input-ref required md-ref-id="suite.cbo.period.calendar.ref" v-model="model.main.calendar"/>
-        </md-input-container>
-        <md-input-container>
+        </md-field>
+        <md-field>
           <label>币种</label>
           <md-input-ref required md-ref-id="suite.cbo.currency.ref" v-model="model.main.currency"/>
-        </md-input-container>
-        <md-input-container>
+        </md-field>
+        <md-field>
           <label>备注</label>
           <md-textarea v-model="model.main.memo"></md-textarea>
-        </md-input-container>
+        </md-field>
       </md-content>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
 </template>
 <script>
-  import model from '../../gmf-sys/core/mixin/model';
+  import model from 'gmf/core/mixins/MdModel/MdModel';
   export default {
     data() {
       return {

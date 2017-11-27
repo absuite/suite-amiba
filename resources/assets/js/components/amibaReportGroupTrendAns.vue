@@ -7,22 +7,22 @@
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
           <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>目的</label>
               <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="50" md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>从</label>
               <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.fm_period"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="50" md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>到</label>
               <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.to_period"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -71,8 +71,8 @@
 }
 </style>
 <script>
-import common from '../../gmf-sys/core/utils/common';
-import queryCase from '../../gmf-sys/core/mixin/queryCase';
+import common from 'gmf/core/utils/common';
+import queryCase from 'gmf/core/mixins/MdQuery/MdQueryCase';
 var defaultOpts = {
   chart: {
     type: 'line',

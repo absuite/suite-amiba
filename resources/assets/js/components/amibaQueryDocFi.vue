@@ -7,34 +7,34 @@
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>期间</label>
               <md-input-ref md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-input-ref>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>业务类型</label>
               <md-input v-model="model.biz_type"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>单据类型</label>
               <md-input v-model="model.doc_type"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>组织</label>
               <md-input v-model="model.org"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <label>科目</label>
               <md-input v-model="model.account"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
           <md-layout>
             <md-button @click.native="query">查询</md-button>

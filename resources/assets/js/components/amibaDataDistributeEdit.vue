@@ -12,20 +12,20 @@
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">
-        <md-input-container>
+        <md-field>
           <label>核算目的</label>
           <md-input-ref md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
           </md-input-ref>
-        </md-input-container>
-        <md-input-container>
+        </md-field>
+        <md-field>
           <label>期间</label>
           <md-input-ref multiple @init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
           </md-input-ref>
-        </md-input-container>
-        <md-input-container>
+        </md-field>
+        <md-field>
           <label>备注</label>
           <md-input v-model="model.main.memo"></md-input>
-        </md-input-container>
+        </md-field>
         <md-layout>
           <md-button class="md-raised md-accent" @click.native="save" :disabled="!canSave">分配</md-button>
         </md-layout>

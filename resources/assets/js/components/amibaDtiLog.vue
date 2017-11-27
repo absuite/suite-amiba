@@ -8,9 +8,9 @@
       <md-part-toolbar-group>
         <md-layout md-gutter>
           <md-layout>
-            <md-input-container class="md-inset">
+            <md-field class="md-inset">
               <md-input :fetch="doFetch" placeholder="search" @keyup.enter.native="load()"></md-input>
-            </md-input-container>
+            </md-field>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
