@@ -21,7 +21,7 @@
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-field>
               <label>编码</label>
-              <md-input required  v-model="model.main.code"></md-input>
+              <md-input required v-model="model.main.code"></md-input>
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
@@ -31,18 +31,11 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose"></md-input-ref>
-            </md-field>
+            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>上级核算要素</label>
-              <md-input-ref @init="initParentElementRef" md-ref-id="suite.amiba.element.ref" v-model="model.main.parent"></md-input-ref>
-            </md-field>
+            <md-ref-input md-label="上级核算要素" @init="initParentElementRef" md-ref-id="suite.amiba.element.ref" v-model="model.main.parent"></md-ref-input>
           </md-layout>
-          
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-field>
               <label>类型</label>
@@ -68,9 +61,7 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <md-checkbox required v-model="model.main.is_manual">是否人工</md-checkbox>
-            </md-field>
+            <md-checkbox required v-model="model.main.is_manual">是否人工</md-checkbox>
           </md-layout>
         </md-layout>
       </md-content>
@@ -79,74 +70,73 @@
   </md-part>
 </template>
 <script>
-  import model from 'gmf/core/mixins/MdModel/MdModel';
-  export default {
-    data() {
+import model from 'gmf/core/mixins/MdModel/MdModel';
+export default {
+  data() {
+    return {};
+  },
+  mixins: [model],
+  computed: {
+    canSave() {
+      return this.validate(true);
+    }
+  },
+  watch: {
+    'model.main.parent': function(newV, oldV) {
+      if (newV) {
+        this.model.main.direction_enum = newV.direction_enum;
+        this.model.main.type_enum = newV.type_enum;
+      } else {
+        this.model.main.direction_enum = '';
+        this.model.main.type_enum = '';
+      }
+    }
+  },
+  methods: {
+    validate(notToast) {
+      var validator = this.$validate(this.model.main, {
+        'code': 'required',
+        'name': 'required',
+        'purpose': 'required',
+        'type_enum': 'required',
+        'direction_enum': 'required',
+        'factor_enum': 'required'
+      });
+      var fail = validator.fails();
+      if (fail && !notToast) {
+        this.$toast(validator.errors.all());
+      }
+      return !fail;
+    },
+    initModel() {
       return {
-      };
-    },
-    mixins: [model],
-    computed: {
-      canSave() {
-        return this.validate(true);
-      }
-    },
-    watch: {
-      'model.main.parent':function(newV,oldV) {
-        if(newV){
-          this.model.main.direction_enum=newV.direction_enum;
-          this.model.main.type_enum=newV.type_enum;
-        }else{
-          this.model.main.direction_enum='';
-          this.model.main.type_enum='';
+        main: {
+          'code': '',
+          'name': '',
+          'purpose': this.$root.userConfig.purpose,
+          'parent': null,
+          'type_enum': '',
+          'direction_enum': '',
+          'factor_enum': '',
+          'scope_enum': ''
         }
       }
     },
-    methods: {
-      validate(notToast){
-        var validator=this.$validate(this.model.main,{
-          'code':'required',
-          'name':'required',
-          'purpose':'required',
-          'type_enum':'required',
-          'direction_enum':'required',
-          'factor_enum':'required'
-        });
-        var fail=validator.fails();
-        if(fail&&!notToast){
-          this.$toast(validator.errors.all());
-        }
-        return !fail;
-      },
-      initModel(){
-        return {
-          main:{
-            'code':'',
-            'name':'',
-            'purpose':this.$root.userConfig.purpose,
-            'parent':null,
-            'type_enum':'',
-            'direction_enum':'',
-            'factor_enum':'',
-            'scope_enum':''
-          }
-        }
-      },
-      list() {
-        this.$router.push({ name: 'module', params: { module: 'amiba.element.list' }});
-      },
-      initParentElementRef(options){
-        if(this.model.main.purpose){
-          options.wheres.purpose={name:'purpose_id',value:this.model.main.purpose.id};
-        }else{
-          options.wheres.purpose=false;
-        }
-      },
+    list() {
+      this.$router.push({ name: 'module', params: { module: 'amiba.element.list' } });
     },
-    created() {
-      this.model.entity='suite.amiba.element';
-      this.model.order="code";
-      this.route='amiba/elements';
+    initParentElementRef(options) {
+      if (this.model.main.purpose) {
+        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+      } else {
+        options.wheres.purpose = false;
+      }
     },
-  };
+  },
+  created() {
+    this.model.entity = 'suite.amiba.element';
+    this.model.order = "code";
+    this.route = 'amiba/elements';
+  },
+};
 </script>

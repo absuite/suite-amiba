@@ -31,18 +31,12 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>上级阿米巴单元</label>
-              <md-input-ref @init="initParentGroupRef" md-ref-id="suite.amiba.group.ref" v-model="model.main.parent">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="上级阿米巴单元" @init="initParentGroupRef" md-ref-id="suite.amiba.group.ref" v-model="model.main.parent">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-field>
@@ -89,7 +83,7 @@ export default {
       lineRefID: ''
     };
   },
-  mixins: [model,modelGrid],
+  mixins: [model, modelGrid],
   computed: {
     canSave() {
       return this.validate(true);
@@ -139,9 +133,9 @@ export default {
           'code': '',
           'name': '',
           'memo': '',
-          'parent':null,
+          'parent': null,
           'type_enum': '',
-          'factor_enum':''
+          'factor_enum': ''
         }
       }
     },

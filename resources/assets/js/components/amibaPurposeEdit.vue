@@ -25,14 +25,8 @@
           <label>名称</label>
           <md-input required v-model="model.main.name"></md-input>
         </md-field>
-        <md-field>
-          <label>日历</label>
-          <md-input-ref required md-ref-id="suite.cbo.period.calendar.ref" v-model="model.main.calendar"/>
-        </md-field>
-        <md-field>
-          <label>币种</label>
-          <md-input-ref required md-ref-id="suite.cbo.currency.ref" v-model="model.main.currency"/>
-        </md-field>
+        <md-ref-input md-label="日历" required md-ref-id="suite.cbo.period.calendar.ref" v-model="model.main.calendar" />
+        <md-ref-input md-label="币种" required md-ref-id="suite.cbo.currency.ref" v-model="model.main.currency" />
         <md-field>
           <label>备注</label>
           <md-textarea v-model="model.main.memo"></md-textarea>
@@ -43,51 +37,50 @@
   </md-part>
 </template>
 <script>
-  import model from 'gmf/core/mixins/MdModel/MdModel';
-  export default {
-    data() {
-      return {
-      };
+import model from 'gmf/core/mixins/MdModel/MdModel';
+export default {
+  data() {
+    return {};
+  },
+  mixins: [model],
+  computed: {
+    canSave() {
+      return this.validate(true);
+    }
+  },
+  methods: {
+    validate(notToast) {
+      var validator = this.$validate(this.model.main, {
+        'code': 'required',
+        'name': 'required',
+        'calendar': 'required',
+        'currency': 'required'
+      });
+      var fail = validator.fails();
+      if (fail && !notToast) {
+        this.$toast(validator.errors.all());
+      }
+      return !fail;
     },
-    mixins: [model],
-    computed: {
-      canSave() {
-        return this.validate(true);
+    initModel() {
+      return {
+        main: {
+          'code': '',
+          'name': '',
+          'memo': '',
+          calendar: this.$root.userConfig.calendar,
+          currency: this.$root.userConfig.currency
+        }
       }
     },
-    methods: {
-      validate(notToast){
-        var validator=this.$validate(this.model.main,{
-          'code':'required',
-          'name':'required',
-          'calendar':'required',
-          'currency':'required'
-        });
-        var fail=validator.fails();
-        if(fail&&!notToast){
-          this.$toast(validator.errors.all());
-        }
-        return !fail;
-      },
-      initModel(){
-        return {
-          main:{
-            'code':'',
-            'name':'',
-            'memo':'',
-            calendar:this.$root.userConfig.calendar,
-            currency:this.$root.userConfig.currency
-          }
-        }
-      },
-      list() {
-        this.$router.push({ name: 'module', params: { module: 'amiba.purpose.list' }});
-      },
+    list() {
+      this.$router.push({ name: 'module', params: { module: 'amiba.purpose.list' } });
     },
-    created() {
-      this.model.entity='suite.amiba.purpose';
-      this.model.order="code";
-      this.route='amiba/purposes';
-    },
-  };
+  },
+  created() {
+    this.model.entity = 'suite.amiba.purpose';
+    this.model.order = "code";
+    this.route = 'amiba/purposes';
+  },
+};
 </script>

@@ -31,16 +31,10 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
-            </md-field>
+            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>期间</label>
-              <md-input-ref @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
-            </md-field>
+            <md-ref-input md-label="期间" @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-field>
@@ -94,7 +88,7 @@ export default {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.adjust.list' } });
     },
     onLineAdd() {
-      this.$refs.grid && this.$refs.grid.addDatas({ });
+      this.$refs.grid && this.$refs.grid.addDatas({});
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {

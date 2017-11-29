@@ -35,17 +35,11 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref required :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="核算目的" required :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>阿米巴</label>
-              <md-input-ref required :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
-            </md-field>
+            <md-ref-input md-label="阿米巴" required :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
             <md-field>

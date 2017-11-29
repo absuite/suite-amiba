@@ -38,22 +38,13 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
-            </md-field>
+            <md-ref-input md-label="核算目的" :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>期间</label>
-              <md-input-ref @init="init_period_ref" :disabled="isApproved" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
-            </md-field>
+            <md-ref-input md-label="期间" @init="init_period_ref" :disabled="isApproved" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算要素</label>
-              <md-input-ref @init="init_element_ref" :disabled="isApproved" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
-            </md-field>
+            <md-ref-input md-label="核算要素" @init="init_element_ref" :disabled="isApproved" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-field>
@@ -62,16 +53,10 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>阿米巴</label>
-              <md-input-ref @init="init_fm_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
-            </md-field>
+            <md-ref-input md-label="阿米巴" @init="init_fm_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>对方阿米巴</label>
-              <md-input-ref @init="init_to_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
-            </md-field>
+            <md-ref-input md-label="对方阿米巴" @init="init_to_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
             <md-field>

@@ -19,32 +19,20 @@
       <md-content class="flex layout-column">
         <md-layout md-gutter>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>阿米巴</label>
-              <md-input-ref @init="init_group_ref" required md-ref-id="suite.amiba.group.ref" v-model="model.main.group"></md-input-ref>
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="阿米巴" @init="init_group_ref" required md-ref-id="suite.amiba.group.ref" v-model="model.main.group"></md-ref-input>
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>开始期间</label>
-              <md-input-ref @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.fm_period">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="开始期间" @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.fm_period">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>结束期间</label>
-              <md-input-ref @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.to_period">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="结束期间" @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.to_period">
+            </md-ref-input>
           </md-layout>
         </md-layout>
         <md-layout class="flex">

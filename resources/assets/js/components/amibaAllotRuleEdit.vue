@@ -31,25 +31,16 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>核算目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>分配方法</label>
-              <md-input-ref @init="init_method_ref" required md-ref-id="suite.amiba.allot.method.ref" v-model="model.main.method">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="分配方法" @init="init_method_ref" required md-ref-id="suite.amiba.allot.method.ref" v-model="model.main.method">
+            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" md-flex-xlarge="20">
-            <md-field>
-              <label>来源核算要素</label>
-              <md-input-ref @init="init_element_ref" required md-ref-id="suite.amiba.element.ref" v-model="model.main.element">
-              </md-input-ref>
-            </md-field>
+            <md-ref-input md-label="来源核算要素" @init="init_element_ref" required md-ref-id="suite.amiba.element.ref" v-model="model.main.element">
+            </md-ref-input>
           </md-layout>
         </md-layout>
         <md-layout class="flex">

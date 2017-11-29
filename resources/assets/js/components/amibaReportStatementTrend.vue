@@ -3,23 +3,14 @@
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
-          <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-field class="md-inset">
-              <label>目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-input-ref>
-            </md-field>
+          <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+            <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="50" md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-field class="md-inset">
-              <label>从</label>
-              <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.fm_period"></md-input-ref>
-            </md-field>
+          <md-layout md-flex-xsmall="50" md-flex-small="33" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+            <md-ref-input md-label="从" required md-ref-id="suite.cbo.period.account.ref" v-model="model.fm_period"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="50" md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-field class="md-inset">
-              <label>到</label>
-              <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.to_period"></md-input-ref>
-            </md-field>
+          <md-layout md-flex-xsmall="50" md-flex-small="33" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+            <md-ref-input md-label="到" required md-ref-id="suite.cbo.period.account.ref" v-model="model.to_period"></md-ref-input>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -124,19 +115,19 @@ export default {
       this.model.group = group;
     },
     loadGroups() {
-      var params={};
-      if(this.model.purpose){
-        params.purpose_id=this.model.purpose.id;
+      var params = {};
+      if (this.model.purpose) {
+        params.purpose_id = this.model.purpose.id;
       }
-      this.groups=[];
+      this.groups = [];
       this.$http.get('amiba/groups/all', { params: params }).then(response => {
         this.groups = response.data.data;
-        this.model.group=null;
+        this.model.group = null;
       }, response => {
         this.$toast(response);
       });
     },
-    loadPeriodInfo(){
+    loadPeriodInfo() {
       this.$http.get('amiba/reports/period-info').then(response => {
         this.model.fm_period = response.data.data.yearFirstPeriod;
         this.model.to_period = response.data.data.period;

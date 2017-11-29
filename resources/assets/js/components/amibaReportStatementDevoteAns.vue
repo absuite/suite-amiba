@@ -3,17 +3,11 @@
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
-          <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-field class="md-inset">
-              <label>目的</label>
-              <md-input-ref required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-input-ref>
-            </md-field>
+          <md-layout md-hide-xsmall md-flex-small="33" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+            <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="25" md-flex-large="20"  md-flex-xlarge="20">
-            <md-field class="md-inset">
-              <label>期间</label>
-              <md-input-ref required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-input-ref>
-            </md-field>
+          <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+            <md-ref-input md-label="期间" required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-ref-input>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -104,14 +98,14 @@ export default {
       this.model.group = group;
     },
     loadGroups() {
-      var params={};
-      if(this.model.purpose){
-        params.purpose_id=this.model.purpose.id;
+      var params = {};
+      if (this.model.purpose) {
+        params.purpose_id = this.model.purpose.id;
       }
-      this.groups=[];
+      this.groups = [];
       this.$http.get('amiba/groups/all', { params: params }).then(response => {
         this.groups = response.data.data;
-        this.model.group=null;
+        this.model.group = null;
       }, response => {
         this.$toast(response);
       });
