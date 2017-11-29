@@ -14,10 +14,6 @@
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
       <span class="flex"></span>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>核算目的</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>编辑</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-content>

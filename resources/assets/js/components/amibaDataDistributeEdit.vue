@@ -5,10 +5,6 @@
         <md-button @click.native="list">列表</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>间接费用分配</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>分配</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">

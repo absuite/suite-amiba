@@ -17,10 +17,6 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>经营台账</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>查询</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-query @init="init_model_query" @select="select" ref="list" md-query-id="suite.amiba.result.profit.list"></md-query>

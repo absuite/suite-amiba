@@ -21,10 +21,6 @@
         <cbo-file-import @import="importData" template="/files/suite.amiba.doc.xlsx"></cbo-file-import>
       </md-part-toolbar-group>
       <span class="flex"></span>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>核算数据表</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>编辑</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">

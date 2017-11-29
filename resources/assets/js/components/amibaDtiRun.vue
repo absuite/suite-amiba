@@ -12,10 +12,6 @@
           <md-icon>play_circle_filled</md-icon>执行</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>接口</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>执行</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true">

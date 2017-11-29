@@ -17,10 +17,6 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>阿米巴排名分析</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>报表</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body class="md-no-scroll">
       <md-layout>

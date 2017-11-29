@@ -41,10 +41,6 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>财务数据</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>查询</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-query @select="select" @init="initQuery" ref="list" md-query-id="suite.amiba.doc.fi.list"></md-query>

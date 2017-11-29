@@ -7,18 +7,8 @@
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-group>
-        <md-layout md-gutter>
-          <md-layout>
-            <md-field class="md-inset">
-              <md-input :fetch="doFetch" placeholder="search" @keyup.enter.native="load()"></md-input>
-            </md-field>
-          </md-layout>
-        </md-layout>
+        <md-fetch :fetch="doFetch"></md-fetch>
       </md-part-toolbar-group>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>核算数据表</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>列表</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-query @select="select" @dblclick="edit" @init="initQuery" ref="list" md-query-id="suite.amiba.data.doc.list"></md-query>

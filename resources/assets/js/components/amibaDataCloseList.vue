@@ -6,10 +6,6 @@
         <md-button @click.native="remove" :disabled="!(selectRows&&selectRows.length)">取消关账</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>期间关账</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>列表</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-query @select="select" ref="list" md-query-id="suite.amiba.data.close.list"></md-query>

@@ -7,10 +7,7 @@
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
-            <md-field class="md-inset">
-              <label>期间</label>
-              <md-input-ref md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-input-ref>
-            </md-field>
+            <md-ref-input md-ref-id="suite.cbo.period.account.ref" md-label="期间" v-model="model.period"></md-ref-input>
           </md-layout>
           <md-layout md-flex-small="33" md-flex-medium="15" md-flex-large="15">
             <md-field class="md-inset">
@@ -41,10 +38,6 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>业务数据</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>查询</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
       <md-query @select="select" @init="initQuery" ref="list" md-query-id="suite.amiba.doc.biz.list"></md-query>

@@ -23,10 +23,6 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>阿米巴类比分析</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>报表</md-part-toolbar-crumb>
-      </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body direction="row" class="md-no-scroll">
       <md-part-body-side md-left>
