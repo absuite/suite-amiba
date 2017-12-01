@@ -12,7 +12,7 @@
         </md-layout>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body>
+    <md-part-body class="no-padding">
       <md-query @init="init_model_query" @select="select" ref="list" md-query-id="suite.amiba.result.profit.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>

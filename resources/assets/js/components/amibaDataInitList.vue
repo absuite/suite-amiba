@@ -7,7 +7,7 @@
       </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
-    <md-part-body>
+    <md-part-body class="no-padding">
       <md-query @select="select" @dblclick="edit" ref="list" md-query-id="suite.amiba.data.init.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>

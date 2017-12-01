@@ -17,24 +17,24 @@
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">
-        <md-layout md-gutter>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+        <md-layout md-gutter md-row>
+          <md-layout md-flex md-flex-small="100">
             <md-field>
               <label>编码</label>
               <md-input v-model="model.main.code"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+          <md-layout md-flex md-flex-small="100">
             <md-field>
               <label>名称</label>
               <md-input v-model="model.main.name"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+          <md-layout md-flex md-flex-small="100">
             <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
             </md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+          <md-layout md-flex md-flex-small="100">
             <md-ref-input md-label="阿米巴" @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.group">
             </md-ref-input>
           </md-layout>

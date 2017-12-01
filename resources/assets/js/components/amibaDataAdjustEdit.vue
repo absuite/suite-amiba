@@ -17,26 +17,26 @@
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">
-        <md-layout md-gutter>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+        <md-layout md-gutter md-row>
+          <md-layout md-flex md-flex-small="100">
             <md-field>
               <label>单据编号</label>
-              <md-input required v-model="model.main.doc_no" />
+              <md-input required v-model="model.main.doc_no"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+          <md-layout md-flex md-flex-small="100">
             <md-field>
               <label>单据日期</label>
-              <md-date required v-model="model.main.doc_date" />
+              <md-date required v-model="model.main.doc_date"></md-date>
             </md-field>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
+          <md-layout md-flex md-flex-small="100">
+            <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
-            <md-ref-input md-label="期间" @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
+          <md-layout md-flex md-flex-small="100">
+            <md-ref-input md-label="期间" @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="25" md-flex-large="20" md-flex-xlarge="20">
+          <md-layout md-flex md-flex-small="100">
             <md-field>
               <label>备注</label>
               <md-input v-model="model.main.memo" />

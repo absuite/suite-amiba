@@ -10,7 +10,7 @@
         <md-fetch :fetch="doFetch"></md-fetch>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body>
+    <md-part-body class="no-padding">
       <md-query @init="initQuery" @select="select" @dblclick="edit" ref="list" md-query-id="suite.amiba.element.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>

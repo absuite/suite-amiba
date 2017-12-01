@@ -9,7 +9,7 @@
         <md-fetch :fetch="doFetch"></md-fetch>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body>
+    <md-part-body class="no-padding">
       <md-query ref="list" @init="initQuery" md-query-id="gmf.sys.dti.log.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
