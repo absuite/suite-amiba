@@ -23,50 +23,45 @@
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>
-      <md-content class="flex layout-column">
+      <md-content class="flex layout-column md-form">
         <md-layout md-gutter md-row>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>单据编号</label>
               <md-input required :disabled="isApproved" v-model="model.main.doc_no" />
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
-            <md-field>
-              <label>单据日期</label>
-              <md-date required :disabled="isApproved" v-model="model.main.doc_date" />
-            </md-field>
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
+              <md-datepicker md-label="单据日期" required :disabled="isApproved" v-model="model.main.doc_date" />
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="核算目的" :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="期间" @init="init_period_ref" :disabled="isApproved" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="核算要素" @init="init_element_ref" :disabled="isApproved" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
           </md-layout>
-        </md-layout>
-        <md-layout md-gutter md-row>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>数据用途</label>
               <md-enum :disabled="isApproved" md-enum-id="suite.amiba.doc.use.type.enum" v-model="model.main.use_type_enum" />
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="阿米巴" @init="init_fm_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="对方阿米巴" @init="init_to_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>考核金额</label>
               <md-input type="number" required :disabled="isApproved" v-model="model.main.money" />
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>状态</label>
               <md-enum md-enum-id="suite.cbo.data.state.enum" disabled v-model="model.main.state_enum" />

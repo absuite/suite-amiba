@@ -2,13 +2,10 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-field class="md-inset">
-          <label>日期</label>
-          <md-date required v-model="model.date"></md-date>
-        </md-field>
+          <md-datepicker md-label="日期" required v-model="model.date"></md-datepicker>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button class="md-primary md-raised" @click.native="runAll" :disabled="is_running>0">
+        <md-button class="md-primary" @click.native="runAll" :disabled="is_running>0">
           <md-icon>play_circle_filled</md-icon>执行</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>

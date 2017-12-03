@@ -1,5 +1,5 @@
 <template>
-  <md-part>
+  <md-part class="md-full">
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
@@ -12,29 +12,25 @@
         </md-layout>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body class="md-no-scroll">
+    <md-part-body class="no-padding no-margin">
       <md-layout>
         <md-chart class="myChart" ref="myChart" :options="options"></md-chart>
       </md-layout>
       <md-layout class="flex">
         <md-content class="flex md-query">
           <md-table>
-            <md-table-header>
-              <md-table-row>
-                <md-table-head>阿米巴</md-table-head>
-                <md-table-head md-numeric>实际收入</md-table-head>
-                <md-table-head md-numeric>实际支出</md-table-head>
-                <md-table-head md-numeric>实际利润</md-table-head>
-              </md-table-row>
-            </md-table-header>
-            <md-table-body>
-              <md-table-row v-for="(row, index) in dataDetail" :key="index">
-                <md-table-cell>{{row.name}}</md-table-cell>
-                <md-table-cell md-numeric>{{row.this_income}}</md-table-cell>
-                <md-table-cell md-numeric>{{row.this_cost}}</md-table-cell>
-                <md-table-cell md-numeric>{{row.this_profit}}</md-table-cell>
-              </md-table-row>
-            </md-table-body>
+            <md-table-row>
+              <md-table-head>阿米巴</md-table-head>
+              <md-table-head md-numeric>实际收入</md-table-head>
+              <md-table-head md-numeric>实际支出</md-table-head>
+              <md-table-head md-numeric>实际利润</md-table-head>
+            </md-table-row>
+            <md-table-row v-for="(row, index) in dataDetail" :key="index">
+              <md-table-cell>{{row.name}}</md-table-cell>
+              <md-table-cell md-numeric>{{row.this_income}}</md-table-cell>
+              <md-table-cell md-numeric>{{row.this_cost}}</md-table-cell>
+              <md-table-cell md-numeric>{{row.this_profit}}</md-table-cell>
+            </md-table-row>
           </md-table>
         </md-content>
       </md-layout>

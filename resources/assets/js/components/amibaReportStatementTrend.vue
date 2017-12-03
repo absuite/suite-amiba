@@ -1,5 +1,5 @@
 <template>
-  <md-part>
+  <md-part class="md-full">
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
@@ -15,39 +15,35 @@
         </md-layout>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body direction="row" class="md-no-scroll">
+    <md-part-body direction="row" class="no-padding no-margin">
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" :md-selection="false" @focus="focusGroup"></md-tree-view>
       </md-part-body-side>
       <div class="layout layout-fill layout-column md-query">
         <md-table class="flex md-header-multiple">
-          <md-table-header>
-            <md-table-row>
-              <md-table-head style="min-width:2rem" rowspan="2">收支项目</md-table-head>
-              <template v-for="g in dataCategories">
-                <md-table-head colspan="3">{{g}}</md-table-head>
-              </template>
-            </md-table-row>
-            <md-table-row>
-              <template v-for="g in dataCategories">
-                <md-table-head style="min-width:1rem">发生额</md-table-head>
-                <md-table-head style="min-width:1rem">结构比率</md-table-head>
-                <md-table-head style="min-width:1rem">年累计</md-table-head>
-              </template>
-            </md-table-row>
-          </md-table-header>
-          <md-table-body>
-            <md-table-row v-for="(row, index) in dataDetail" :key="index">
-              <md-table-cell>
-                <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
-              </md-table-cell>
-              <template v-for="cItem in row.categories">
-                <md-table-cell md-numeric>{{cItem.money_month}}</md-table-cell>
-                <md-table-cell md-numeric>{{cItem.money_month_ratio}}</md-table-cell>
-                <md-table-cell md-numeric>{{cItem.money_year}}</md-table-cell>
-              </template>
-            </md-table-row>
-          </md-table-body>
+          <md-table-row>
+            <md-table-head style="min-width:2rem" rowspan="2">收支项目</md-table-head>
+            <template v-for="g in dataCategories">
+              <md-table-head colspan="3">{{g}}</md-table-head>
+            </template>
+          </md-table-row>
+          <md-table-row>
+            <template v-for="g in dataCategories">
+              <md-table-head style="min-width:1rem">发生额</md-table-head>
+              <md-table-head style="min-width:1rem">结构比率</md-table-head>
+              <md-table-head style="min-width:1rem">年累计</md-table-head>
+            </template>
+          </md-table-row>
+          <md-table-row v-for="(row, index) in dataDetail" :key="index">
+            <md-table-cell>
+              <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
+            </md-table-cell>
+            <template v-for="cItem in row.categories">
+              <md-table-cell md-numeric>{{cItem.money_month}}</md-table-cell>
+              <md-table-cell md-numeric>{{cItem.money_month_ratio}}</md-table-cell>
+              <md-table-cell md-numeric>{{cItem.money_year}}</md-table-cell>
+            </template>
+          </md-table-row>
         </md-table>
       </div>
     </md-part-body>

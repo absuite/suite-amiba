@@ -20,28 +20,28 @@
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>
-      <md-content class="flex layout-column">
+      <md-content class="flex layout-column md-form">
         <md-layout md-gutter md-row>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>编码</label>
               <md-input required :disabled="isApproved" v-model="model.main.code"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>名称</label>
               <md-input required :disabled="isApproved" v-model="model.main.name"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="核算目的" required :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
             </md-ref-input>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="阿米巴" required :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>状态</label>
               <md-enum md-enum-id="suite.cbo.data.state.enum" disabled v-model="model.main.state_enum" />

@@ -1,5 +1,5 @@
 <template>
-  <md-part>
+  <md-part class="md-full">
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
@@ -12,34 +12,30 @@
         </md-layout>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body direction="row" class="md-no-scroll">
+    <md-part-body direction="row" class="no-padding no-margin">
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" :md-selection="false" @focus="focusGroup"></md-tree-view>
       </md-part-body-side>
       <div class="layout layout-fill layout-column md-query">
         <md-table class="flex">
-          <md-table-header>
-            <md-table-row>
-              <md-table-head>收支项目</md-table-head>
-              <md-table-head>方向</md-table-head>
-              <md-table-head md-numeric>发生额</md-table-head>
-              <md-table-head md-numeric>结构比率</md-table-head>
-              <md-table-head md-numeric>年累计</md-table-head>
-              <md-table-head md-numeric>累计比率</md-table-head>
-            </md-table-row>
-          </md-table-header>
-          <md-table-body>
-            <md-table-row v-for="(row, index) in dataDetail" :key="index">
-              <md-table-cell>
-                <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
-              </md-table-cell>
-              <md-table-cell>{{row.direction}}</md-table-cell>
-              <md-table-cell md-numeric>{{row.month_value}}</md-table-cell>
-              <md-table-cell md-numeric>{{row.month_ratio}}</md-table-cell>
-              <md-table-cell md-numeric>{{row.year_value}}</md-table-cell>
-              <md-table-cell md-numeric>{{row.year_ratio}}</md-table-cell>
-            </md-table-row>
-          </md-table-body>
+          <md-table-row>
+            <md-table-head>收支项目</md-table-head>
+            <md-table-head>方向</md-table-head>
+            <md-table-head md-numeric>发生额</md-table-head>
+            <md-table-head md-numeric>结构比率</md-table-head>
+            <md-table-head md-numeric>年累计</md-table-head>
+            <md-table-head md-numeric>累计比率</md-table-head>
+          </md-table-row>
+          <md-table-row v-for="(row, index) in dataDetail" :key="index">
+            <md-table-cell>
+              <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
+            </md-table-cell>
+            <md-table-cell>{{row.direction}}</md-table-cell>
+            <md-table-cell md-numeric>{{row.month_value}}</md-table-cell>
+            <md-table-cell md-numeric>{{row.month_ratio}}</md-table-cell>
+            <md-table-cell md-numeric>{{row.year_value}}</md-table-cell>
+            <md-table-cell md-numeric>{{row.year_ratio}}</md-table-cell>
+          </md-table-row>
         </md-table>
       </div>
     </md-part-body>

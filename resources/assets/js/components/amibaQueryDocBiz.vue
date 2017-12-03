@@ -34,7 +34,7 @@
             </md-field>
           </md-layout>
           <md-layout>
-            <md-button @click.native="query">查询</md-button>
+            <md-button class="md-primary" @click.native="query">查询</md-button>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>

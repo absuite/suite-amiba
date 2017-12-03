@@ -69,6 +69,9 @@ class GroupController extends Controller {
 		}
 		$input['is_leaf'] = 1;
 		$input['ent_id'] = $request->oauth_ent_id;
+		if (empty($input['employees'])) {
+			$input['employees'] = 0;
+		}
 		$data = Models\Group::create($input);
 
 		$this->storeLines($request, $data->id);
@@ -101,6 +104,9 @@ class GroupController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$oldData = Models\Group::find($id);
+		if (empty($input['employees'])) {
+			$input['employees'] = 0;
+		}
 
 		$data = Models\Group::where('id', $id)->update($input);
 		$data = Models\Group::find($id);

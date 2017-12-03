@@ -1,5 +1,5 @@
 <template>
-  <md-part>
+  <md-part class="md-full">
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
@@ -15,7 +15,7 @@
         </md-layout>
       </md-part-toolbar-group>
     </md-part-toolbar>
-    <md-part-body direction="row" class="md-no-scroll">
+    <md-part-body direction="row" class="no-padding no-margin">
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" @focus="focusGroup" @select="selectGroups"></md-tree-view>
       </md-part-body-side>
@@ -26,18 +26,14 @@
         <md-layout class="flex">
           <md-content class="flex md-query">
             <md-table>
-              <md-table-header>
-                <md-table-row>
-                  <md-table-head>阿米巴</md-table-head>
-                  <md-table-head md-numeric v-for="(cell, cind) in categories" :key="cind">{{cell}}</md-table-head>
-                </md-table-row>
-              </md-table-header>
-              <md-table-body>
-                <md-table-row v-for="(row, index) in dataDetail" :key="index">
-                  <md-table-cell>{{row.name}}</md-table-cell>
-                  <md-table-cell md-numeric v-for="(cell, cind) in categories" :key="cind">{{row.profit[cind] }}</md-table-cell>
-                </md-table-row>
-              </md-table-body>
+              <md-table-row>
+                <md-table-head>阿米巴</md-table-head>
+                <md-table-head md-numeric v-for="(cell, cind) in categories" :key="cind">{{cell}}</md-table-head>
+              </md-table-row>
+              <md-table-row v-for="(row, index) in dataDetail" :key="index">
+                <md-table-cell>{{row.name}}</md-table-cell>
+                <md-table-cell md-numeric v-for="(cell, cind) in categories" :key="cind">{{row.profit[cind] }}</md-table-cell>
+              </md-table-row>
             </md-table>
           </md-content>
         </md-layout>

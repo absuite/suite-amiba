@@ -16,52 +16,50 @@
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>
-      <md-content class="flex layout-column">
+      <md-content class="flex layout-column md-form md-form">
         <md-layout md-gutter md-row>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>编码</label>
               <md-input required v-model="model.main.code"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>名称</label>
               <md-input required v-model="model.main.name"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
             </md-ref-input>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-ref-input md-label="上级阿米巴单元" @init="initParentGroupRef" md-ref-id="suite.amiba.group.ref" v-model="model.main.parent">
             </md-ref-input>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>类型</label>
               <md-enum md-enum-id="suite.amiba.group.type.enum" v-model="model.main.type_enum"></md-enum>
             </md-field>
           </md-layout>
-        </md-layout>
-        <md-layout md-gutter md-row>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>经营体类型</label>
               <md-enum md-enum-id="suite.amiba.group.factor.enum" v-model="model.main.factor_enum"></md-enum>
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>员工人数</label>
               <md-input required type="number" v-model="model.main.employees"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex md-flex-small="100">
+          <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex="20">
             <md-field>
               <label>备注</label>
-              <md-textarea v-model="model.main.memo"></md-textarea>
+              <md-input v-model="model.main.memo"></md-input>
             </md-field>
           </md-layout>
         </md-layout>
