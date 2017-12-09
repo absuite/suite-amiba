@@ -50,6 +50,9 @@ class DocFiController extends Controller {
 				'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'data_src_identity']);
 			$data['ent_id'] = $entId;
 			$data['data_src_identity'] = $data_src_identity;
+			if (!empty($data['doc_date'])) {
+				$data['doc_date'] = substr($data['doc_date'], 0, 10);
+			}
 			AmibaModels\DocFi::create($data);
 		}
 		return $this->toJson(true);

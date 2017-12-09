@@ -83,10 +83,10 @@ class AmibaDtiRunJob implements ShouldQueue {
 			throw $e;
 		}
 	}
-	private function runDtiItem_U9($dti, $paramsConfig = []) {
+	private function fetchDataFromDti($dti, $paramsConfig = []) {
 		$result = false;
 		$base_uri = '';
-		$apiPath = 'RestServices/UFIDA.U9.ISV.TransData.ICommonQuery.svc/Do';
+		$apiPath = $dti->path ?: $dti->code;
 		if ($dti->category && $dti->category->host) {
 			$base_uri = $dti->category->host;
 		}
@@ -98,36 +98,24 @@ class AmibaDtiRunJob implements ShouldQueue {
 			'headers' => ['Accept' => 'application/json', 'Content-Type' => 'application/json'],
 			'verify' => false,
 		]);
-
-		$input = [
-			'serverName' => $dti->code,
-			'parameters' => '',
-		];
-		if (!empty($paramsConfig['ent_code'])) {
-			$input['context']['EntCode'] = $paramsConfig['ent_code'];
-		}
+		$input = [];
 		if ($dti->body && count($dti->body)) {
-			$input['parameters'] = $this->parseParams($dti->body, $paramsConfig);
+			$input['params'] = $this->parseParams($dti->body, $paramsConfig);
 		}
-
-		Log::error(static::class . "dti post to u9 {$base_uri}{$apiPath}:" . json_encode($input));
+		Log::error(static::class . "dti post to {$base_uri}{$apiPath}:" . json_encode($input));
 		$res = $client->request('POST', $apiPath, [
 			'json' => $input,
 		]);
+
 		$result = (string) $res->getBody();
 
 		$result = json_decode($result);
-
-		if ($result->d->Error) {
-			Log::error($result->d->Error);
-			throw new \Exception($result->d->Error . ',请查看U9日志', 1);
+		if (!empty($result->d)) {
+			$result = $result->d;
 		}
-		$result = $result->d->Datas;
-		//Log::error(static::class . "dti data from u9:" . json_encode($result));
-		if ($result) {
-			$result = json_decode($result);
+		if (!empty($result->data)) {
+			$result = $result->data;
 		}
-		//Log::error(static::class . "dti data from u9 json:" . json_encode($result));
 		return $result;
 	}
 	private function parseParams($paramStr, $paramsConfig = []) {
@@ -145,9 +133,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 					$paramsObj->{$pk} = $parseValue;
 				}
 			}
-			$paramStr = json_encode($paramsObj);
+			return $paramsObj;
 		}
-		return $paramStr;
+		return [];
 	}
 	private function getDtiParamConfig($dti) {
 		$dtiParams = Models\DtiParam::where('dti_id', $dti->id)->get();
@@ -190,7 +178,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		try {
 			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']远程调用.开始']);
 			$paramsConfig = $this->getDtiParamConfig($dti);
-			$result = $this->runDtiItem_U9($dti, $paramsConfig);
+			$result = $this->fetchDataFromDti($dti, $paramsConfig);
 
 			$this->callLocalStore($dti, $result, $paramsConfig);
 
