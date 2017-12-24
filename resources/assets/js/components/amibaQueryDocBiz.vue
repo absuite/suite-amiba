@@ -4,6 +4,9 @@
       <md-part-toolbar-group>
         <md-button @click.native="remove" :disabled="!(selectRows&&selectRows.length)">删除</md-button>
       </md-part-toolbar-group>
+      <md-part-toolbar-group>
+        <cbo-file-import md-action="amiba/doc-bizs/import" template="/files/suite.amiba.doc.biz.xlsx"></cbo-file-import>
+      </md-part-toolbar-group>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
           <md-layout md-flex-sm="33" md-flex-md="15" md-flex-lg="15">

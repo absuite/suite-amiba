@@ -1,8 +1,10 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Suite\Amiba\Models as AmibaModels;
 use Validator;
 
@@ -66,6 +68,34 @@ class DocFiController extends Controller {
 	public function destroy(Request $request, $id) {
 		$ids = explode(",", $id);
 		AmibaModels\DocFi::destroy($ids);
+		return $this->toJson(true);
+	}
+
+	private function importData($data, $throwExp = true) {
+		$validator = Validator::make($data, [
+			'doc_no' => 'required',
+			'doc_date' => ['required', 'date'],
+			'biz_type' => [
+				'required',
+				Rule::in(['voucher']),
+			],
+			'debit_money' => ['numeric'],
+			'credit_money' => ['numeric'],
+		]);
+		if ($throwExp) {
+			$validator->validate();
+		} else if ($validator->fails()) {
+			return false;
+		}
+		$data['ent_id'] = GAuth::entId();
+		return AmibaModels\DocFi::create($data);
+	}
+	public function import(Request $request) {
+		$datas = app('Suite\Cbo\Bp\FileImport')->create($this, $request);
+		$datas->each(function ($row, $key) {
+			$row['data_src_identity'] = 'import';
+			$this->importData($row);
+		});
 		return $this->toJson(true);
 	}
 }
