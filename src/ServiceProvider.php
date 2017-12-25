@@ -20,15 +20,11 @@ class ServiceProvider extends BaseServiceProvider {
 			$publishes = config('gmf.publishes', 'gmf');
 			$this->publishes([
 				__DIR__ . '/../resources/assets/js' => base_path('resources/assets/js/vendor/suite-amiba'),
-			], $publishes);
-
-			$this->publishes([
 				__DIR__ . '/../resources/assets/sass' => base_path('resources/assets/sass/vendor/suite-amiba'),
 			], $publishes);
 
 			$this->publishes([
-				__DIR__ . '/../resources/assets/img' => base_path('public/img'),
-				__DIR__ . '/../resources/assets/files' => base_path('public/files'),
+				__DIR__ . '/../resources/public' => public_path('assets/vendor/suite-amiba'),
 			], $publishes);
 
 			$this->publishes([

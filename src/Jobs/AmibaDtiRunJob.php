@@ -83,6 +83,47 @@ class AmibaDtiRunJob implements ShouldQueue {
 			throw $e;
 		}
 	}
+	private function fetchDataFromU9($dti, $paramsConfig = []) {
+		$result = false;
+		$base_uri = '';
+		$apiPath = 'RestServices/UFIDA.U9.ISV.TransData.ICommonQuery.svc/Do';
+		if ($dti->category && $dti->category->host) {
+			$base_uri = $dti->category->host;
+		}
+		if (!ends_with($base_uri, "/")) {
+			$base_uri = $base_uri . '/';
+		}
+		$client = new GuzzleHttp\Client([
+			'base_uri' => $base_uri,
+			'headers' => ['Accept' => 'application/json', 'Content-Type' => 'application/json'],
+			'verify' => false,
+		]);
+		$input = [
+			'serverName' => $dti->code,
+			'parameters' => '',
+		];
+		if (!empty($paramsConfig['ent_code'])) {
+			$input['context']['EntCode'] = $paramsConfig['ent_code'];
+		}
+		if ($dti->body && count($dti->body)) {
+			$input['parameters'] = $this->parseParams($dti->body, $paramsConfig);
+		}
+		Log::error(static::class . "dti post to u9 {$base_uri}{$apiPath}:" . json_encode($input));
+		$res = $client->request('POST', $apiPath, [
+			'json' => $input,
+		]);
+		$result = (string) $res->getBody();
+		$result = json_decode($result);
+		if ($result->d->Error) {
+			Log::error($result->d->Error);
+			throw new \Exception($result->d->Error . ',请查看U9日志', 1);
+		}
+		$result = $result->d->Datas;
+		if ($result) {
+			$result = json_decode($result);
+		}
+		return $result;
+	}
 	private function fetchDataFromDti($dti, $paramsConfig = []) {
 		$result = false;
 		$base_uri = '';
@@ -178,8 +219,11 @@ class AmibaDtiRunJob implements ShouldQueue {
 		try {
 			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']远程调用.开始']);
 			$paramsConfig = $this->getDtiParamConfig($dti);
-			$result = $this->fetchDataFromDti($dti, $paramsConfig);
-
+			if ($dti->category && $dti->category->code == 'u9') {
+				$result = $this->fetchDataFromU9($dti, $paramsConfig);
+			} else {
+				$result = $this->fetchDataFromDti($dti, $paramsConfig);
+			}
 			$this->callLocalStore($dti, $result, $paramsConfig);
 
 		} catch (\Exception $exception) {
