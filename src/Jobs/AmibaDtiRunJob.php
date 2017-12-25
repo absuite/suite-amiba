@@ -106,7 +106,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			$input['context']['EntCode'] = $paramsConfig['ent_code'];
 		}
 		if ($dti->body && count($dti->body)) {
-			$input['parameters'] = $this->parseParams($dti->body, $paramsConfig);
+			$input['parameters'] = json_encode($this->parseParams($dti->body, $paramsConfig));
 		}
 		Log::error(static::class . "dti post to u9 {$base_uri}{$apiPath}:" . json_encode($input));
 		$res = $client->request('POST', $apiPath, [
