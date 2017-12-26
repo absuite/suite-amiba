@@ -8,10 +8,10 @@ use Gmf\Sys\Models;
 use Illuminate\Http\Request;
 use Suite\Amiba\Jobs;
 use Suite\Cbo\Models\PeriodAccount;
-
+use GAuth;
 class DtiController extends Controller {
 	public function run(Request $request) {
-		$query = Models\Dti::select('id')->where('ent_id', $request->oauth_ent_id);
+		$query = Models\Dti::select('id')->where('ent_id', GAuth::entId());
 		if ($request->has('dtis')) {
 			$dtis = explode(",", $request->dtis);
 			$query->where(function ($query) use ($dtis) {
@@ -25,15 +25,15 @@ class DtiController extends Controller {
 		}
 		$query->orderBy('sequence');
 		$datas = $query->pluck('id')->toArray();
-		$query = PeriodAccount::where('ent_id', $request->oauth_ent_id)
+		$query = PeriodAccount::where('ent_id', GAuth::entId())
 			->where('from_date', '<=', $request->date)
 			->where('to_date', '>=', $request->date);
 		$query->select(DB::raw('min(from_date) as from_date, max(to_date) as to_date'));
 		$dates = $query->first();
 
 		$context = [];
-		$context['ent_id'] = $request->oauth_ent_id;
-		$context['user_id'] = Auth::id();
+		$context['ent_id'] = GAuth::entId();
+		$context['user_id'] = GAuth::id();
 		$context['date'] = $request->date;
 		if ($dates) {
 			$context['fm_date'] = $dates->from_date;

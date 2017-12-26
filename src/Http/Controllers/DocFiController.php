@@ -23,7 +23,7 @@ class DocFiController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$batch = intval($request->input('batch', 1));
-		$entId = $request->oauth_ent_id;
+		$entId =GAuth::entId();
 		$data_src_identity = '';
 		if (!empty($input['data_src_identity'])) {
 			$data_src_identity = $input['data_src_identity'];

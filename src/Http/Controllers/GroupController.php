@@ -7,7 +7,7 @@ use Gmf\Sys\Libs\TreeBuilder;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class GroupController extends Controller {
 	public function index(Request $request) {
 		$query = Models\Group::select('id', 'code', 'name', 'memo');
@@ -68,7 +68,7 @@ class GroupController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$input['is_leaf'] = 1;
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		if (empty($input['employees'])) {
 			$input['employees'] = 0;
 		}
@@ -153,7 +153,7 @@ class GroupController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['group_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] =GAuth::entId();
 					$data['data_type'] = $dataType;
 					Models\GroupLine::create($data);
 					continue;

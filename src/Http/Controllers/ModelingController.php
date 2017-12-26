@@ -6,7 +6,7 @@ use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class ModelingController extends Controller {
 	public function index(Request $request) {
 		$query = Models\Modeling::with('purpose', 'group');
@@ -48,7 +48,7 @@ class ModelingController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\Modeling::create($input);
 		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
@@ -85,7 +85,7 @@ class ModelingController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['modeling_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] = GAuth::entId();
 					Models\ModelingLine::create($data);
 					continue;
 				}

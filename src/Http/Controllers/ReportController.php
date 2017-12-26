@@ -6,7 +6,7 @@ use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models as AmibaModels;
 use Suite\Cbo\Models as CboModels;
-
+use GAuth;
 class ReportController extends Controller {
 	public function getPeriodInfo(Request $request) {
 		$result = [];
@@ -23,7 +23,7 @@ class ReportController extends Controller {
 				$calendar_id = $tmp->calendar_id;
 			}
 		}
-		$date = AmibaModels\DataDoc::where('ent_id', $request->oauth_ent_id)
+		$date = AmibaModels\DataDoc::where('ent_id', GAuth::entId())
 			->where('doc_date', '<=', date('Y-m-d'))
 			->max('doc_date');
 		//当前期间

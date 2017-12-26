@@ -9,7 +9,7 @@ use Suite\Amiba\Libs\MonthClose;
 use Suite\Amiba\Models;
 use Suite\Cbo\Models as CboModels;
 use Validator;
-
+use GAuth;
 class DataAccountingController extends Controller {
 	public function index(Request $request) {
 		$query = Models\DataAccounting::with('purpose', 'period');
@@ -37,7 +37,7 @@ class DataAccountingController extends Controller {
 		}
 		//月结校验
 
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		if (is_array($input['period_id'])) {
 			$periods = CboModels\PeriodAccount::whereIn('id', $input['period_id'])->orderBy('from_date')->get();
 			foreach ($periods as $value) {

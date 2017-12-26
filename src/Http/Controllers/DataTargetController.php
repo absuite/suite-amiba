@@ -6,7 +6,7 @@ use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class DataTargetController extends Controller {
 	public function index(Request $request) {
 		$query = Models\DataTarget::with('purpose', 'group', 'fm_period', 'to_period');
@@ -55,7 +55,7 @@ class DataTargetController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\DataTarget::create($input);
 		$this->storeLines($request, $data->id);
 		return $this->show($request, $data->id);
@@ -94,7 +94,7 @@ class DataTargetController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['target_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] = GAuth::entId();
 					Models\DataTargetLine::create($data);
 					continue;
 				}

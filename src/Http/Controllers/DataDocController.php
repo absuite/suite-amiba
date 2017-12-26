@@ -12,7 +12,7 @@ use Suite\Amiba\Jobs;
 use Suite\Amiba\Models;
 use Suite\Cbo\Models as CboModels;
 use Validator;
-
+use GAuth;
 class DataDocController extends Controller {
 	public function index(Request $request) {
 		$pageSize = $request->input('size', 10);
@@ -80,7 +80,7 @@ class DataDocController extends Controller {
 			'use_type' => 'suite.amiba.doc.use.type.enum',
 			'src_type' => 'suite.amiba.doc.src.type.enum',
 		]);
-		$ent_id = $request->oauth_ent_id;
+		$ent_id = GAuth::entId();
 		$input = InputHelper::fillEntity($input, $data, [
 			'purpose' => function ($value) use ($ent_id) {
 				if (empty($value)) {
@@ -157,7 +157,7 @@ class DataDocController extends Controller {
 	private function importLineData(Request $request, $head, $data) {
 		$input = array_only($data, ['qty', 'price', 'money', 'expense_code', 'account_code', 'memo']);
 
-		$ent_id = $request->oauth_ent_id;
+		$ent_id = GAuth::entId();
 		$input = InputHelper::fillEntity($input, $data, [
 			'trader' => function ($value) use ($ent_id) {
 				if (empty($value)) {
@@ -269,7 +269,7 @@ class DataDocController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\DataDoc::create($input);
 
 		$this->storeLines($request, $data->id);
@@ -312,7 +312,7 @@ class DataDocController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['doc_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] = GAuth::entId();
 					Models\DataDocLine::create($data);
 					continue;
 				}

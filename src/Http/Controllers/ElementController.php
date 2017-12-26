@@ -6,7 +6,7 @@ use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class ElementController extends Controller {
 	public function index(Request $request) {
 		$query = Models\Element::select('id', 'code', 'name', 'memo', 'scope_enum');
@@ -51,7 +51,7 @@ class ElementController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$input['is_leaf'] = 1;
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\Element::create($input);
 
 		if ($data && $data->parent_id) {

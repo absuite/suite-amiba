@@ -8,7 +8,7 @@ use Suite\Amiba\Jobs;
 use Suite\Amiba\Models;
 use Suite\Cbo\Models as CboModels;
 use Validator;
-
+use GAuth;
 class DataCloseController extends Controller {
 	public function index(Request $request) {
 		$query = Models\DataClose::with('purpose', 'period');
@@ -32,7 +32,7 @@ class DataCloseController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 
 		if (is_array($input['period_id'])) {
 			$periods = CboModels\PeriodAccount::whereIn('id', $input['period_id'])->orderBy('from_date')->get();

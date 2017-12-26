@@ -52,7 +52,7 @@ class DataTimeController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\DataTime::create($input);
 
 		$this->storeLines($request, $data->id);
@@ -88,7 +88,7 @@ class DataTimeController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['time_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] =GAuth::entId();
 					if (empty($data['nor_time'])) {
 						$data['nor_time'] = 0;
 					}

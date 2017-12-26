@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Suite\Amiba\Libs\MonthClose;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class DataAdjustController extends Controller {
 	public function index(Request $request) {
 		$query = Models\DataAdjust::with('purpose', 'period');
@@ -56,7 +56,7 @@ class DataAdjustController extends Controller {
 		}
 		//月结校验
 		MonthClose::check($request, $input['period_id'], $input['purpose_id']);
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\DataAdjust::create($input);
 		$this->storeLines($request, $data->id);
 
@@ -97,7 +97,7 @@ class DataAdjustController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['adjust_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] = GAuth::entId();
 					Models\DataAdjustLine::create($data);
 					continue;
 				}

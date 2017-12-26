@@ -6,7 +6,7 @@ use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class PurposeController extends Controller {
 	public function index(Request $request) {
 		$query = Models\Purpose::select('id', 'code', 'name', 'memo');
@@ -35,7 +35,7 @@ class PurposeController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] = GAuth::entId();
 		$data = Models\Purpose::create($input);
 		return $this->show($request, $data->id);
 	}

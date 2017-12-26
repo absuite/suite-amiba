@@ -6,7 +6,7 @@ use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-
+use GAuth;
 class DataInitController extends Controller {
 	public function index(Request $request) {
 		$query = Models\DataInit::with('purpose', 'period', 'currency');
@@ -53,7 +53,7 @@ class DataInitController extends Controller {
 		if ($validator->fails()) {
 			return $this->toError($validator->errors());
 		}
-		$input['ent_id'] = $request->oauth_ent_id;
+		$input['ent_id'] =GAuth::entId();
 		$data = Models\DataInit::create($input);
 
 		$this->storeLines($request, $data->id);
@@ -96,7 +96,7 @@ class DataInitController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['init_id'] = $headId;
-					$data['ent_id'] = $request->oauth_ent_id;
+					$data['ent_id'] = GAuth::entId();
 					Models\DataInitLine::create($data);
 					continue;
 				}
