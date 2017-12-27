@@ -1,7 +1,7 @@
 <?php
 $ns = 'Suite\Amiba\Http\Controllers';
 Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->group(function () {
-	Route::resource('docs', 'DocController', ['only' => ['index']]);
+	//Route::resource('docs', 'DocController', ['only' => ['index']]);
 
 	Route::get('/elements/all', 'ElementController@all');
 	Route::resource('elements', 'ElementController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
