@@ -2,8 +2,8 @@
 
 namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
-use Gmf\Ac\Models\User;
 use Gmf\Sys\Models;
+use Gmf\Sys\Models\User;
 use Gmf\Sys\Uuid;
 use GuzzleHttp;
 use Illuminate\Bus\Queueable;
