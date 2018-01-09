@@ -161,7 +161,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 	}
 	private function parseParams($paramStr, $paramsConfig = []) {
 		if ($paramStr) {
+
 			$paramsObj = json_decode($paramStr);
+
 			if ($paramsObj) {
 				foreach ($paramsObj as $pk => $pv) {
 					$parseValue = $pv;
