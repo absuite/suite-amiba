@@ -29,7 +29,7 @@ class DocBizController extends Controller {
 		if (!empty($input['data_src_identity'])) {
 			$data_src_identity = $input['data_src_identity'];
 		}
-		if ($data_src_identity) {
+		if ($data_src_identity && $batch <= 1) {
 			$query = AmibaModels\DocBiz::where('data_src_identity', $data_src_identity);
 			$query->where('ent_id', $entId);
 			if (!empty($input['fm_date'])) {
@@ -38,10 +38,7 @@ class DocBizController extends Controller {
 			if (!empty($input['to_date'])) {
 				$query->where('doc_date', '<=', $input['to_date']);
 			}
-			if ($batch <= 1) {
-				$query->delete();
-			}
-
+			$query->delete();
 		}
 		$datas = $request->input('datas');
 		foreach ($datas as $k => $v) {

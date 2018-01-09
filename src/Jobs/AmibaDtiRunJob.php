@@ -291,7 +291,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 
 				$input = [
 					'server_name' => $dti->code,
-					'data_src_identity' => $dti->code,
+					'data_src_identity' => ($dti->category ? $dti->category->code : '') . ':' . $dti->code,
 					'date' => $this->context['date'],
 					'fm_date' => $this->context['fm_date'],
 					'to_date' => $this->context['to_date'],
