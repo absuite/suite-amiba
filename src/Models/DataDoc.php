@@ -2,12 +2,16 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
+use GAuth;
 use Gmf\Sys\Builder;
+use Gmf\Sys\Libs\InputHelper;
 use Gmf\Sys\Models\Entity;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Suite\Amiba\Jobs;
 use Suite\Cbo\Models as CboModels;
+use Validator;
 
 class DataDoc extends Model {
 	use Snapshotable, HasGuard;
@@ -42,6 +46,194 @@ class DataDoc extends Model {
 	}
 	public function lines() {
 		return $this->hasMany('Suite\Amiba\Models\DataDocLine', 'doc_id');
+	}
+
+	private static function importHeadData($data) {
+		$input = array_only($data, ['doc_no', 'doc_date', 'money', 'src_id', 'src_no', 'memo']);
+
+		$input = InputHelper::fillEnum($input, $data, [
+			'use_type' => 'suite.amiba.doc.use.type.enum',
+			'src_type' => 'suite.amiba.doc.src.type.enum',
+		]);
+		$ent_id = GAuth::entId();
+		$input = InputHelper::fillEntity($input, $data, [
+			'purpose' => function ($value) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return Models\Purpose::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'fm_group' => function ($value, $input) use ($ent_id) {
+				if (empty($value) || empty($input['purpose_id'])) {
+					return false;
+				}
+				return Models\Group::where('ent_id', $ent_id)
+					->where('purpose_id', $input['purpose_id'])
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'to_group' => function ($value, $input) use ($ent_id) {
+				if (empty($value) || empty($input['purpose_id'])) {
+					return false;
+				}
+				return Models\Group::where('ent_id', $ent_id)
+					->where('purpose_id', $input['purpose_id'])
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'period' => function ($value, $input) use ($ent_id) {
+				if (empty($input['doc_date']) || empty($input['purpose_id'])) {
+					return false;
+				}
+				$query = DB::table('suite_cbo_period_accounts as pa');
+				$query->join('suite_amiba_purposes as p', 'pa.calendar_id', '=', 'p.calendar_id');
+				$query->where('p.id', $input['purpose_id']);
+				$query->where('p.ent_id', $ent_id);
+				$query->whereRaw("'" . $input['doc_date'] . "' between pa.from_date and pa.to_date");
+				return $query->value('pa.id');
+			},
+			'element' => function ($value, $input) use ($ent_id) {
+				if (empty($value) || empty($input['purpose_id'])) {
+					return false;
+				}
+				return Models\Element::where('ent_id', $ent_id)
+					->where('purpose_id', $input['purpose_id'])
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'currency' => function ($value, $input) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\Currency::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+		]);
+		$validator = Validator::make($input, [
+			'doc_no' => 'required',
+			'doc_date' => 'required',
+			'purpose_id' => 'required',
+		]);
+		if ($validator->fails()) {
+			return $this->toError($validator->errors());
+		}
+		$input['ent_id'] = $ent_id;
+		$input['state_enum'] = 'opened';
+		return static::create($input);
+	}
+	private static function importLineData($head, $data) {
+		$input = array_only($data, ['qty', 'price', 'money', 'expense_code', 'account_code', 'memo']);
+
+		$ent_id = GAuth::entId();
+		$input = InputHelper::fillEntity($input, $data, [
+			'trader' => function ($value) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\Trader::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'item_category' => function ($value, $input) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\ItemCategory::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'item' => function ($value, $input) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\Item::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'mfc' => function ($value, $input) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\Mfc::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'project' => function ($value, $input) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\Project::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+			'unit' => function ($value, $input) use ($ent_id) {
+				if (empty($value)) {
+					return false;
+				}
+				return CboModels\Unit::where('ent_id', $ent_id)
+					->where(function ($query) use ($value) {
+						$query->where('code', $value)->orWhere('name', $value);
+					})->value('id');
+			},
+		]);
+		$input['doc_id'] = $head->id;
+		$input['ent_id'] = $ent_id;
+		if (empty($input['money'])) {
+			$input['money'] = 0;
+		}
+		if (empty($input['price'])) {
+			$input['price'] = 0;
+		}
+		if (empty($input['qty'])) {
+			$input['qty'] = 0;
+		}
+		return DataDocLine::create($input);
+	}
+	public static function fromImport($rows) {
+		$grouped = $rows->reject(function ($item) {
+			return empty($item['doc_no']);
+		})->map(function ($item) {
+			$item['doc_no'] = $item['doc_no'] . '';
+			return $item;
+		})->groupBy('doc_no')->toArray();
+
+		foreach ($grouped as $gk => $items) {
+			$head = static::importHeadData($items[0]);
+			if (!$head) {
+				continue;
+			}
+			$hasLines = false;
+			foreach ($items as $ik => $item) {
+				$line = collect($item)->filter(function ($v, $k) {
+					return starts_with($k, 'line.');
+				})->mapWithKeys(function ($item, $key) {
+					return [str_after($key, 'line.') => $item];
+				})->all();
+
+				if (count($line) && !(empty($item['qty']) && empty($item['money']))) {
+					static::importLineData($head, $line);
+					$hasLines = true;
+				}
+			}
+			if ($hasLines) {
+				$job = new Jobs\AmibaDataDocMoneyJob($head->id);
+				$job->handle();
+			}
+		}
+		return true;
 	}
 
 	public static function build(Closure $callback) {

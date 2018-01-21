@@ -1,9 +1,12 @@
 <?php
 
 namespace Suite\Amiba\Models;
+use GAuth;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
+use Validator;
 
 class DocFi extends Model {
 	use Snapshotable, HasGuard;
@@ -17,4 +20,21 @@ class DocFi extends Model {
 		'trader', 'project', 'account', 'debit_money', 'credit_money',
 		'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'data_src_identity'];
 
+	public static function fromImport($data) {
+		$datas->each(function ($row, $key) {
+			$row['data_src_identity'] = 'import';
+			Validator::make($row, [
+				'doc_no' => 'required',
+				'doc_date' => ['required', 'date'],
+				'biz_type' => [
+					'required',
+					Rule::in(['voucher']),
+				],
+				'debit_money' => ['numeric'],
+				'credit_money' => ['numeric'],
+			])->validate();
+			$row['ent_id'] = GAuth::entId();
+			static::create($row);
+		});
+	}
 }

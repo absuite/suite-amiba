@@ -29,7 +29,6 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 	Route::get('/data-inits/{id}/lines', 'DataInitController@showLines');
 	Route::resource('data-inits', 'DataInitController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
-	Route::post('/data-docs/import', 'DataDocController@import');
 	Route::get('/data-docs/{id}/lines', 'DataDocController@showLines');
 	Route::resource('data-docs', 'DataDocController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
@@ -57,11 +56,9 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 
 	Route::resource('result-profits', 'ResultProfitController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
-	Route::post('/doc-bizs/import', 'DocBizController@import');
 	Route::post('/doc-bizs/batch', 'DocBizController@batchStore');
 	Route::resource('doc-bizs', 'DocBizController', ['only' => ['destroy']]);
 
-	Route::post('/doc-fis/import', 'DocFiController@import');
 	Route::post('/doc-fis/batch', 'DocFiController@batchStore');
 	Route::resource('doc-fis', 'DocFiController', ['only' => ['destroy']]);
 

@@ -4,7 +4,6 @@ namespace Suite\Amiba\Http\Controllers;
 use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Suite\Amiba\Models as AmibaModels;
 use Validator;
 
@@ -72,42 +71,4 @@ class DocBizController extends Controller {
 		return $this->toJson(true);
 	}
 
-	private function importData($data, $throwExp = true) {
-		$validator = Validator::make($data, [
-			'doc_no' => 'required',
-			'doc_date' => ['required', 'date'],
-			'biz_type' => [
-				'required',
-				Rule::in(['ship', 'rcv',
-					'miscRcv', 'miscShip',
-					'transfer', 'moRcv', 'moIssue',
-					'process', 'receivables', 'payment',
-					'ar', 'ap', 'plan',
-					'expense']),
-			],
-			'direction' => [
-				'required',
-				Rule::in(['rcv', 'ship']),
-			],
-			'qty' => ['numeric'],
-			'price' => ['numeric'],
-			'money' => ['numeric'],
-			'tax' => ['numeric'],
-		]);
-		if ($throwExp) {
-			$validator->validate();
-		} else if ($validator->fails()) {
-			return false;
-		}
-		$data['ent_id'] = GAuth::entId();
-		return AmibaModels\DocBiz::create($data);
-	}
-	public function import(Request $request) {
-		$datas = app('Suite\Cbo\Bp\FileImport')->create($this, $request);
-		$datas->each(function ($row, $key) {
-			$row['data_src_identity'] = 'import';
-			$this->importData($row);
-		});
-		return $this->toJson(true);
-	}
 }

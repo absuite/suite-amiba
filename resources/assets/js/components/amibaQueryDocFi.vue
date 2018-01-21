@@ -5,7 +5,7 @@
         <md-button @click.native="remove" :disabled="!(selectRows&&selectRows.length)">删除</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <cbo-file-import md-action="amiba/doc-fis/import" template="/assets/vendor/suite-cbo/files/suite.amiba.doc.fi.xlsx"></cbo-file-import>
+        <md-file-import md-entity="Suite\Amiba\Models\DocFi" template="/assets/vendor/suite-cbo/files/suite.amiba.doc.fi.xlsx"></md-file-import>
       </md-part-toolbar-group>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
