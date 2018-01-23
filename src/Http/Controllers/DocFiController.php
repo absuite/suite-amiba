@@ -4,7 +4,6 @@ namespace Suite\Amiba\Http\Controllers;
 use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Suite\Amiba\Models as AmibaModels;
 use Validator;
 
@@ -23,7 +22,7 @@ class DocFiController extends Controller {
 			return $this->toError($validator->errors());
 		}
 		$batch = intval($request->input('batch', 1));
-		$entId =GAuth::entId();
+		$entId = GAuth::entId();
 		$data_src_identity = '';
 		if (!empty($input['data_src_identity'])) {
 			$data_src_identity = $input['data_src_identity'];
@@ -69,6 +68,5 @@ class DocFiController extends Controller {
 		$ids = explode(",", $id);
 		AmibaModels\DocFi::destroy($ids);
 		return $this->toJson(true);
-	}return $this->toJson(true);
 	}
 }
