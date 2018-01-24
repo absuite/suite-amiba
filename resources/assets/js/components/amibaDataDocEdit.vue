@@ -18,7 +18,7 @@
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
       <md-part-toolbar-group>
-        <md-file-import md-entity="Suite\Amiba\Models\DataDoc"  template="/assets/vendor/suite-cbo/files/suite.amiba.doc.xlsx"></md-file-import>
+        <md-file-import md-entity="Suite\Amiba\Models\Price"  template="/assets/vendor/suite-cbo/files/suite.amiba.price.xlsx"></md-file-import>
       </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
@@ -145,7 +145,7 @@ export default {
       }
     },
     async afterInitData() {
-      this.model.main.doc_no = await this.$root.issueUid('suite.amiba.data.doc');
+      this.model.main.doc_no = await this.$root.issueSn('suite.amiba.data.doc');
     },
     approve() {
       const oldState = this.model.main.state_enum;

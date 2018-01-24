@@ -61,19 +61,19 @@ class DataDoc extends Model {
 				if (empty($value)) {
 					return false;
 				}
-				return Models\Purpose::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
+				return Purpose::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'fm_group' => function ($value, $input) use ($ent_id) {
 				if (empty($value) || empty($input['purpose_id'])) {
 					return false;
 				}
-				return Models\Group::where('ent_id', $ent_id)->where('purpose_id', $input['purpose_id'])->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
+				return Group::where('ent_id', $ent_id)->where('purpose_id', $input['purpose_id'])->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'to_group' => function ($value, $input) use ($ent_id) {
 				if (empty($value) || empty($input['purpose_id'])) {
 					return false;
 				}
-				return Models\Group::where('ent_id', $ent_id)->where('purpose_id', $input['purpose_id'])->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
+				return Group::where('ent_id', $ent_id)->where('purpose_id', $input['purpose_id'])->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'period' => function ($value, $input) use ($ent_id) {
 				if (empty($input['doc_date']) || empty($input['purpose_id'])) {
@@ -90,7 +90,7 @@ class DataDoc extends Model {
 				if (empty($value) || empty($input['purpose_id'])) {
 					return false;
 				}
-				return Models\Element::where('ent_id', $ent_id)->where('purpose_id', $input['purpose_id'])->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
+				return Element::where('ent_id', $ent_id)->where('purpose_id', $input['purpose_id'])->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'currency' => function ($value, $input) use ($ent_id) {
 				if (empty($value)) {
@@ -120,55 +120,37 @@ class DataDoc extends Model {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\Trader::where('ent_id', $ent_id)
-					->where(function ($query) use ($value) {
-						$query->where('code', $value)->orWhere('name', $value);
-					})->value('id');
+				return CboModels\Trader::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'item_category' => function ($value, $input) use ($ent_id) {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\ItemCategory::where('ent_id', $ent_id)
-					->where(function ($query) use ($value) {
-						$query->where('code', $value)->orWhere('name', $value);
-					})->value('id');
+				return CboModels\ItemCategory::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'item' => function ($value, $input) use ($ent_id) {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\Item::where('ent_id', $ent_id)
-					->where(function ($query) use ($value) {
-						$query->where('code', $value)->orWhere('name', $value);
-					})->value('id');
+				return CboModels\Item::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'mfc' => function ($value, $input) use ($ent_id) {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\Mfc::where('ent_id', $ent_id)
-					->where(function ($query) use ($value) {
-						$query->where('code', $value)->orWhere('name', $value);
-					})->value('id');
+				return CboModels\Mfc::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'project' => function ($value, $input) use ($ent_id) {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\Project::where('ent_id', $ent_id)
-					->where(function ($query) use ($value) {
-						$query->where('code', $value)->orWhere('name', $value);
-					})->value('id');
+				return CboModels\Project::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 			'unit' => function ($value, $input) use ($ent_id) {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\Unit::where('ent_id', $ent_id)
-					->where(function ($query) use ($value) {
-						$query->where('code', $value)->orWhere('name', $value);
-					})->value('id');
+				return CboModels\Unit::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 		]);
 		$input['doc_id'] = $head->id;
