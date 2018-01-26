@@ -1,6 +1,7 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
@@ -88,7 +89,7 @@ class DataTimeController extends Controller {
 					$data = array_only($value, $fillable);
 					$data = InputHelper::fillEntity($data, $value, $entityable);
 					$data['time_id'] = $headId;
-					$data['ent_id'] =GAuth::entId();
+					$data['ent_id'] = GAuth::entId();
 					if (empty($data['nor_time'])) {
 						$data['nor_time'] = 0;
 					}
