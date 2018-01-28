@@ -12,6 +12,8 @@
         </md-ref-input>
         <md-ref-input md-label="期间" multiple md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
         </md-ref-input>
+        <md-ref-input md-label="经营模型" multiple md-ref-id="suite.amiba.modeling.ref" v-model="model.main.modeling">
+        </md-ref-input>
         <md-field>
           <label>备注</label>
           <md-input v-model="model.main.memo"></md-input>

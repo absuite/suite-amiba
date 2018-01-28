@@ -4,12 +4,12 @@ namespace Suite\Amiba\Jobs;
 
 use Carbon\Carbon;
 use DB;
-use Suite\Amiba\Models\DtiModeling;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Suite\Amiba\Models\DtiModeling;
 
 class AmibaDtiModelingJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,9 +42,10 @@ class AmibaDtiModelingJob implements ShouldQueue {
 			$m->msg = null;
 			$m->save();
 
-			DB::statement("CALL sp_amiba_data_modeling(?,?,?);", [$this->model->ent_id, $this->model->purpose_id, $this->model->period_id]);
+			DB::statement("CALL sp_amiba_data_modeling(?,?,?,?);", [$this->model->ent_id, $this->model->purpose_id, $this->model->period_id, $this->model->model_ids]);
 		} catch (\Exception $ex) {
 			$e = $ex;
+			throw $ex;
 		} finally {
 			$m = DtiModeling::find($this->model->id);
 			if ($e) {

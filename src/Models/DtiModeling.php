@@ -9,7 +9,7 @@ class DtiModeling extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_dti_modelings';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'purpose_id', 'period_id', 'memo', 'revoked', 'succeed', 'start_time', 'end_time', 'msg'];
+	protected $fillable = ['id', 'ent_id', 'purpose_id', 'period_id', 'model_ids', 'memo', 'revoked', 'succeed', 'start_time', 'end_time', 'msg'];
 
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');

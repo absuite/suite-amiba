@@ -2,7 +2,7 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_amiba_data_modeling$$
 
 
-CREATE PROCEDURE sp_amiba_data_modeling(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
+CREATE PROCEDURE sp_amiba_data_modeling(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200),IN p_model NVARCHAR(500)) 
 BEGIN
 DECLARE v_from_date DATETIME;
 DECLARE v_to_date DATETIME;
@@ -121,6 +121,7 @@ FROM `suite_amiba_doc_bizs` AS d
   LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id
 WHERE ml.`biz_type_enum`=d.`biz_type` 
   AND d.doc_date BETWEEN v_from_date AND v_to_date
+  AND (p_model IS NULL OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
   AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ic.`code`=d.`item_category`))
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
@@ -152,6 +153,7 @@ FROM `suite_amiba_doc_fis` AS d
   LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id
 WHERE ml.`biz_type_enum`=d.`biz_type` 
   AND d.doc_date BETWEEN v_from_date AND v_to_date
+  AND (p_model IS NULL OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
   AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))

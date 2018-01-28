@@ -1,6 +1,7 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
@@ -8,7 +9,7 @@ use Suite\Amiba\Jobs;
 use Suite\Amiba\Models;
 use Suite\Cbo\Models as CboModels;
 use Validator;
-use GAuth;
+
 class DtiModelingController extends Controller {
 	public function index(Request $request) {
 		$query = Models\DtiModeling::with('purpose', 'period');
@@ -29,8 +30,8 @@ class DtiModelingController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function store(Request $request) {
-		$input = array_only($request->all(), ['purpose', 'period', 'memo']);
-		$input = InputHelper::fillEntity($input, $request, ['purpose', 'period']);
+		$input = array_only($request->all(), ['purpose', 'period', 'modeling', 'memo']);
+		$input = InputHelper::fillEntity($input, $request, ['purpose', 'period', 'modeling']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',
 			'period_id' => 'required',
@@ -44,13 +45,20 @@ class DtiModelingController extends Controller {
 			$periods = CboModels\PeriodAccount::whereIn('id', $input['period_id'])->orderBy('from_date')->get();
 			foreach ($periods as $value) {
 				$input['period_id'] = $value->id;
-				$data = Models\DtiModeling::updateOrCreate(array_only($input, ['period_id', 'purpose_id']), $input);
+				if (!empty($input['modeling_id'])) {
+					$input['model_ids'] = implode(',', $input['modeling_id']);
+				}
+
+				$data = Models\DtiModeling::updateOrCreate(array_only($input, ['period_id', 'purpose_id', 'model_ids']), $input);
 
 				$job = new Jobs\AmibaDtiModelingJob($data);
 				$job->handle();
 			}
 		} else {
-			$data = Models\DtiModeling::updateOrCreate(array_only($input, ['period_id', 'purpose_id']), $input);
+			if (!empty($input['modeling_id'])) {
+				$input['model_ids'] = implode(',', $input['modeling_id']);
+			}
+			$data = Models\DtiModeling::updateOrCreate(array_only($input, ['period_id', 'purpose_id', 'model_ids']), $input);
 
 			$job = new Jobs\AmibaDtiModelingJob($data);
 			$job->handle();

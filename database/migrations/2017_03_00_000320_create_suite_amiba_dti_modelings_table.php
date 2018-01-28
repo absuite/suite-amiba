@@ -18,6 +18,7 @@ class CreateSuiteAmibaDtiModelingsTable extends Migration {
 		$md->entity('ent', 'gmf.sys.ent')->nullable()->comment('企业');
 		$md->entity('purpose', 'suite.amiba.purpose')->nullable()->comment('核算目的');
 		$md->entity('period', 'suite.cbo.period.account')->nullable()->comment('期间');
+		$md->text('model_ids')->nullable()->comment('模型');
 		$md->text('memo')->nullable()->comment('备注');
 		$md->boolean('revoked')->default(0)->comment('撤销');
 		$md->boolean('succeed')->default(0)->comment('成功的');
