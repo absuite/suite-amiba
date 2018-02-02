@@ -13,6 +13,9 @@
         <md-button @click.native="list">列表</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
+      <md-part-toolbar-group>
+        <md-file-import md-entity="Suite\Amiba\Models\Modeling"  template="/assets/vendor/suite-cbo/files/suite.amiba.modeling.xlsx"></md-file-import>
+      </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>
@@ -51,7 +54,11 @@
             <md-grid-column label="会计科目" field="account_code" editable/>
             <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" editable/>
             <md-grid-column label="物料" field="item" dataType="entity" ref-id="suite.cbo.item.ref" editable/>
-            <md-grid-column label="因素" field="factor1" editable/>
+            <md-grid-column label="因素1" field="factor1" editable/>
+            <md-grid-column label="因素2" field="factor2" editable/>
+            <md-grid-column label="因素3" field="factor3" editable/>
+            <md-grid-column label="因素4" field="factor4" editable/>
+            <md-grid-column label="因素5" field="factor5" editable/>
             <md-grid-column label="取值类型" field="value_type_enum" dataType="enum" editable ref-id="suite.amiba.value.type.enum" />
             <md-grid-column label="取值比例%" field="adjust" editable/>
             <md-grid-column label="交易方" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" editable/>

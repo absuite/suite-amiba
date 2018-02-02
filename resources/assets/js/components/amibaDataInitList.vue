@@ -5,6 +5,9 @@
         <md-button @click.native="create">新增</md-button>
         <md-button @click.native="remove" :disabled="!(selectRows&&selectRows.length)">删除</md-button>
       </md-part-toolbar-group>
+      <md-part-toolbar-group>
+        <md-file-import md-entity="Suite\Amiba\Models\DataInit"  template="/assets/vendor/suite-cbo/files/suite.amiba.data.init.xlsx"></md-file-import>
+      </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body class="no-padding">

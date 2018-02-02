@@ -16,6 +16,7 @@ class CreateSuiteAmibaDataInitsTable extends Migration {
 
 		$md->string('id', 100)->primary();
 		$md->entity('ent', 'gmf.sys.ent')->nullable()->comment('企业');
+		$md->string('doc_no')->nullable()->comment('单据编号');
 		$md->entity('purpose', 'suite.amiba.purpose')->nullable()->comment('核算目的');
 		$md->entity('period', 'suite.cbo.period.account')->nullable()->comment('期间');
 		$md->entity('currency', 'suite.cbo.currency')->nullable()->comment('币种');

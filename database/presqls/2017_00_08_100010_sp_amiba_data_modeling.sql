@@ -106,24 +106,24 @@ INSERT INTO tml_data_elementing
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
 )
-SELECT 
+SELECT Distinct 
   p_purpose,p_period,m.group_id,ml.to_group_id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
   d.id AS data_id,'biz' AS data_type,ml.`value_type_enum`,
   d.qty AS src_qty,
   d.money AS src_money,
   ml.`adjust`
 FROM `suite_amiba_doc_bizs` AS d 
-  INNER JOIN  `suite_amiba_modelings` AS m ON m.purpose_id=p_purpose  
+  INNER JOIN  `suite_amiba_modelings` AS m ON m.`purpose_id`=p_purpose  
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
-  LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.doc_type_id=dt.id
-  LEFT JOIN `suite_cbo_item_categories` AS ic ON ml.item_category_id=ic.id
-  LEFT JOIN `suite_cbo_items` AS item ON ml.item_id=item.id
-  LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id
+  LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.`doc_type_id`=dt.`id`
+  LEFT JOIN `suite_cbo_item_categories` AS ic ON ml.`item_category_id`=ic.`id`
+  LEFT JOIN `suite_cbo_items` AS item ON ml.`item_id`=item.`id`
+  LEFT JOIN `suite_cbo_traders` AS trader ON ml.`trader_id`=trader.`id`
 WHERE ml.`biz_type_enum`=d.`biz_type` 
-  AND d.doc_date BETWEEN v_from_date AND v_to_date
+  AND d.`doc_date` BETWEEN v_from_date AND v_to_date
   AND (p_model IS NULL OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
-  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ic.`code`=d.`item_category`))
+  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ml.`item_category_id`=item.`category_id` and item.`code`=d.`item`))
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
   AND (item.`code` IS NULL OR(item.`code` IS NOT NULL AND item.`code`=d.`item`))
   AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))
@@ -139,7 +139,7 @@ INSERT INTO tml_data_elementing
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
   `account_code`,`expense_code`
 )
-SELECT 
+SELECT Distinct 
   p_purpose,p_period,m.group_id,ml.to_group_id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
   d.id AS data_id,'fi' AS data_type,ml.`value_type_enum`,
   0 AS src_qty,

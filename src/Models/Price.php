@@ -76,11 +76,15 @@ class Price extends Model {
 				return CboModels\Item::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 		]);
+		$input = InputHelper::fillEnum($input, $data, [
+			'type' => 'suite.amiba.price.type.enum',
+		]);
 		$input['price_id'] = $head->id;
 		$input['ent_id'] = $ent_id;
 		if (empty($input['cost_price'])) {
 			$input['cost_price'] = 0;
 		}
+
 		return PriceLine::create($input);
 	}
 	public static function fromImport($rows) {
@@ -104,7 +108,7 @@ class Price extends Model {
 					return [str_after($key, 'line.') => $item];
 				})->all();
 
-				if (count($line) && !(empty($item['cost_price']))) {
+				if (count($line) && !(empty($item['line.cost_price']))) {
 					static::importLineData($head, $line);
 					$hasLines = true;
 				}

@@ -13,11 +13,20 @@
         <md-button @click.native="list">列表</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
+      <md-part-toolbar-group>
+        <md-file-import md-entity="Suite\Amiba\Models\DataInit"  template="/assets/vendor/suite-cbo/files/suite.amiba.data.init.xlsx"></md-file-import>
+      </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column md-form">
         <md-layout md-gutter md-row>
+          <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
+            <md-field>
+              <label>单据编号</label>
+              <md-input required v-model="model.main.doc_no" />
+            </md-field>
+          </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
             </md-ref-input>
@@ -74,6 +83,9 @@ export default {
           'lines': []
         }
       }
+    },
+    async afterInitData() {
+      this.model.main.doc_no = await this.$root.issueSn('suite.amiba.data.init');
     },
     list() {
       this.$router.push({ name: 'module', params: { module: 'amiba.data.init.list' } });
