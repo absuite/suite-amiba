@@ -104,7 +104,7 @@ export default {
           'name': '',
           'memo': '',
           'state_enum': 'opened',
-          purpose: this.$root.userConfig.purpose,
+          purpose: this.$root.configs.purpose,
           group: null
         }
       }
@@ -149,7 +149,7 @@ export default {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
         options.wheres.calendar = { name: 'calendar_id', value: this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.calendar = { name: 'calendar_id', value: this.$root.userConfig.calendar.id };
+        options.wheres.calendar = { name: 'calendar_id', value: this.$root.configs.calendar.id };
       }
     },
   },

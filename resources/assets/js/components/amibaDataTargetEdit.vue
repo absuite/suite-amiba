@@ -75,10 +75,10 @@ export default {
     initModel() {
       return {
         main: {
-          'purpose': this.$root.userConfig.purpose,
+          'purpose': this.$root.configs.purpose,
           'group': null,
-          fm_period: this.$root.userConfig.period,
-          to_period: this.$root.userConfig.period
+          fm_period: this.$root.configs.period,
+          to_period: this.$root.configs.period
         }
       }
     },
@@ -100,7 +100,7 @@ export default {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
         options.wheres.calendar = { name: 'calendar_id', value: this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.calendar = { name: 'calendar_id', value: this.$root.userConfig.calendar.id };
+        options.wheres.calendar = { name: 'calendar_id', value: this.$root.configs.calendar.id };
       }
     },
   },

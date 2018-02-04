@@ -24,7 +24,7 @@ export default {
     return {
       selectRows: [],
       loading: 0,
-      model: { period: this.$root.userConfig.period, purpose: this.$root.userConfig.purpose }
+      model: { period: this.$root.configs.period, purpose: this.$root.configs.purpose }
     };
   },
   watch: {

@@ -92,9 +92,9 @@ export default {
       dataDetail: [],
       groups: [],
       model: {
-        purpose: this.$root.userConfig.purpose,
+        purpose: this.$root.configs.purpose,
         fm_period: null,
-        to_period: this.$root.userConfig.period,
+        to_period: this.$root.configs.period,
         group: null
       },
     };

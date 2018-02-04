@@ -115,7 +115,7 @@ export default {
         main: {
           'code': '',
           'name': '',
-          'purpose': this.$root.userConfig.purpose,
+          'purpose': this.$root.configs.purpose,
           'parent': null,
           'type_enum': '',
           'direction_enum': '',

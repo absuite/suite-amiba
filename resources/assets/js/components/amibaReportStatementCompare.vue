@@ -55,8 +55,8 @@ export default {
       dataDetail: [],
       dataCategories: [],
       model: {
-        purpose: this.$root.userConfig.purpose,
-        period: this.$root.userConfig.period,
+        purpose: this.$root.configs.purpose,
+        period: this.$root.configs.period,
         group: []
       },
       groups: [],

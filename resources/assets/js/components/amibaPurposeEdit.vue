@@ -79,8 +79,8 @@ export default {
           'code': '',
           'name': '',
           'memo': '',
-          calendar: this.$root.userConfig.calendar,
-          currency: this.$root.userConfig.currency
+          calendar: this.$root.configs.calendar,
+          currency: this.$root.configs.currency
         }
       }
     },

@@ -84,7 +84,7 @@ export default {
         main: {
           'code': '',
           'name': '',
-          purpose: this.$root.userConfig.purpose,
+          purpose: this.$root.configs.purpose,
           method: null,
           element: null,
           group: null,

@@ -12,6 +12,7 @@
     </md-part-toolbar>
     <md-part-body class="no-padding">
       <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true">
+        <md-grid-column label="接口" field="local" dataType="entity" />
         <md-grid-column label="分类" field="category" dataType="entity" />
         <md-grid-column label="名称" field="name" />
         <md-grid-column label="开始时间" field="begin_date" />
@@ -33,7 +34,7 @@ export default {
   data() {
     return {
       model: {
-        date: this.$root.userConfig.date,
+        date: this.$root.configs.date,
       },
       loading: 0,
       is_running: 0

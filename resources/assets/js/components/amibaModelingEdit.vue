@@ -91,7 +91,7 @@ export default {
     initModel() {
       return {
         main: {
-          'purpose': this.$root.userConfig.purpose,
+          'purpose': this.$root.configs.purpose,
           'group': null,
           'code': '',
           'name': ''

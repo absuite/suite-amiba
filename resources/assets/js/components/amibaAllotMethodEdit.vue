@@ -75,7 +75,7 @@ export default {
           'code': '',
           'name': '',
           'memo': '',
-          purpose: this.$root.userConfig.purpose
+          purpose: this.$root.configs.purpose
         }
       }
     },
