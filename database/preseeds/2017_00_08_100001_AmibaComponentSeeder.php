@@ -122,6 +122,20 @@ class AmibaComponentSeeder extends Seeder {
 			});
 
 			Models\Component::build(function (Builder $builder) {
+				$builder->code('amibaDataTargetEdit')->name('经营目标')->path('amibaDataTargetEdit');
+			});
+			Models\Component::build(function (Builder $builder) {
+				$builder->code('amibaDataTargetList')->name('经营目标列表')->path('amibaDataTargetList');
+			});
+
+			Models\Component::build(function (Builder $builder) {
+				$builder->code('amibaDataAdjustEdit')->name('责任调整单')->path('amibaDataAdjustEdit');
+			});
+			Models\Component::build(function (Builder $builder) {
+				$builder->code('amibaDataAdjustList')->name('责任调整单列表')->path('amibaDataAdjustList');
+			});
+
+			Models\Component::build(function (Builder $builder) {
 				$builder->code('amibaQueryAccount')->name('查询-考核结果')->path('amibaQueryAccount');
 			});
 			Models\Component::build(function (Builder $builder) {

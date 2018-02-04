@@ -13,6 +13,9 @@
         <md-button @click.native="list">列表</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
+      <md-part-toolbar-group>
+        <md-button @click="showCopyDialog=true">数据拷贝</md-button>
+      </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>
@@ -33,14 +36,22 @@
         </md-field>
       </md-content>
       <md-loading :loading="loading"></md-loading>
+      <amiba-data-copy :md-active.sync="showCopyDialog"></amiba-data-copy>
     </md-part-body>
   </md-part>
 </template>
 <script>
 import model from 'gmf/core/mixins/MdModel/MdModel';
+
+import amibaDataCopy from './amibaDataCopy';
 export default {
+  components: {
+    amibaDataCopy
+  },
   data() {
-    return {};
+    return {
+      showCopyDialog: false
+    };
   },
   mixins: [model],
   computed: {
