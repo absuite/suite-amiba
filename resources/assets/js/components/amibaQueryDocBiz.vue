@@ -9,28 +9,28 @@
       </md-part-toolbar-group>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
-          <md-layout md-flex-sm="33" md-flex-md="15" md-flex-lg="15">
+          <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
             <md-ref-input md-ref-id="suite.cbo.period.account.ref" md-label="期间" v-model="model.period"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-sm="33" md-flex-md="15" md-flex-lg="15">
+          <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
             <md-field class="md-inset">
               <label>业务类型</label>
-              <md-input v-model="model.biz_type"></md-input>
+              <md-enum md-enum-id="suite.cbo.biz.type.enum" v-model="model.biz_type"></md-enum>
             </md-field>
           </md-layout>
-          <md-layout md-flex-sm="33" md-flex-md="15" md-flex-lg="15">
+          <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
             <md-field class="md-inset">
               <label>单据类型</label>
               <md-input v-model="model.doc_type"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex-sm="33" md-flex-md="15" md-flex-lg="15">
+          <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
             <md-field class="md-inset">
               <label>组织</label>
               <md-input v-model="model.org"></md-input>
             </md-field>
           </md-layout>
-          <md-layout md-flex-sm="33" md-flex-md="15" md-flex-lg="15">
+          <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
             <md-field class="md-inset">
               <label>料品</label>
               <md-input v-model="model.item"></md-input>
