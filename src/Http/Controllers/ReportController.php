@@ -1,12 +1,13 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use GAuth;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models as AmibaModels;
 use Suite\Cbo\Models as CboModels;
-use GAuth;
+
 class ReportController extends Controller {
 	public function getPeriodInfo(Request $request) {
 		$result = [];
@@ -40,7 +41,9 @@ class ReportController extends Controller {
 			$item = new Builder();
 			$item->id($tmp->id)->code($tmp->code)->name($tmp->name)->from_date($tmp->from_date)->to_date($tmp->to_date);
 		}
-		$config->period($item);
+		if ($item) {
+			$config->period($item);
+		}
 
 		//前六期间
 		$date = date('Y-m-d');
@@ -53,7 +56,10 @@ class ReportController extends Controller {
 			$item = new Builder();
 			$item->id($tmp->id)->code($tmp->code)->name($tmp->name)->from_date($tmp->from_date)->to_date($tmp->to_date);
 		}
-		$config->prevSixPeriod($item);
+		if ($item) {
+			$config->prevSixPeriod($item);
+		}
+
 		//后前六期间
 		$date = date('Y-m-d');
 		$item = false;
@@ -65,7 +71,10 @@ class ReportController extends Controller {
 			$item = new Builder();
 			$item->id($tmp->id)->code($tmp->code)->name($tmp->name)->from_date($tmp->from_date)->to_date($tmp->to_date);
 		}
-		$config->nextSixPeriod($item);
+		if ($item) {
+			$config->nextSixPeriod($item);
+		}
+
 		//年度第一期
 		$date = date('Y-1-1');
 		$item = false;
@@ -77,7 +86,9 @@ class ReportController extends Controller {
 			$item = new Builder();
 			$item->id($tmp->id)->code($tmp->code)->name($tmp->name)->from_date($tmp->from_date)->to_date($tmp->to_date);
 		}
-		$config->yearFirstPeriod($item);
+		if ($item) {
+			$config->yearFirstPeriod($item);
+		}
 
 		//年度最后一期
 		$date = date('Y-12-30');
@@ -90,7 +101,9 @@ class ReportController extends Controller {
 			$item = new Builder();
 			$item->id($tmp->id)->code($tmp->code)->name($tmp->name)->from_date($tmp->from_date)->to_date($tmp->to_date);
 		}
-		$config->yearLastPeriod($item);
+		if ($item) {
+			$config->yearLastPeriod($item);
+		}
 
 		return $this->toJson($config);
 	}
