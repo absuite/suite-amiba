@@ -33,6 +33,9 @@ class CreateSuiteAmibaDataDocsTable extends Migration {
 		$md->string('src_id')->nullable()->comment('来源ID');
 		$md->string('src_no')->nullable()->comment('来源单据号');
 		$md->decimal('money', 30, 2)->default(0)->comment('金额');
+
+		$md->entity('modeling', 'suite.amiba.modeling')->nullable()->comment('经营模型');
+
 		$md->text('memo')->nullable()->comment('备注');
 		$md->enum('state', 'suite.cbo.data.state.enum')->nullable()->comment('状态');
 

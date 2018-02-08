@@ -22,6 +22,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_elementing(
 `m_fm_group_id` NVARCHAR(100),/*模型行按匹配方向取得的巴*/
 `m_to_group_id` NVARCHAR(100),/*模型行按匹配方向取得的巴*/
 
+`m_id` NVARCHAR(100),/*模型行ID*/
 `ml_id` NVARCHAR(100),/*模型行ID*/
 `match_direction_enum` NVARCHAR(100),
 `match_group_id` NVARCHAR(100),
@@ -71,6 +72,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_doc(
 `purpose_id` NVARCHAR(100),
 `period_id` NVARCHAR(100),
 `use_type_enum` NVARCHAR(100),
+`modeling_id` NVARCHAR(100),
 `fm_group_id` NVARCHAR(100),
 `to_group_id` NVARCHAR(100),
 `element_id` NVARCHAR(100),
@@ -103,11 +105,11 @@ SELECT from_date,to_date INTO v_from_date,v_to_date FROM `suite_cbo_period_accou
 /*业务数据*/
 INSERT INTO tml_data_elementing
 (
-  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
+  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`m_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
 )
-SELECT Distinct 
-  p_purpose,p_period,m.group_id,ml.to_group_id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
+SELECT DISTINCT 
+  p_purpose,p_period,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
   d.id AS data_id,'biz' AS data_type,ml.`value_type_enum`,
   d.qty AS src_qty,
   d.money AS src_money,
@@ -121,9 +123,9 @@ FROM `suite_amiba_doc_bizs` AS d
   LEFT JOIN `suite_cbo_traders` AS trader ON ml.`trader_id`=trader.`id`
 WHERE ml.`biz_type_enum`=d.`biz_type` 
   AND d.`doc_date` BETWEEN v_from_date AND v_to_date
-  AND (p_model IS NULL OR (FIND_IN_SET(m.id , p_model)>0))
+  AND (IFNULL(p_model,'')='' OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
-  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ml.`item_category_id`=item.`category_id` and item.`code`=d.`item`))
+  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ml.`item_category_id`=item.`category_id` AND item.`code`=d.`item`))
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
   AND (item.`code` IS NULL OR(item.`code` IS NOT NULL AND item.`code`=d.`item`))
   AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))
@@ -135,12 +137,12 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
 /*财务数据*/
 INSERT INTO tml_data_elementing
 (
-  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
+  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`m_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
   `account_code`,`expense_code`
 )
-SELECT Distinct 
-  p_purpose,p_period,m.group_id,ml.to_group_id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
+SELECT DISTINCT 
+  p_purpose,p_period,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
   d.id AS data_id,'fi' AS data_type,ml.`value_type_enum`,
   0 AS src_qty,
   CASE WHEN ml.value_type_enum='debit' THEN d.`debit_money` ELSE d.`credit_money` END AS src_money,
@@ -153,7 +155,7 @@ FROM `suite_amiba_doc_fis` AS d
   LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id
 WHERE ml.`biz_type_enum`=d.`biz_type` 
   AND d.doc_date BETWEEN v_from_date AND v_to_date
-  AND (p_model IS NULL OR (FIND_IN_SET(m.id , p_model)>0))
+  AND (IFNULL(p_model,'')='' OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
   AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))
@@ -324,20 +326,19 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET use_type_enum='indirect' WHERE m_fm_group_id IS NULL;
   UPDATE tml_data_elementing SET use_type_enum='direct' WHERE m_fm_group_id IS NOT NULL;
   -- 更新业务主键
-  UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
+  UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(m_id,purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
   
   SET @len=1; 
   SELECT COUNT(0) INTO @len FROM tml_data_elementing AS l;
   CALL sp_gmf_sys_uid('suite.amiba.data.doc',@len);
   
-  INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,
+  INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,`src_type_enum`,`modeling_id`,
 	`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`)
-  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,(@rownum := @rownum+1),
+  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,(@rownum := @rownum+1),'interface',l.m_id,
 	v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
   FROM tml_data_elementing AS l,(SELECT @rownum:=@len) r
-  GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey;
-  
-  
+  GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey,l.m_id;
+
   INSERT INTO tml_data_docLine(`id`,`bizKey`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`expense_code`,`unit_id`,`qty`,`money`)
   SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,
     l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`,l.expense_code,l.unit_id,
@@ -351,15 +352,16 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
 
 DELETE l FROM suite_amiba_data_doc_lines AS l
 INNER JOIN suite_amiba_data_docs AS h ON l.doc_id=h.id
-WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose AND h.period_id=p_period;
+WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose AND h.period_id=p_period AND ((IFNULL(p_model,'')='' OR (FIND_IN_SET(h.modeling_id , p_model)>0)));
 
 DELETE h FROM suite_amiba_data_docs AS h 
-WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose AND h.period_id=p_period;
+WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose AND h.period_id=p_period AND ((IFNULL(p_model,'')='' OR (FIND_IN_SET(h.modeling_id , p_model)>0)));
 
 /*将数据更新到考核数据表*/
-INSERT INTO `suite_amiba_data_docs`(`id`,`created_at`,`ent_id`,`src_type_enum`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`,`state_enum`)
-SELECT `id`,NOW(),p_ent,'interface',`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,IFNULL(`money`,0),'approved'
+INSERT INTO `suite_amiba_data_docs`(`id`,`created_at`,`ent_id`,`src_type_enum`,`modeling_id`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`,`state_enum`)
+SELECT `id`,NOW(),p_ent,src_type_enum,`modeling_id`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,IFNULL(`money`,0),'approved'
 FROM tml_data_doc;
+
 INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`qty`,`price`,`money`)
 SELECT `id`,NOW(),p_ent,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,IFNULL(`qty`,0),IFNULL(`price`,0),IFNULL(`money`,0)
 FROM tml_data_docLine;

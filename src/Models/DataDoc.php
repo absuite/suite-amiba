@@ -17,7 +17,7 @@ class DataDoc extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_data_docs';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'doc_no', 'doc_date', 'state_enum',
+	protected $fillable = ['id', 'ent_id', 'doc_no', 'doc_date', 'state_enum', 'modeling_id',
 		'purpose_id', 'fm_group_id', 'to_group_id', 'period_id', 'element_id', 'currency_id',
 		'qty', 'money', 'use_type_enum', 'created_by', 'src_type_enum', 'src_id', 'src_no', 'memo'];
 
