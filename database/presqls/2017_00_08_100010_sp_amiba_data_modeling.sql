@@ -72,6 +72,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_doc(
 `purpose_id` NVARCHAR(100),
 `period_id` NVARCHAR(100),
 `use_type_enum` NVARCHAR(100),
+`src_type_enum` NVARCHAR(100),
 `modeling_id` NVARCHAR(100),
 `fm_group_id` NVARCHAR(100),
 `to_group_id` NVARCHAR(100),
