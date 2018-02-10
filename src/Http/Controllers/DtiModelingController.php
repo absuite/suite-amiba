@@ -47,6 +47,8 @@ class DtiModelingController extends Controller {
 				$input['period_id'] = $value->id;
 				if (!empty($input['modeling_id'])) {
 					$input['model_ids'] = implode(',', $input['modeling_id']);
+				} else {
+					$input['model_ids'] = '';
 				}
 
 				$data = Models\DtiModeling::updateOrCreate(array_only($input, ['period_id', 'purpose_id', 'model_ids']), $input);
@@ -57,6 +59,8 @@ class DtiModelingController extends Controller {
 		} else {
 			if (!empty($input['modeling_id'])) {
 				$input['model_ids'] = implode(',', $input['modeling_id']);
+			} else {
+				$input['model_ids'] = '';
 			}
 			$data = Models\DtiModeling::updateOrCreate(array_only($input, ['period_id', 'purpose_id', 'model_ids']), $input);
 
