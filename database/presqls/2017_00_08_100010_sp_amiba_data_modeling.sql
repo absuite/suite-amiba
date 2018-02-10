@@ -22,8 +22,8 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_elementing(
 `m_fm_group_id` NVARCHAR(100),/*模型行按匹配方向取得的巴*/
 `m_to_group_id` NVARCHAR(100),/*模型行按匹配方向取得的巴*/
 
-`m_id` NVARCHAR(100),/*模型行ID*/
-`ml_id` NVARCHAR(100),/*模型行ID*/
+`modeling_id` NVARCHAR(100),/*模型行ID*/
+`modeling_line_id` NVARCHAR(100),/*模型行ID*/
 `match_direction_enum` NVARCHAR(100),
 `match_group_id` NVARCHAR(100),
 
@@ -85,6 +85,8 @@ DROP TEMPORARY TABLE IF EXISTS tml_data_docLine;
 CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_docLine(
 `id` NVARCHAR(100),
 `doc_id` NVARCHAR(100),
+`modeling_id` NVARCHAR(100),
+`modeling_line_id` NVARCHAR(100),
 `trader_id` NVARCHAR(100),
 `item_category_id` NVARCHAR(100),
 `item_id` NVARCHAR(100),
@@ -106,7 +108,7 @@ SELECT from_date,to_date INTO v_from_date,v_to_date FROM `suite_cbo_period_accou
 /*业务数据*/
 INSERT INTO tml_data_elementing
 (
-  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`m_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
+  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
 )
 SELECT DISTINCT 
@@ -138,7 +140,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
 /*财务数据*/
 INSERT INTO tml_data_elementing
 (
-  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`m_id`,`ml_id`,`match_direction_enum`,`match_group_id`,`element_id`,
+  `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
   `account_code`,`expense_code`
 )
@@ -327,7 +329,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET use_type_enum='indirect' WHERE m_fm_group_id IS NULL;
   UPDATE tml_data_elementing SET use_type_enum='direct' WHERE m_fm_group_id IS NOT NULL;
   -- 更新业务主键
-  UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(m_id,purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
+  UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(modeling_id,purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
   
   SET @len=1; 
   SELECT COUNT(0) INTO @len FROM tml_data_elementing AS l;
@@ -335,17 +337,17 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   
   INSERT INTO tml_data_doc(`id`,`bizKey`,`doc_no`,`src_type_enum`,`modeling_id`,
 	`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`)
-  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,(@rownum := @rownum+1),'interface',l.m_id,
+  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,(@rownum := @rownum+1),'interface',l.modeling_id,
 	v_to_date,l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,SUM(l.money) AS money
   FROM tml_data_elementing AS l,(SELECT @rownum:=@len) r
-  GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey,l.m_id;
+  GROUP BY l.purpose_id,l.period_id,l.use_type_enum,l.m_fm_group_id,l.m_to_group_id,l.element_id,l.bizKey,l.modeling_id;
 
-  INSERT INTO tml_data_docLine(`id`,`bizKey`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`expense_code`,`unit_id`,`qty`,`money`)
-  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,
+  INSERT INTO tml_data_docLine(`id`,`bizKey`,`modeling_id`,`modeling_line_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`expense_code`,`unit_id`,`qty`,`money`)
+  SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,l.bizKey,l.modeling_id,l.modeling_line_id,
     l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`,l.expense_code,l.unit_id,
     SUM(l.qty),SUM(l.money)
   FROM tml_data_elementing AS l
-  GROUP BY l.bizKey,l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`,l.expense_code,l.unit_id;
+  GROUP BY l.bizKey,l.modeling_id,l.modeling_line_id,l.`trader_id`,l.`item_category_id`,l.`item_id`,l.`mfc_id`,l.`project_id`,l.`account_code`,l.expense_code,l.unit_id;
   
   UPDATE tml_data_docLine SET price=money/qty WHERE qty!=0;
   UPDATE tml_data_docLine AS dl INNER JOIN  tml_data_doc AS d ON d.bizkey=dl.bizkey
@@ -363,8 +365,8 @@ INSERT INTO `suite_amiba_data_docs`(`id`,`created_at`,`ent_id`,`src_type_enum`,`
 SELECT `id`,NOW(),p_ent,src_type_enum,`modeling_id`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,IFNULL(`money`,0),'approved'
 FROM tml_data_doc;
 
-INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`qty`,`price`,`money`)
-SELECT `id`,NOW(),p_ent,`doc_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,IFNULL(`qty`,0),IFNULL(`price`,0),IFNULL(`money`,0)
+INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`modeling_id`,`modeling_line_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`qty`,`price`,`money`)
+SELECT `id`,NOW(),p_ent,`doc_id`,`modeling_id`,`modeling_line_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,IFNULL(`qty`,0),IFNULL(`price`,0),IFNULL(`money`,0)
 FROM tml_data_docLine;
 
 END$$

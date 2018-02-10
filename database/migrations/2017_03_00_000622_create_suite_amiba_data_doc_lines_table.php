@@ -32,6 +32,9 @@ class CreateSuiteAmibaDataDocLinesTable extends Migration {
 		$md->decimal('money', 30, 2)->default(0)->comment('金额');
 		$md->text('memo')->nullable()->comment('描述');
 
+		$md->entity('modeling', 'suite.amiba.modeling')->nullable()->comment('经营模型');
+		$md->entity('modeling_line', 'suite.amiba.modeling.line')->nullable()->comment('经营模型行');
+
 		$md->timestamps();
 
 		$md->foreign('doc_id')->references('id')->on('suite_amiba_data_docs')->onDelete('cascade');

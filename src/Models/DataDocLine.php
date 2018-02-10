@@ -2,17 +2,17 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
-use Suite\Cbo\Models as CboModels;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Suite\Cbo\Models as CboModels;
 
 class DataDocLine extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_data_doc_lines';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'doc_id', 'trader_id', 'item_category_id', 'item_id',
+	protected $fillable = ['id', 'ent_id', 'doc_id', 'modeling_id', 'modeling_line_id', 'trader_id', 'item_category_id', 'item_id',
 		'mfc_id', 'project_id', 'unit_id', 'qty', 'price', 'money',
 		'expense_code', 'subject_code', 'memo'];
 
