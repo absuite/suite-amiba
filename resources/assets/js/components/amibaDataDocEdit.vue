@@ -38,10 +38,10 @@
             <md-ref-input md-label="核算目的" :disabled="isApproved" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose" />
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="期间" @init="init_period_ref" :disabled="isApproved" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
+            <md-ref-input md-label="期间" :md-init="init_period_ref" :disabled="isApproved" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period" />
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="核算要素" @init="init_element_ref" :disabled="isApproved" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
+            <md-ref-input md-label="核算要素" :md-init="init_element_ref" :disabled="isApproved" md-ref-id="suite.amiba.element.ref" v-model="model.main.element" />
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-field>
@@ -50,10 +50,10 @@
             </md-field>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="阿米巴" @init="init_fm_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
+            <md-ref-input md-label="阿米巴" :md-init="init_fm_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.fm_group" />
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="对方阿米巴" @init="init_to_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
+            <md-ref-input md-label="对方阿米巴" :md-init="init_to_group_ref" :disabled="isApproved" md-ref-id="suite.amiba.group.ref" v-model="model.main.to_group" />
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-field>
@@ -201,34 +201,34 @@ export default {
       });
     },
     init_fm_group_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { is_leaf: '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_to_group_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { 'is_leaf': '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = {'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_element_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { 'is_leaf': '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
-        options.wheres.calendar = { name: 'calendar_id', value: this.model.main.purpose.calendar_id };
+        options.wheres.$calendar = { 'calendar_id': this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.calendar = { name: 'calendar_id', value: this.$root.configs.calendar.id };
+        options.wheres.$calendar = { 'calendar_id': this.$root.configs.calendar.id };
       }
     },
   },

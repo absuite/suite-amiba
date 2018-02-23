@@ -34,7 +34,7 @@
             <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="上级核算要素" @init="initParentElementRef" md-ref-id="suite.amiba.element.ref" v-model="model.main.parent"></md-ref-input>
+            <md-ref-input md-label="上级核算要素" :md-init="initParentElementRef" md-ref-id="suite.amiba.element.ref" v-model="model.main.parent"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-field>
@@ -129,9 +129,9 @@ export default {
     },
     initParentElementRef(options) {
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
   },

@@ -124,16 +124,16 @@ export default {
         return;
       }
       if (this.model.purpose) {
-        queryCase.wheres.push({ name: 'purpose_id', value: this.model.purpose.id });
+        queryCase.wheres.push({ 'purpose_id': this.model.purpose.id });
       }
       if (this.model.fm_period) {
-        queryCase.wheres.push({ name: 'fm_period', operator: 'greater_than_equal', value: this.model.fm_period.code });
+        queryCase.wheres.push({ 'gte':{'fm_period': this.model.fm_period.code }});
       }
       if (this.model.to_period) {
-        queryCase.wheres.push({ name: 'to_period', operator: 'less_than_equal', value: this.model.to_period.code });
+        queryCase.wheres.push({ 'lte':{'to_period': this.model.to_period.code }});
       }
       if (this.model.group) {
-        queryCase.wheres.push({ name: 'group_id', value: this.model.group.id });
+        queryCase.wheres.push({ 'group_id' : this.model.group.id });
       }
       this.$http.post('amiba/reports/group-trend-ans', queryCase).then(response => {
         this.updateOption(response.data.data);

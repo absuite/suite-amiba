@@ -39,12 +39,12 @@ export default {
       this.currentQ = q;
     },
     initQuery(options) {
-      options.wheres.filter = false;
+      options.wheres.$filter = false;
       if (this.currentQ) {
-        options.wheres.filter = {
+        options.wheres.$filter = {
           "or": [
-            { name: 'doc_no', operator: 'like', value: this.currentQ },
-            { name: 'period.name', operator: 'like', value: this.currentQ }
+            { like: {'doc_no': this.currentQ }},
+			{ like: {'period.name': this.currentQ }}
           ]
         };
       }

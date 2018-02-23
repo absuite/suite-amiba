@@ -14,7 +14,7 @@
       </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body class="no-padding">
-      <md-query @select="select" @dblclick="edit" @init="initQuery" ref="list" md-query-id="suite.amiba.data.doc.list"></md-query>
+      <md-query @select="select" @dblclick="edit" :md-init="initQuery" ref="list" md-query-id="suite.amiba.data.doc.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
@@ -42,13 +42,13 @@ export default {
       this.currentQ = q;
     },
     initQuery(options) {
-      options.wheres.filter = false;
+      options.wheres.$filter = false;
       if (this.currentQ) {
-        options.wheres.filter = {
+        options.wheres.$filter = {
           "or": [
-            { name: 'doc_no', operator: 'like', value: this.currentQ },
-            { name: 'fm_group.name', operator: 'like', value: this.currentQ },
-            { name: 'period.name', operator: 'like', value: this.currentQ }
+            { 'like':{'doc_no': this.currentQ }},
+			{ 'like':{'fm_group.name': this.currentQ }},
+			{ 'like':{'period.name': this.currentQ }}
           ]
         };
       }

@@ -133,17 +133,17 @@ export default {
         return;
       }
       if (this.model.purpose) {
-        queryCase.wheres.push({ name: 'purpose_id', value: this.model.purpose.id });
+        queryCase.wheres.push({ 'purpose_id': this.model.purpose.id });
       }
       if (this.model.period) {
-        queryCase.wheres.push({ name: 'period_id', value: this.model.period.id });
+        queryCase.wheres.push({ 'period_id' : this.model.period.id });
       }
       if (this.model.group) {
         var ids = [];
         for (var i = 0; i < this.model.group.length; i++) {
           ids.push(this.model.group[i].id);
         }
-        queryCase.wheres.push({ name: 'group_id', operator: 'in', value: ids });
+        queryCase.wheres.push({ 'in':{'group_id': ids }});
       }
       this.$http.post('amiba/reports/group-compare-ans', queryCase).then(response => {
         this.updateOption(response.data.data);

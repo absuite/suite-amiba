@@ -14,7 +14,7 @@
       </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body class="no-padding">
-      <md-query @select="select" @init="initQuery" @dblclick="edit" ref="list" md-query-id="suite.amiba.price.list"></md-query>
+      <md-query @select="select" :md-init="initQuery" @dblclick="edit" ref="list" md-query-id="suite.amiba.price.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
@@ -42,12 +42,12 @@ export default {
       this.currentQ = q;
     },
     initQuery(options) {
-      options.wheres.filter = false;
+      options.wheres.$filter = false;
       if (this.currentQ) {
-        options.wheres.filter = {
+        options.wheres.$filter = {
           "or": [
-            { name: 'code', operator: 'like', value: this.currentQ },
-            { name: 'name', operator: 'like', value: this.currentQ }
+			{ like: {'code': this.currentQ }},
+			{ like: {'name': this.currentQ }}
           ]
         };
       }

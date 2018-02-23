@@ -43,7 +43,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
-    <md-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
+    <md-ref :md-init="init_group_ref" md-ref-id="suite.amiba.group.ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>
@@ -91,11 +91,11 @@ export default {
       });
     },
     init_group_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { 'is_leaf': '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
 

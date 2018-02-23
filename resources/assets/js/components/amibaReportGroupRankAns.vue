@@ -115,10 +115,10 @@ export default {
         return;
       }
       if (this.model.purpose) {
-        queryCase.wheres.push({ name: 'purpose_id', value: this.model.purpose.id });
+        queryCase.wheres.push({ 'purpose_id': this.model.purpose.id });
       }
       if (this.model.period) {
-        queryCase.wheres.push({ name: 'period_id', value: this.model.period.id });
+        queryCase.wheres.push({ 'period_id' : this.model.period.id });
       }
       this.$http.post('amiba/reports/group-rank-ans', queryCase).then(response => {
         this.updateOption(response.data.data);

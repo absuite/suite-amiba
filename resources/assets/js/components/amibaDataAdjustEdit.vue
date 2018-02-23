@@ -31,7 +31,7 @@
             <md-ref-input md-label="核算目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="期间" @init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period"></md-ref-input>
+            <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-field>
@@ -89,9 +89,9 @@ export default {
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
-        options.wheres.calendar = { name: 'calendar_id', value: this.model.main.purpose.calendar_id };
+        options.wheres.$calendar = { calendar_id: this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.calendar = { name: 'calendar_id', value: this.$root.configs.calendar.id };
+        options.wheres.$calendar = { calendar_id: this.$root.configs.calendar.id };
       }
     },
   },

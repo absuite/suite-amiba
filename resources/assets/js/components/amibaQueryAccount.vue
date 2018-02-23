@@ -13,7 +13,7 @@
       </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body class="no-padding">
-      <md-query @init="init_model_query" @select="select" ref="list" md-query-id="suite.amiba.result.account.list"></md-query>
+      <md-query :md-init="init_model_query" @select="select" ref="list" md-query-id="suite.amiba.result.account.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
@@ -43,14 +43,14 @@ export default {
       this.$refs.list.pagination(1);
     },
     init_model_query(options) {
-      options.wheres.purpose = false;
-      options.wheres.period = false;
+      options.wheres.$purpose = false;
+      options.wheres.$period = false;
 
       if (this.model.purpose) {
-        options.wheres.purpose = { name: 'purpose.id', value: this.model.purpose.id };
+        options.wheres.$purpose = { 'purpose.id': this.model.purpose.id };
       }
       if (this.model.period) {
-        options.wheres.period = { name: 'period.id', value: this.model.period.id };
+        options.wheres.$period = { 'period.id': this.model.period.id };
       }
 
 

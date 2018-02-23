@@ -67,6 +67,27 @@ class AmibaRefAmibaSeeder extends Seeder {
 				$builder->filter('a0.ent_id=#{entId}#');
 			});
 
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.project.code.ref')->component('suite.amiba.modeling.project.code.ref');
+			});
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.account.code.ref')->component('suite.amiba.modeling.account.code.ref');
+			});
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.factor1.ref')->component('suite.amiba.modeling.factor1.ref');
+			});
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.factor2.ref')->component('suite.amiba.modeling.factor2.ref');
+			});
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.factor3.ref')->component('suite.amiba.modeling.factor3.ref');
+			});
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.factor4.ref')->component('suite.amiba.modeling.factor4.ref');
+			});
+			Models\Query::build(function (Builder $builder) use ($id) {
+				$builder->name('suite.amiba.modeling.factor5.ref')->component('suite.amiba.modeling.factor5.ref');
+			});
 		});
 	}
 }

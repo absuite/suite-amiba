@@ -35,11 +35,11 @@
             </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="分配方法" @init="init_method_ref" required md-ref-id="suite.amiba.allot.method.ref" v-model="model.main.method">
+            <md-ref-input md-label="分配方法" :md-init="init_method_ref" required md-ref-id="suite.amiba.allot.method.ref" v-model="model.main.method">
             </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="来源核算要素" @init="init_element_ref" required md-ref-id="suite.amiba.element.ref" v-model="model.main.element">
+            <md-ref-input md-label="来源核算要素" :md-init="init_element_ref" required md-ref-id="suite.amiba.element.ref" v-model="model.main.element">
             </md-ref-input>
           </md-layout>
         </md-layout>
@@ -51,7 +51,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
-    <md-ref @init="init_group_ref" md-ref-id="suite.amiba.group.ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
+    <md-ref :md-init="init_group_ref" md-ref-id="suite.amiba.group.ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>
@@ -104,25 +104,25 @@ export default {
       });
     },
     init_group_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
-      if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+      options.wheres.$leaf = { is_leaf: '1' };
+      if (this.model.main.$purpose) {
+        options.wheres.$purpose = { purpose_id: this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_method_ref(options) {
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = {purpose_id: this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_element_ref(options) {
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = {purpose_id: this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
   },

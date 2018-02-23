@@ -43,7 +43,7 @@
       </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body class="no-padding">
-      <md-query @select="select" @init="initQuery" ref="list" md-query-id="suite.amiba.doc.biz.list"></md-query>
+      <md-query @select="select" :md-init="initQuery" ref="list" md-query-id="suite.amiba.doc.biz.list"></md-query>
       <md-loading :loading="loading"></md-loading>
     </md-part-body>
   </md-part>
@@ -81,28 +81,28 @@ export default {
       });
     },
     initQuery(options) {
-      options.wheres.fm_date = false;
-      options.wheres.to_date = false;
-      options.wheres.biz_type = false;
-      options.wheres.doc_type = false;
-      options.wheres.org = false;
-      options.wheres.item = false;
+      options.wheres.$fm_date = false;
+      options.wheres.$to_date = false;
+      options.wheres.$biz_type = false;
+      options.wheres.$doc_type = false;
+      options.wheres.$org = false;
+      options.wheres.$item = false;
 
       if (this.model.period) {
-        options.wheres.fm_date = { name: 'doc_date', operator: 'greater_than_equal', value: this.model.period.from_date };
-        options.wheres.to_date = { name: 'doc_date', operator: 'less_than_equal', value: this.model.period.to_date };
+        options.wheres.$fm_date = {'gte': {'doc_date': this.model.period.from_date }};
+        options.wheres.$to_date = {'lte': {'doc_date': this.model.period.to_date }};
       }
       if (this.model.biz_type) {
-        options.wheres.biz_type = { name: 'biz_type', operator: 'like', value: this.model.biz_type };
+        options.wheres.$biz_type = {'like': {'biz_type': this.model.biz_type }};
       }
       if (this.model.doc_type) {
-        options.wheres.doc_type = { name: 'doc_type', operator: 'like', value: this.model.doc_type };
+        options.wheres.$doc_type ={'like': {'doc_type': this.model.doc_type }};
       }
       if (this.model.org) {
-        options.wheres.org = { name: 'org', operator: 'like', value: this.model.org };
+        options.wheres.$org ={'like': {'org': this.model.org }};
       }
       if (this.model.item) {
-        options.wheres.item = { name: 'item', operator: 'like', value: this.model.item };
+        options.wheres.$item = {'like': {'item': this.model.item }};
       }
     },
     loadData() {

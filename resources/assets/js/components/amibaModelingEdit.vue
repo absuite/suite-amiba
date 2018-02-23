@@ -38,7 +38,7 @@
             </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="阿米巴" @init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.group">
+            <md-ref-input md-label="阿米巴" :md-init="init_group_ref" md-ref-id="suite.amiba.group.ref" v-model="model.main.group">
             </md-ref-input>
           </md-layout>
         </md-layout>
@@ -50,15 +50,15 @@
             <md-grid-column label="业务类型" field="biz_type_enum" dataType="enum" editable ref-id="suite.cbo.biz.type.enum" />
             <md-grid-column label="单据类型" field="doc_type" dataType="entity" ref-id="suite.cbo.doc.type.ref" :ref-init="init_doc_type_ref" editable/>
             <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" editable/>
-            <md-grid-column label="费用项目" field="project_code" editable/>
-            <md-grid-column label="会计科目" field="account_code" editable/>
+            <md-grid-column label="费用项目" field="project_code" ref-id="suite.amiba.modeling.project.code.ref" ref-type="text" editable/>
+            <md-grid-column label="会计科目" field="account_code" ref-id="suite.amiba.modeling.account.code.ref" ref-type="text" editable/>
             <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" editable/>
             <md-grid-column label="物料" field="item" dataType="entity" ref-id="suite.cbo.item.ref" editable/>
-            <md-grid-column label="因素1" field="factor1" editable/>
-            <md-grid-column label="因素2" field="factor2" editable/>
-            <md-grid-column label="因素3" field="factor3" editable/>
-            <md-grid-column label="因素4" field="factor4" editable/>
-            <md-grid-column label="因素5" field="factor5" editable/>
+            <md-grid-column label="因素1" field="factor1" ref-id="suite.amiba.modeling.factor1.ref" ref-type="text" editable/>
+            <md-grid-column label="因素2" field="factor2" ref-id="suite.amiba.modeling.factor2.ref" ref-type="text" editable/>
+            <md-grid-column label="因素3" field="factor3" ref-id="suite.amiba.modeling.factor3.ref" ref-type="text" editable/>
+            <md-grid-column label="因素4" field="factor4" ref-id="suite.amiba.modeling.factor4.ref" ref-type="text" editable/>
+            <md-grid-column label="因素5" field="factor5" ref-id="suite.amiba.modeling.factor5.ref" ref-type="text" editable/>
             <md-grid-column label="取值类型" field="value_type_enum" dataType="enum" editable ref-id="suite.amiba.value.type.enum" />
             <md-grid-column label="取值比例%" field="adjust" editable/>
             <md-grid-column label="交易方" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" editable/>
@@ -66,7 +66,7 @@
         </md-layout>
       </md-content>
     </md-part-body>
-    <md-ref md-ref-id="suite.amiba.element.ref" @init="init_element_ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
+    <md-ref md-ref-id="suite.amiba.element.ref" :md-init="init_element_ref" ref="lineRef" @confirm="lineRefClose"></md-ref>
   </md-part>
 </template>
 <script>
@@ -118,19 +118,19 @@ export default {
       });
     },
     init_group_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { 'is_leaf': '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_element_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { 'is_leaf': '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_doc_type_ref(options) {

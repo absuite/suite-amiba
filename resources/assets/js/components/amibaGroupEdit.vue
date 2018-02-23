@@ -35,7 +35,7 @@
             </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="上级阿米巴单元" @init="initParentGroupRef" md-ref-id="suite.amiba.group.ref" v-model="model.main.parent">
+            <md-ref-input md-label="上级阿米巴单元" :md-init="initParentGroupRef" md-ref-id="suite.amiba.group.ref" v-model="model.main.parent">
             </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
@@ -152,9 +152,9 @@ export default {
     },
     initParentGroupRef(options) {
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
   },

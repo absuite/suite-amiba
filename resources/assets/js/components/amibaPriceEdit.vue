@@ -42,7 +42,7 @@
             </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
-            <md-ref-input md-label="阿米巴" @init="init_group_ref" :disabled="isApproved" required md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
+            <md-ref-input md-label="阿米巴" :md-init="init_group_ref" :disabled="isApproved" required md-ref-id="suite.amiba.group.ref" v-model="model.main.group" />
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-field>
@@ -138,18 +138,18 @@ export default {
       });
     },
     init_group_ref(options) {
-      options.wheres.leaf = { name: 'is_leaf', value: '1' };
+      options.wheres.$leaf = { is_leaf: '1' };
       if (this.model.main.purpose) {
-        options.wheres.purpose = { name: 'purpose_id', value: this.model.main.purpose.id };
+        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
       } else {
-        options.wheres.purpose = false;
+        options.wheres.$purpose = false;
       }
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
-        options.wheres.calendar = { name: 'calendar_id', value: this.model.main.purpose.calendar_id };
+        options.wheres.$calendar = { 'calendar_id': this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.calendar = { name: 'calendar_id', value: this.$root.configs.calendar.id };
+        options.wheres.$calendar = { 'calendar_id': this.$root.configs.calendar.id };
       }
     },
   },

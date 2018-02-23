@@ -121,20 +121,20 @@ export default {
         return;
       }
       if (this.model.purpose) {
-        queryCase.wheres.push({ name: 'purpose_id', value: this.model.purpose.id });
+        queryCase.wheres.push({ 'purpose_id': this.model.purpose.id });
       }
       if (this.model.fm_period) {
-        queryCase.wheres.push({ name: 'fm_period', operator: 'greater_than_equal', value: this.model.fm_period.code });
+        queryCase.wheres.push({ 'gte':{'fm_period': this.model.fm_period.code }});
       }
       if (this.model.to_period) {
-        queryCase.wheres.push({ name: 'to_period', operator: 'less_than_equal', value: this.model.to_period.code });
+        queryCase.wheres.push({ 'lte':{'to_period': this.model.to_period.code }});
       }
       if (this.model.group) {
         var ids = [];
         for (var i = 0; i < this.model.group.length; i++) {
           ids.push(this.model.group[i].id);
         }
-        queryCase.wheres.push({ name: 'group_id', operator: 'in', value: ids });
+        queryCase.wheres.push({ 'in':{'group_id': ids }});
       }
       this.$http.post('amiba/reports/group-analogy-ans', queryCase).then(response => {
         this.categories = response.data.categories;

@@ -10,7 +10,7 @@
       <md-content class="flex layout-column">
         <md-ref-input md-label="核算目的" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
         </md-ref-input>
-        <md-ref-input md-label="期间" multiple @init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
+        <md-ref-input md-label="期间" multiple :md-init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
         </md-ref-input>
         <md-field>
           <label>备注</label>
@@ -62,9 +62,9 @@ export default {
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
-        options.wheres.calendar = { name: 'calendar_id', value: this.model.main.purpose.calendar_id };
+        options.wheres.$calendar = {calendar_id: this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.calendar = { name: 'calendar_id', value: this.$root.configs.calendar.id };
+        options.wheres.$calendar = {calendar_id: this.$root.configs.calendar.id };
       }
     },
   },

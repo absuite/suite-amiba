@@ -72,13 +72,13 @@ export default {
         return;
       }
       if (this.model.purpose) {
-        queryCase.wheres.push({ name: 'purpose_id', value: this.model.purpose.id });
+        queryCase.wheres.push({ 'purpose_id': this.model.purpose.id });
       }
       if (this.model.period) {
-        queryCase.wheres.push({ name: 'period_id', value: this.model.period.id });
+        queryCase.wheres.push({ 'period_id' : this.model.period.id });
       }
       if (this.model.group) {
-        queryCase.wheres.push({ name: 'group_id', value: this.model.group.id });
+        queryCase.wheres.push({ 'group_id' : this.model.group.id });
       }
       this.$http.post('amiba/reports/statement-purpose', queryCase).then(response => {
         this.updateTableOptions(response.data.data);
