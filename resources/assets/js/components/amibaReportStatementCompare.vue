@@ -16,8 +16,8 @@
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" @focus="focusGroup" @select="selectGroups"></md-tree-view>
       </md-part-body-side>
-      <div class="layout layout-fill layout-column md-query">
-        <md-table class="flex md-header-multiple">
+      <div class="layout flex layout-column md-query">
+        <md-table class="layout-fill md-header-multiple">
           <md-table-row>
             <md-table-head style="min-width:2rem" rowspan="2">收支项目</md-table-head>
             <template v-for="g in dataCategories">

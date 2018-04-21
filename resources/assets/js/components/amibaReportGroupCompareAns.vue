@@ -16,7 +16,7 @@
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" @focus="focusGroup" @select="selectGroups"></md-tree-view>
       </md-part-body-side>
-      <div class="layout  layout-fill layout-column">
+      <div class="layout flex layout-column">
         <md-layout>
           <md-chart class="myChart" ref="myChart" :options="options"></md-chart>
         </md-layout>
@@ -48,6 +48,7 @@
 }
 </style>
 <script>
+import _each from 'lodash/each'
 import common from 'gmf/core/utils/common';
 var defaultOpts = {
   chart: {
@@ -173,7 +174,7 @@ export default {
       var datas = [];
       var datas2 = [];
       var datas3 = [];
-      this._.each(data, (value, key) => {
+      _each(data, (value, key) => {
         datas.push({
           name: value.name,
           y: value.this_profit
@@ -205,7 +206,7 @@ export default {
     },
     updateTableOptions(data) {
       this.dataDetail = [];
-      this._.each(data, (value, key) => {
+      _each(data, (value, key) => {
         this.dataDetail.push({
           name: value.name,
           this_cost: common.formatDecimal(value.this_cost),

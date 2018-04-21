@@ -16,8 +16,8 @@
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" :md-selection="false" @focus="focusGroup"></md-tree-view>
       </md-part-body-side>
-      <div class="layout layout-fill layout-column md-query">
-        <md-table class="flex">
+      <div class="layout flex layout-column md-query">
+        <md-table class="layout-fill">
           <md-table-row>
             <md-table-head>目标类型</md-table-head>
             <md-table-head md-numeric>目标值</md-table-head>
@@ -39,7 +39,7 @@
 </template>
 <script>
 import common from 'gmf/core/utils/common';
-
+import _each from 'lodash/each'
 export default {
   data() {
     return {
@@ -110,7 +110,7 @@ export default {
     },
     updateTableOptions(data) {
       this.dataDetail = [];
-      this._.each(data, (value, key) => {
+      _each(data, (value, key) => {
         this.dataDetail.push(value);
       });
     },

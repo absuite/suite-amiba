@@ -30,6 +30,7 @@
 </template>
 <script>
 import common from 'gmf/core/utils/common';
+import _extend from 'lodash/extend'
 export default {
   data() {
     return {
@@ -42,7 +43,7 @@ export default {
   },
   methods: {
     async loadDatas({ pager }) {
-      const params = this._.extend({}, pager, { date: this.model.date });
+      const params = _extend({}, pager, { date: this.model.date });
       return await this.$http.get('sys/dtis', { params: params })
     },
     runAll() {

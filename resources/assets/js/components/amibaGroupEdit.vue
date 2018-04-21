@@ -74,9 +74,10 @@
   </md-part>
 </template>
 <script>
-import model from 'gmf/core/mixins/MdModel/MdModel';
+import model from 'cbo/mixins/MdModel/MdModel';
 import common from 'gmf/core/utils/common';
-import modelGrid from 'gmf/core/mixins/MdModel/MdModelGrid';
+import modelGrid from 'cbo/mixins/MdModel/MdModelGrid';
+import _forEach from 'lodash/forEach'
 export default {
   data() {
     return {
@@ -146,7 +147,7 @@ export default {
       this.lineRefID && this.$refs['lineRef'].open();
     },
     lineRefClose(datas) {
-      this._.forEach(datas, (v, k) => {
+      _forEach(datas, (v, k) => {
         this.$refs.grid && this.$refs.grid.addDatas({ data: v, id: v.id });
       });
     },

@@ -4,8 +4,8 @@
   </div>
 </template>
 <script>
-import common from 'core/utils/common';
-import MdRefMixin from 'core/mixins/MdRef/MdRef';
+import common from 'gmf/core/utils/common';
+import MdRefMixin from 'gmf/core/mixins/MdRef/MdRef';
 export default {
   name: 'SuiteAmibaModelingAccountCodeRef',
   mixins: [MdRefMixin],

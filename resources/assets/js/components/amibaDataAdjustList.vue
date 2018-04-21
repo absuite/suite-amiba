@@ -17,6 +17,7 @@
   </md-part>
 </template>
 <script>
+import _map from 'lodash/map'
 export default {
   data() {
     return {
@@ -55,7 +56,7 @@ export default {
         return;
       }
       this.loading++;
-      const ids = this._.map(this.selectRows, 'id').toString();
+      const ids = _map(this.selectRows, 'id').toString();
       this.$http.delete('amiba/data-adjusts/' + ids).then(response => {
         this.loadData();
         this.loading--;

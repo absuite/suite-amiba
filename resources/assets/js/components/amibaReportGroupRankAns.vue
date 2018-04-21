@@ -43,6 +43,7 @@
 }
 </style>
 <script>
+import _each from 'lodash/each'
 import common from 'gmf/core/utils/common';
 var defaultOpts = {
   chart: {
@@ -131,7 +132,7 @@ export default {
       var datas = [];
       var datas2 = [];
       var datas3 = [];
-      this._.each(data, (value, key) => {
+      _each(data, (value, key) => {
         datas.push({
           name: value.name,
           y: value.this_profit
@@ -163,7 +164,7 @@ export default {
     },
     updateTableOptions(data) {
       this.dataDetail = [];
-      this._.each(data, (value, key) => {
+     _each(data, (value, key) => {
         this.dataDetail.push({
           name: value.name,
           this_cost: common.formatDecimal(value.this_cost),

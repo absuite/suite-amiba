@@ -41,7 +41,7 @@
   </md-part>
 </template>
 <script>
-import model from 'gmf/core/mixins/MdModel/MdModel';
+import model from 'cbo/mixins/MdModel/MdModel';
 
 import amibaDataCopy from './amibaDataCopy';
 export default {

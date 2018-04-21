@@ -25,7 +25,9 @@
   </md-part>
 </template>
 <script>
+import MdValidate from 'cbo/mixins/MdValidate/MdValidate';
 export default {
+  mixins: [MdValidate],
   data() {
     return {
       selectedRows: [],

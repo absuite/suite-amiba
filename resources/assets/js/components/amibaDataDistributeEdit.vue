@@ -25,7 +25,9 @@
   </md-part>
 </template>
 <script>
+import MdValidate from 'cbo/mixins/MdValidate/MdValidate';
 export default {
+  mixins: [MdValidate],
   data() {
     return {
       selectedRows: [],
@@ -62,9 +64,9 @@ export default {
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
-        options.wheres.$calendar = {'calendar_id': this.model.main.purpose.calendar_id };
+        options.wheres.$calendar = { 'calendar_id': this.model.main.purpose.calendar_id };
       } else {
-        options.wheres.$calendar = {'calendar_id': this.$root.configs.calendar.id };
+        options.wheres.$calendar = { 'calendar_id': this.$root.configs.calendar.id };
       }
     },
   },

@@ -22,7 +22,7 @@
       <md-part-body-side md-left>
         <md-tree-view :nodes="groups" :md-selection="false" @focus="focusGroup"></md-tree-view>
       </md-part-body-side>
-      <div class="layout layout-fill layout-column">
+      <div class="layout flex layout-column">
         <md-layout>
           <md-chart class="myChart" ref="myChart" :options="options"></md-chart>
         </md-layout>
@@ -56,6 +56,8 @@
 <script>
 import common from 'gmf/core/utils/common';
 import queryCase from 'gmf/core/mixins/MdQuery/MdQueryCase';
+import _each from 'lodash/each'
+import reverse from 'lodash/reverse'
 var defaultOpts = {
   chart: {
     type: 'line',
@@ -170,7 +172,7 @@ export default {
       var datas = [];
       var datas2 = [];
       var datas3 = [];
-      this._.each(data, (value, key) => {
+      _each(data, (value, key) => {
         categories.push(value.name);
         datas.push({
           name: value.name,
@@ -209,9 +211,9 @@ export default {
       this.$refs.myChart.mergeOption(opts);
     },
     updateTableOptions(data) {
-      data = this._.reverse(data);
+      data =reverse(data);
       this.dataDetail = [];
-      this._.each(data, (value, key) => {
+      _each(data, (value, key) => {
         this.dataDetail.push({
           name: value.name,
           this_cost: common.formatDecimal(value.this_cost),

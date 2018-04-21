@@ -15,6 +15,7 @@
 </template>
 <script>
 import amibaDataCopy from './amibaDataCopy';
+import _map from 'lodash/map'
 export default {
   data() {
     return {
@@ -35,7 +36,7 @@ export default {
         return;
       }
       this.loading++;
-      const ids = this._.map(this.selectRows, 'id').toString();
+      const ids =_map(this.selectRows, 'id').toString();
       this.$http.delete('amiba/purposes/' + ids).then(response => {
         this.loadData();
         this.loading--;

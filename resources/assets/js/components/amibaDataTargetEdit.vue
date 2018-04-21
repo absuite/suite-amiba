@@ -48,8 +48,8 @@
   </md-part>
 </template>
 <script>
-import model from 'gmf/core/mixins/MdModel/MdModel';
-import modelGrid from 'gmf/core/mixins/MdModel/MdModelGrid';
+import model from 'cbo/mixins/MdModel/MdModel';
+import modelGrid from 'cbo/mixins/MdModel/MdModelGrid';
 export default {
   mixins: [model, modelGrid],
   computed: {
