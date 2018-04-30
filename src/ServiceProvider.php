@@ -3,6 +3,7 @@
 namespace Suite\Amiba;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Packager;
 
 class ServiceProvider extends BaseServiceProvider {
 	/**
@@ -15,7 +16,7 @@ class ServiceProvider extends BaseServiceProvider {
 		$this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
 
 		if ($this->app->runningInConsole()) {
-			$this->registerMigrations();
+			Packager::loadDatabasesFrom(__DIR__ . '/../database/');
 
 			$publishes = config('gmf.publishes', 'gmf');
 			$this->publishes([
@@ -26,19 +27,6 @@ class ServiceProvider extends BaseServiceProvider {
 			$this->publishes([
 				__DIR__ . '/../resources/public' => public_path('assets/vendor/suite-amiba'),
 			], $publishes);
-
-			$this->publishes([
-				__DIR__ . '/../database/seeds' => base_path('database/seeds'),
-				__DIR__ . '/../database/preseeds' => base_path('database/preseeds'),
-				__DIR__ . '/../database/postseeds' => base_path('database/postseeds'),
-			], $publishes);
-
-			$this->publishes([
-				__DIR__ . '/../database/sqls' => base_path('database/sqls'),
-				__DIR__ . '/../database/presqls' => base_path('database/presqls'),
-				__DIR__ . '/../database/postsqls' => base_path('database/postsqls'),
-			], $publishes);
-
 		}
 	}
 
@@ -48,15 +36,6 @@ class ServiceProvider extends BaseServiceProvider {
 	 * @return void
 	 */
 	public function register() {
-
-	}
-	/**
-	 * Register Passport's migration files.
-	 *
-	 * @return void
-	 */
-	protected function registerMigrations() {
-		$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
 	}
 }
