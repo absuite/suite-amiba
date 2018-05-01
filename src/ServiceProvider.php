@@ -29,6 +29,9 @@ class ServiceProvider extends BaseServiceProvider {
 			], $publishes);
 		}
 	}
+	public function alias() {
+		return 'suite-amiba';
+	}
 
 	/**
 	 * Register the application services.
