@@ -140,6 +140,14 @@ class AmibaDtiRunJob implements ShouldQueue {
 			'verify' => false,
 		]);
 		$input = [];
+		if (!empty($dti->header)) {
+			$header = $this->parseParams($dti->header, $paramsConfig);
+			if ($header) {
+				foreach ($header as $pk => $pv) {
+					$input[$pk] = $pv;
+				}
+			}
+		}
 		if ($dti->body && count($dti->body)) {
 			$input['params'] = $this->parseParams($dti->body, $paramsConfig);
 		}
@@ -161,9 +169,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 	}
 	private function parseParams($paramStr, $paramsConfig = []) {
 		if ($paramStr) {
-
 			$paramsObj = json_decode($paramStr);
-
 			if ($paramsObj) {
 				foreach ($paramsObj as $pk => $pv) {
 					$parseValue = $pv;
