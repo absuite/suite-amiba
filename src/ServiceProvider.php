@@ -14,9 +14,8 @@ class ServiceProvider extends BaseServiceProvider {
 	public function boot() {
 		$this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
 		$this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-
+		Packager::loadDatabasesFrom(__DIR__ . '/../database/');
 		if ($this->app->runningInConsole()) {
-			Packager::loadDatabasesFrom(__DIR__ . '/../database/');
 
 			$publishes = config('gmf.publishes', 'gmf');
 			$this->publishes([

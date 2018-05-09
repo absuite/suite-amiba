@@ -4,7 +4,7 @@ namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
 use Gmf\Sys\Models;
 use Gmf\Sys\Models\User;
-use Gmf\Sys\Uuid;
+use Uuid;
 use GuzzleHttp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,7 +48,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$e = false;
 		try {
 			$dt = Carbon::now();
-			$this->sessionId = $dt->toDateString() . '' . Uuid::generate(1, 'gmf', Uuid::NS_DNS, "");
+			$this->sessionId = $dt->toDateString() . '' . Uuid::generate();
 			//日志
 			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'runing', 'memo' => '接口程序处理.开始，上下文：' . json_encode($this->context)]);
 

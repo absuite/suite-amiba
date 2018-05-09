@@ -23,13 +23,12 @@ class AmibaRolePreSeeder extends Seeder {
 		if (empty($this->entId)) {
 			return;
 		}
-		$uid = config('gmf.admin.id');
 		Role::build(function (Builder $b) {
 			$b->ent_id($this->entId)->code($this->role)->name('阿米巴经营管理员');
 		});
-		if ($uid) {
-			RoleUser::build(function (Builder $b) use ($uid) {
-				$b->ent_id($this->entId)->user_id($uid)->role($this->role);
+		if ($user = config('gmf.user.model')::findByAccount(config('gmf.admin.account'), 'sys')) {
+			RoleUser::build(function (Builder $b) use ($user) {
+				$b->ent_id($this->entId)->user_id($user->id)->role($this->role);
 			});
 		}
 
