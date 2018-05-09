@@ -2,11 +2,11 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
-use Suite\Cbo\Models as CboModels;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
+use Suite\Cbo\Models as CboModels;
 
 class DataTime extends Model {
 	use Snapshotable, HasGuard;

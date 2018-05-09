@@ -2,6 +2,7 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
+use DB;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;

@@ -2,6 +2,7 @@
 
 namespace Suite\Amiba\Models;
 use Closure;
+use DB;
 use GAuth;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Libs\InputHelper;
