@@ -4,7 +4,6 @@ namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
 use Gmf\Sys\Models;
 use Gmf\Sys\Models\User;
-use Uuid;
 use GuzzleHttp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Uuid;
 
 class AmibaDtiRunJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -159,10 +159,10 @@ class AmibaDtiRunJob implements ShouldQueue {
 		$result = (string) $res->getBody();
 
 		$result = json_decode($result);
-		if (!empty($result->d)) {
+		if (isset($result->d)) {
 			$result = $result->d;
 		}
-		if (!empty($result->data)) {
+		if (isset($result->data)) {
 			$result = $result->data;
 		}
 		return $result;
