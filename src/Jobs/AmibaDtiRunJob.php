@@ -189,7 +189,11 @@ class AmibaDtiRunJob implements ShouldQueue {
 	private function getDtiParamConfig($dti) {
 		$dtiParams = Models\DtiParam::where('dti_id', $dti->id)->get();
 		$dtiCategoryParams = Models\DtiParam::where('category_id', $dti->category_id)->get();
-		$emptyParams = Models\DtiParam::whereNull('category_id')->whereNull('dti_id')->get();
+		$emptyParams = Models\DtiParam::where(function ($query) {
+			$query->whereNull('category_id')->orWhere('category_id', '');
+		})->where(function ($query) {
+			$query->whereNull('dti_id')->orWhere('dti_id', '');
+		})->get();
 
 		$params = [];
 		foreach ($emptyParams as $key => $value) {
