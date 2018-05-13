@@ -172,7 +172,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET `qty`=(`src_qty`*`adjust`/100) WHERE adjust IS NOT NULL AND src_qty!=0;
   UPDATE tml_data_elementing SET `money`=(`src_money`*`adjust`/100) WHERE adjust IS NOT NULL AND src_money!=0;
   
-  UPDATE tml_data_elementing SET `money`=`qty` WHERE value_type_enum='qty';
+  UPDATE tml_data_elementing SET `money`=0 WHERE value_type_enum='qty';
 
   UPDATE tml_data_elementing AS l 
     INNER JOIN suite_amiba_doc_bizs AS d ON l.data_id=d.id
@@ -257,7 +257,6 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   /*数据巴的来源和去向相同时，则需要删除*/
   DELETE FROM tml_data_elementing WHERE IFNULL(to_group_id,'')!='' AND IFNULL(fm_group_id,'')!='' AND (to_group_id=fm_group_id);
   
-
   
   /*
   匹配方：与原始业务数据中的巴进行匹配，并将匹配结果作为表头巴的建模成果。
@@ -286,7 +285,7 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   
   /*数据巴的来源和去向相同时，则需要删除*/
   DELETE FROM tml_data_elementing WHERE IFNULL(match_group_id,'')!='' AND (m_fm_group_id=m_to_group_id);
-  
+
   /*如果取数量，则需要从价表里取单价*/
   UPDATE `suite_amiba_prices` AS p
     INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
@@ -330,7 +329,8 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET use_type_enum='direct' WHERE m_fm_group_id IS NOT NULL;
   -- 更新业务主键
   UPDATE tml_data_elementing SET bizKey=MD5(CONCAT(modeling_id,purpose_id,period_id,IFNULL(m_fm_group_id,''),IFNULL(m_to_group_id,''),IFNULL(use_type_enum,''),IFNULL(element_id,'')));
-  
+
+
   SET @len=1; 
   SELECT COUNT(0) INTO @len FROM tml_data_elementing AS l;
   CALL sp_gmf_sys_uid('suite.amiba.data.doc',@len);
@@ -352,6 +352,9 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_docLine SET price=money/qty WHERE qty!=0;
   UPDATE tml_data_docLine AS dl INNER JOIN  tml_data_doc AS d ON d.bizkey=dl.bizkey
   SET dl.doc_id=d.id;
+  
+  
+/*将数据更新到考核数据表*/
 
 DELETE l FROM suite_amiba_data_doc_lines AS l
 INNER JOIN suite_amiba_data_docs AS h ON l.doc_id=h.id
@@ -360,7 +363,7 @@ WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose 
 DELETE h FROM suite_amiba_data_docs AS h 
 WHERE h.src_type_enum='interface' AND h.ent_id=p_ent AND h.purpose_id=p_purpose AND h.period_id=p_period AND ((IFNULL(p_model,'')='' OR (FIND_IN_SET(h.modeling_id , p_model)>0)));
 
-/*将数据更新到考核数据表*/
+
 INSERT INTO `suite_amiba_data_docs`(`id`,`created_at`,`ent_id`,`src_type_enum`,`modeling_id`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,`money`,`state_enum`)
 SELECT `id`,NOW(),p_ent,src_type_enum,`modeling_id`,`doc_no`,`doc_date`,`purpose_id`,`period_id`,`use_type_enum`,`fm_group_id`,`to_group_id`,`element_id`,IFNULL(`money`,0),'approved'
 FROM tml_data_doc;
@@ -368,6 +371,7 @@ FROM tml_data_doc;
 INSERT INTO`suite_amiba_data_doc_lines`(`id`,`created_at`,`ent_id`,`doc_id`,`modeling_id`,`modeling_line_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,`qty`,`price`,`money`)
 SELECT `id`,NOW(),p_ent,`doc_id`,`modeling_id`,`modeling_line_id`,`trader_id`,`item_category_id`,`item_id`,`mfc_id`,`project_id`,`account_code`,IFNULL(`qty`,0),IFNULL(`price`,0),IFNULL(`money`,0)
 FROM tml_data_docLine;
+
 
 END$$
 
