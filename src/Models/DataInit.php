@@ -15,6 +15,20 @@ class DataInit extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'doc_no', 'ent_id', 'purpose_id', 'period_id', 'currency_id'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+	public function setPeriodIdAttribute($value) {
+		$this->attributes['period_id'] = empty($value) ? null : $value;
+	}
+	public function setCurrencyIdAttribute($value) {
+		$this->attributes['currency_id'] = empty($value) ? null : $value;
+	}
+
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}

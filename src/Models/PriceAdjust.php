@@ -14,6 +14,20 @@ class PriceAdjust extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'purpose_id', 'period_id', 'group_id', 'code', 'name', 'memo', 'state_enum'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+	public function setGroupIdAttribute($value) {
+		$this->attributes['group_id'] = empty($value) ? null : $value;
+	}
+	public function setPeriodIdAttribute($value) {
+		$this->attributes['period_id'] = empty($value) ? null : $value;
+	}
+
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}

@@ -13,6 +13,14 @@ class DataInitLine extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'init_id', 'is_init', 'profit', 'group_id'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setGroupIdAttribute($value) {
+		$this->attributes['group_id'] = empty($value) ? null : $value;
+	}
+
 	public function group() {
 		return $this->belongsTo('Suite\Amiba\Models\Group');
 	}

@@ -20,6 +20,11 @@ class DocFi extends Model {
 		'trader', 'project', 'account', 'debit_money', 'credit_money',
 		'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'data_src_identity'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+
 	public static function fromImport($data) {
 		$datas->each(function ($row, $key) {
 			$row['data_src_identity'] = 'import';

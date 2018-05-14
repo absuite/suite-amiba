@@ -11,7 +11,25 @@ class AllotRule extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_allot_rules';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo', 'purpose_id', 'method_id', 'group_id', 'element_id'];
+	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo',
+		'purpose_id', 'method_id', 'group_id', 'element_id'];
+
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setMethodIdAttribute($value) {
+		$this->attributes['method_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+	public function setGroupIdAttribute($value) {
+		$this->attributes['group_id'] = empty($value) ? null : $value;
+	}
+	public function setElementIdAttribute($value) {
+		$this->attributes['element_id'] = empty($value) ? null : $value;
+	}
 
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');

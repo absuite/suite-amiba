@@ -21,6 +21,10 @@ class DocBiz extends Model {
 		'trader', 'item', 'item_category', 'project', 'lot', 'mfc',
 		'currency', 'uom', 'qty', 'price', 'money', 'tax',
 		'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'data_src_identity'];
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
 
 	public static function fromImport($data) {
 		$datas->each(function ($row, $key) {

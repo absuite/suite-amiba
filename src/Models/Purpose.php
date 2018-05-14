@@ -14,6 +14,14 @@ class Purpose extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo', 'calendar_id', 'currency_id'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setCalendarIdAttribute($value) {
+		$this->attributes['calendar_id'] = empty($value) ? null : $value;
+	}
+
 	public function calendar() {
 		return $this->belongsTo('Suite\Cbo\Models\PeriodCalendar');
 	}

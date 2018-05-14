@@ -13,6 +13,11 @@ class GroupLine extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'group_id', 'data_id', 'data_type'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+
 	public function data() {
 		return $this->morphTo();
 	}

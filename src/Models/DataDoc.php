@@ -22,6 +22,35 @@ class DataDoc extends Model {
 		'purpose_id', 'fm_group_id', 'to_group_id', 'period_id', 'element_id', 'currency_id',
 		'qty', 'money', 'use_type_enum', 'created_by', 'src_type_enum', 'src_id', 'src_no', 'memo'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+	public function setFmGroupIdAttribute($value) {
+		$this->attributes['fm_group_id'] = empty($value) ? null : $value;
+	}
+	public function setToGroupIdAttribute($value) {
+		$this->attributes['to_group_id'] = empty($value) ? null : $value;
+	}
+	public function setPeriodIdAttribute($value) {
+		$this->attributes['period_id'] = empty($value) ? null : $value;
+	}
+	public function setElementIdAttribute($value) {
+		$this->attributes['element_id'] = empty($value) ? null : $value;
+	}
+	public function setCurrencyIdAttribute($value) {
+		$this->attributes['currency_id'] = empty($value) ? null : $value;
+	}
+	public function setQtyAttribute($value) {
+		$this->attributes['qty'] = empty($value) ? 0 : $value;
+	}
+	public function setMoneyAttribute($value) {
+		$this->attributes['money'] = empty($value) ? 0 : $value;
+	}
+
 	public function validate() {
 		if (empty($this->money)) {
 			$this->money = 0;

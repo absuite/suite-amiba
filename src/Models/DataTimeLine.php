@@ -12,6 +12,13 @@ class DataTimeLine extends Model {
 	protected $table = 'suite_amiba_data_time_lines';
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'time_id', 'group_id', 'nor_time', 'over_time', 'total_time'];
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setGroupIdAttribute($value) {
+		$this->attributes['group_id'] = empty($value) ? null : $value;
+	}
 
 	public function group() {
 		return $this->belongsTo('Suite\Amiba\Models\Group');

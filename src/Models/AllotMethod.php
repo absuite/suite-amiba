@@ -13,6 +13,14 @@ class AllotMethod extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo', 'purpose_id'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}

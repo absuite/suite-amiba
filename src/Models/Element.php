@@ -19,6 +19,18 @@ class Element extends Model {
 	protected $casts = [
 		'is_manual' => 'integer',
 	];
+
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+	public function setParentIdAttribute($value) {
+		$this->attributes['parent_id'] = empty($value) ? null : $value;
+	}
+
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}

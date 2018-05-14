@@ -14,6 +14,23 @@ class DataTarget extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'purpose_id', 'group_id', 'fm_period_id', 'to_period_id', 'memo'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setPurposeIdAttribute($value) {
+		$this->attributes['purpose_id'] = empty($value) ? null : $value;
+	}
+	public function setGroupIdAttribute($value) {
+		$this->attributes['group_id'] = empty($value) ? null : $value;
+	}
+	public function setFmPeriodIdAttribute($value) {
+		$this->attributes['fm_period_id'] = empty($value) ? null : $value;
+	}
+	public function setToPeriodIdAttribute($value) {
+		$this->attributes['to_period_id'] = empty($value) ? null : $value;
+	}
+
 	public function purpose() {
 		return $this->belongsTo('Suite\Amiba\Models\Purpose');
 	}

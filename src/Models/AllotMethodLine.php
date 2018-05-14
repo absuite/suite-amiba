@@ -12,6 +12,18 @@ class AllotMethodLine extends Model {
 	protected $table = 'suite_amiba_allot_method_lines';
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'method_id', 'group_id', 'rate'];
+
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setGroupIdAttribute($value) {
+		$this->attributes['group_id'] = empty($value) ? null : $value;
+	}
+	public function setRateAttribute($value) {
+		$this->attributes['rate'] = empty($value) ? 0 : $value;
+	}
+
 	public function group() {
 		return $this->belongsTo('Suite\Amiba\Models\Group');
 	}

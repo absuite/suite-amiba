@@ -10,7 +10,7 @@
       <md-content class="flex layout-column">
         <md-ref-input md-label="核算目的" md-ref-id="suite.amiba.purpose.ref" v-model="model.main.purpose">
         </md-ref-input>
-        <md-ref-input md-label="期间"  multiple md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
+        <md-ref-input md-label="期间"  multiple :md-init="init_period_ref" md-ref-id="suite.cbo.period.account.ref" v-model="model.main.period">
         </md-ref-input>
         <md-ref-input md-label="经营模型(可选)" multiple md-placeholder="添加经营模型，按经营模型进行建模"  md-ref-id="suite.amiba.modeling.ref" v-model="model.main.modeling">
         </md-ref-input>
@@ -63,6 +63,13 @@ export default {
         this.$toast(response);
         this.loading--;
       });
+    },
+    init_period_ref(options) {
+      if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
+        options.wheres.$calendar = { 'calendar_id': this.model.main.purpose.calendar_id };
+      } else {
+        options.wheres.$calendar = { 'calendar_id': this.$root.configs.calendar.id };
+      }
     },
   },
   created() {

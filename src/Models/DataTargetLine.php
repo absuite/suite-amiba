@@ -14,6 +14,14 @@ class DataTargetLine extends Model {
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id', 'target_id', 'element_id', 'type_enum', 'rate', 'money'];
 
+	//属性
+	public function setEntIdAttribute($value) {
+		$this->attributes['ent_id'] = empty($value) ? null : $value;
+	}
+	public function setElementIdAttribute($value) {
+		$this->attributes['element_id'] = empty($value) ? null : $value;
+	}
+
 	public function element() {
 		return $this->belongsTo('Suite\Amiba\Models\Element');
 	}
