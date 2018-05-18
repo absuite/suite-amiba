@@ -50,8 +50,8 @@ class DtiController extends Controller {
 		$context['local_host'] = $request->getSchemeAndHttpHost() . '/';
 
 		$job = new Jobs\AmibaDtiRunJob($context, $datas);
-		$job->handle();
-		//dispatch($job);
+		// $job->handle();
+		dispatch($job);
 
 		return $this->toJson($datas);
 	}

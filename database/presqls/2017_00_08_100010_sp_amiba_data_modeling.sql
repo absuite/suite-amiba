@@ -3,14 +3,16 @@ DROP PROCEDURE IF EXISTS sp_amiba_data_modeling$$
 
 
 CREATE PROCEDURE sp_amiba_data_modeling(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200),IN p_model NVARCHAR(500)) 
-BEGIN
+sp_amiba_data_modeling:BEGIN
 DECLARE v_from_date DATETIME;
 DECLARE v_to_date DATETIME;
 DECLARE v_id_start BIGINT;
 DECLARE v_id_count BIGINT;
+
 /*
 SELECT UUID_SHORT() into v_uid;
 */
+
 /*数据对应的要素*/
 DROP TEMPORARY TABLE IF EXISTS tml_data_elementing;
 CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_elementing(
@@ -32,6 +34,21 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_elementing(
 `element_id` NVARCHAR(100),
 `data_id`  NVARCHAR(100),
 `data_type`  NVARCHAR(100),
+
+`data_fm_org`  NVARCHAR(100),
+`data_fm_dept`  NVARCHAR(100),
+`data_fm_work`  NVARCHAR(100),
+`data_fm_team`  NVARCHAR(100),
+`data_to_org`  NVARCHAR(100),
+`data_to_dept`  NVARCHAR(100),
+`data_to_work`  NVARCHAR(100),
+`data_to_team`  NVARCHAR(100),
+`data_trader`  NVARCHAR(100),
+`data_item`  NVARCHAR(100),
+`data_uom`  NVARCHAR(100),
+`data_item_category`  NVARCHAR(100),
+ 
+    
 `use_type_enum` NVARCHAR(100),
 `value_type_enum` NVARCHAR(100),
 `src_qty` DECIMAL(30,2) DEFAULT 0,
@@ -110,6 +127,8 @@ INSERT INTO tml_data_elementing
 (
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
+  ,`data_fm_org`,`data_fm_dept`,`data_fm_work` ,`data_fm_team` ,`data_to_org`,`data_to_dept`,`data_to_work`,`data_to_team`
+  ,`data_trader`,`data_item`,`data_uom` ,`data_item_category` 
 )
 SELECT DISTINCT 
   p_purpose,p_period,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
@@ -117,6 +136,8 @@ SELECT DISTINCT
   d.qty AS src_qty,
   d.money AS src_money,
   ml.`adjust`
+  ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team` ,d.`to_org`,d.`to_dept`,d.`to_work`,d.`to_team`
+  ,d.`trader`,d.`item`,d.`uom` ,d.`item_category` 
 FROM `suite_amiba_doc_bizs` AS d 
   INNER JOIN  `suite_amiba_modelings` AS m ON m.`purpose_id`=p_purpose  
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
@@ -143,6 +164,8 @@ INSERT INTO tml_data_elementing
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
   `account_code`,`expense_code`
+  ,`data_fm_org`,`data_fm_dept`,`data_fm_work` ,`data_fm_team` 
+  ,`data_trader`
 )
 SELECT DISTINCT 
   p_purpose,p_period,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
@@ -151,6 +174,8 @@ SELECT DISTINCT
   CASE WHEN ml.value_type_enum='debit' THEN d.`debit_money` ELSE d.`credit_money` END AS src_money,
   ml.`adjust`,
   d.account,d.`project`
+  ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team`
+  ,d.`trader`
 FROM `suite_amiba_doc_fis` AS d 
   INNER JOIN  `suite_amiba_modelings` AS m ON m.purpose_id=p_purpose  
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
@@ -173,59 +198,67 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   UPDATE tml_data_elementing SET `money`=(`src_money`*`adjust`/100) WHERE adjust IS NOT NULL AND src_money!=0;
   
   UPDATE tml_data_elementing SET `money`=0 WHERE value_type_enum='qty';
-
-  UPDATE tml_data_elementing AS l 
-    INNER JOIN suite_amiba_doc_bizs AS d ON l.data_id=d.id
-    LEFT JOIN `suite_cbo_orgs` AS fm_org ON  fm_org.code=d.fm_org
-    LEFT JOIN `suite_cbo_depts` AS fm_dept ON  fm_dept.code=d.fm_dept
-    LEFT JOIN `suite_cbo_works` AS fm_work ON  fm_work.code=d.fm_work
-    LEFT JOIN `suite_cbo_teams` AS fm_team ON  fm_team.code=d.fm_team
-    
-    LEFT JOIN `suite_cbo_orgs` AS to_org ON  to_org.code=d.to_org
-    LEFT JOIN `suite_cbo_depts` AS to_dept ON  to_dept.code=d.to_dept
-    LEFT JOIN `suite_cbo_works` AS to_work ON  to_work.code=d.to_work
-    LEFT JOIN `suite_cbo_teams` AS to_team ON  to_team.code=d.to_team
-    
-    LEFT JOIN  `suite_cbo_traders` AS trader ON  trader.code=d.trader
-    LEFT JOIN  `suite_cbo_items` AS item ON  item.code=d.item
-    LEFT JOIN  `suite_cbo_item_categories` AS item_category ON  item_category.code=d.item_category
-    LEFT JOIN `suite_cbo_item_categories` AS item_category1 ON  item_category1.id=item.category_id
-    LEFT JOIN `suite_cbo_units` AS unit ON unit.code=d.`uom`
-  SET
-    l.fm_org_id=fm_org.id,
-    l.fm_dept_id=fm_dept.id,
-    l.fm_work_id=fm_work.id,
-    l.fm_team_id=fm_team.id,
-    
-    l.to_org_id=to_org.id,
-    l.to_dept_id=to_dept.id,
-    l.to_work_id=to_work.id,
-    l.to_team_id=to_team.id,
-    
-    l.trader_id=trader.id,
-    l.item_id=item.id,
-    
-    l.unit_id=unit.id,
-    l.item_category_id=IFNULL(item_category.id,item_category1.id)
-  WHERE l.data_type='biz';
   
   UPDATE tml_data_elementing AS l 
-    INNER JOIN `suite_amiba_doc_fis` AS d ON l.data_id=d.id
-    LEFT JOIN `suite_cbo_orgs` AS fm_org ON  fm_org.code=d.fm_org
-    LEFT JOIN `suite_cbo_depts` AS fm_dept ON  fm_dept.code=d.fm_dept
-    LEFT JOIN `suite_cbo_works` AS fm_work ON  fm_work.code=d.fm_work
-    LEFT JOIN `suite_cbo_teams` AS fm_team ON  fm_team.code=d.fm_team
-    
-    LEFT JOIN  `suite_cbo_traders` AS trader ON  trader.code=d.trader
-  SET
-    l.fm_org_id=fm_org.id,
-    l.fm_dept_id=fm_dept.id,
-    l.fm_work_id=fm_work.id,
-    l.fm_team_id=fm_team.id,
-    
-    l.trader_id=trader.id
-  WHERE l.data_type='fi';
-    
+    INNER JOIN `suite_cbo_orgs` AS d ON  d.code=l.data_fm_org
+  SET l.fm_org_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_fm_org IS NOT NULL AND l.data_fm_org!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN `suite_cbo_depts` AS d ON  d.code=l.data_fm_dept
+  SET l.fm_dept_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_fm_dept IS NOT NULL AND l.data_fm_dept!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_works` AS d ON  d.code=l.data_fm_work
+  SET l.fm_work_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_fm_work IS NOT NULL AND l.data_fm_work!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_teams` AS d ON  d.code=l.data_fm_team
+  SET l.fm_team_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_fm_team IS NOT NULL AND l.data_fm_team!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_orgs` AS d ON  d.code=l.data_to_org
+  SET l.to_org_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_to_org IS NOT NULL AND l.data_to_org!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_depts` AS d ON  d.code=l.data_to_dept
+  SET l.to_dept_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_to_dept IS NOT NULL AND l.data_to_dept!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_works` AS d ON  d.code=l.data_to_work
+  SET l.to_work_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_to_work IS NOT NULL AND l.data_to_work!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_teams` AS d ON  d.code=l.data_to_team
+  SET l.to_team_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_to_team IS NOT NULL AND l.data_to_team!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_traders` AS d ON  d.code=l.data_trader
+  SET l.trader_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_trader IS NOT NULL AND l.data_trader!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_items` AS d ON  d.code=l.data_item
+  SET l.item_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_item IS NOT NULL AND l.data_item!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_units` AS d ON  d.code=l.data_uom
+  SET l.unit_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_uom IS NOT NULL AND l.data_uom!='';
+  
+  UPDATE tml_data_elementing AS l 
+    INNER JOIN  `suite_cbo_item_categories` AS d ON  d.code=l.data_item_category
+  SET l.item_category_id=d.id
+  WHERE d.ent_id=p_ent AND l.data_item_category IS NOT NULL AND l.data_item_category!='';
+  
 
   -- 依据阿米巴定义找来源阿米巴
   UPDATE tml_data_elementing AS l 

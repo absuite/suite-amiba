@@ -65,9 +65,9 @@ export default {
       this.$http.post('amiba/dtis/run', datas).then(response => {
         this.is_running--;
         item.end_date = common.now();
-        this.$toast(item.name + '执行成功!');
-        item.msg = '执行成功';
-        item.is_running = false
+        this.$toast(item.name + '成功提交请求!');
+        item.msg = '成功提交请求';
+        item.is_running = true
       }, response => {
         this.is_running--;
         item.end_date = common.now();
