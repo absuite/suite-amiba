@@ -129,14 +129,11 @@ class DataDoc extends Model {
 				return CboModels\Currency::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
 			},
 		]);
-		$validator = Validator::make($input, [
+		Validator::make($input, [
 			'doc_no' => 'required',
 			'doc_date' => 'required',
 			'purpose_id' => 'required',
-		]);
-		if ($validator->fails()) {
-			return $this->toError($validator->errors());
-		}
+		])->validate();
 		$input['ent_id'] = $ent_id;
 		$input['state_enum'] = 'opened';
 		return static::create($input);

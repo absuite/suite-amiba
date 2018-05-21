@@ -139,17 +139,20 @@ SELECT DISTINCT
   ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team` ,d.`to_org`,d.`to_dept`,d.`to_work`,d.`to_team`
   ,d.`trader`,d.`item`,d.`uom` ,d.`item_category` 
 FROM `suite_amiba_doc_bizs` AS d 
-  INNER JOIN  `suite_amiba_modelings` AS m ON m.`purpose_id`=p_purpose  
+  LEFT JOIN `suite_cbo_items` AS d_item ON d_item.code=d.item AND d_item.ent_id=d.ent_id
+  INNER JOIN  `suite_amiba_modelings` AS m ON m.`purpose_id`=p_purpose  AND d.ent_id=m.ent_id
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
-  LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.`doc_type_id`=dt.`id`
+  LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.`doc_type_id`=dt.`id` 
   LEFT JOIN `suite_cbo_item_categories` AS ic ON ml.`item_category_id`=ic.`id`
   LEFT JOIN `suite_cbo_items` AS item ON ml.`item_id`=item.`id`
   LEFT JOIN `suite_cbo_traders` AS trader ON ml.`trader_id`=trader.`id`
-WHERE ml.`biz_type_enum`=d.`biz_type` 
+WHERE 
+  d.ent_id=p_ent
+  AND ml.`biz_type_enum`=d.`biz_type` 
   AND d.`doc_date` BETWEEN v_from_date AND v_to_date
   AND (IFNULL(p_model,'')='' OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
-  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ml.`item_category_id`=item.`category_id` AND item.`code`=d.`item`))
+  AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ic.id=d_item.category_id))
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
   AND (item.`code` IS NULL OR(item.`code` IS NOT NULL AND item.`code`=d.`item`))
   AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))
@@ -320,41 +323,43 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   DELETE FROM tml_data_elementing WHERE IFNULL(match_group_id,'')!='' AND (m_fm_group_id=m_to_group_id);
 
   /*如果取数量，则需要从价表里取单价*/
+  -- 来源巴+去向巴+物料
   UPDATE `suite_amiba_prices` AS p
     INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
     INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND pl.group_id=l.m_to_group_id AND pl.item_id=l.item_id
   SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND pl.type_enum='sale' AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
+  WHERE p.purpose_id=p_purpose AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
   
+  UPDATE `suite_amiba_prices` AS p
+    INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
+    INNER JOIN tml_data_elementing AS l ON pl.group_id=l.m_fm_group_id AND p.group_id=l.m_to_group_id AND pl.item_id=l.item_id
+  SET l.money=l.qty*pl.cost_price
+  WHERE p.purpose_id=p_purpose AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
+  -- 来源巴+物料
   UPDATE `suite_amiba_prices` AS p
     INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
     INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND IFNULL(pl.group_id,'')='' AND pl.item_id=l.item_id
   SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose  AND pl.type_enum='sale' AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
+  WHERE p.purpose_id=p_purpose  AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;  
   
+  UPDATE `suite_amiba_prices` AS p
+    INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
+    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_to_group_id AND IFNULL(pl.group_id,'')='' AND pl.item_id=l.item_id
+  SET l.money=l.qty*pl.cost_price
+  WHERE p.purpose_id=p_purpose  AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0; 
+  
+  -- 来源巴
   UPDATE `suite_amiba_prices` AS p
     INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
     INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND IFNULL(pl.group_id,'')='' AND IFNULL(pl.item_id,'')=''
   SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND pl.type_enum='sale' AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
+  WHERE p.purpose_id=p_purpose AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
   
   UPDATE `suite_amiba_prices` AS p
     INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
-    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND IFNULL(pl.group_id,'')='' AND pl.item_id=l.item_id
+    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_to_group_id AND IFNULL(pl.group_id,'')='' AND IFNULL(pl.item_id,'')=''
   SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND pl.type_enum='purchase' AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
-  
-  UPDATE `suite_amiba_prices` AS p
-    INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
-    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND IFNULL(pl.group_id,'')='' AND pl.item_id=l.item_id
-  SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND pl.type_enum='purchase' AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
-  
-  UPDATE `suite_amiba_prices` AS p
-    INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
-    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND IFNULL(pl.group_id,'')='' AND IFNULL(pl.item_id,'')=''
-  SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND pl.type_enum='purchase' AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
+  WHERE p.purpose_id=p_purpose AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
   
 
   -- 更新数据用途

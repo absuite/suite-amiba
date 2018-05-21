@@ -31,7 +31,7 @@ class ReportStatementTrend extends Controller {
 
 			$query->addSelect('e.name as elementName');
 			$query->addSelect('e.type_enum as elementType');
-			$query->addSelect('l.type_enum as dataType');
+			$query->addSelect('e.scope_enum as dataType');
 			foreach ($periods as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $mv->id . "' THEN 1  ELSE 0 END * l.money) AS money_m_" . $mv->name));
 				$query->addSelect(DB::raw("SUM(CASE WHEN p.year='" . $mv->year . "' and p.month<='" . $mv->month . "' THEN 1 ELSE 0 END * l.money) AS money_y_" . $mv->name));
@@ -51,7 +51,7 @@ class ReportStatementTrend extends Controller {
 			$query->whereIn('p.year', $periods->groupBy('year')->keys()->all());
 			$query->where('p.month', '<=', $lastPeriod->month);
 
-			$query->groupBy('e.name', 'e.type_enum', 'l.type_enum');
+			$query->groupBy('e.name', 'e.type_enum', 'e.scope_enum');
 			$queryData = $query->get();
 
 			/*时间数据*/
@@ -130,7 +130,7 @@ class ReportStatementTrend extends Controller {
 				$item->{$pv} = $v->{$pv};
 			}
 			if ($v->elementType == 'rcv') {
-				if ($v->dataType == 'es') {
+				if ($v->dataType == 'outside') {
 					$array = $item_rcv_out->nodes;
 					$array[] = $item;
 					$item_rcv_out->nodes = $array;
@@ -141,7 +141,7 @@ class ReportStatementTrend extends Controller {
 				}
 			}
 			if ($v->elementType == 'cost') {
-				if ($v->dataType == 'ep') {
+				if ($v->dataType == 'outside') {
 					$array = $item_cost_out->nodes;
 					$array[] = $item;
 					$item_cost_out->nodes = $array;

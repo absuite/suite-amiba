@@ -72,10 +72,7 @@ class DataInit extends Model {
 		$validator = Validator::make($input, [
 			'doc_no' => 'required',
 			'purpose_id' => 'required',
-		]);
-		if ($validator->fails()) {
-			return $this->toError($validator->errors());
-		}
+		])->validate();
 		$input['ent_id'] = $ent_id;
 		return static::create($input);
 	}

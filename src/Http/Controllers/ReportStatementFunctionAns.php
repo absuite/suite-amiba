@@ -28,7 +28,7 @@ class ReportStatementFunctionAns extends Controller {
 			$query->addSelect('e.direction_enum as elementDirection');
 			$query->addSelect('e.type_enum as elementType');
 			$query->addSelect('e.is_manual as element_is_manual');
-			$query->addSelect('l.type_enum as dataType');
+			$query->addSelect('e.scope_enum as dataType');
 
 			$query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.money) AS money"));
 			$query->addSelect(DB::raw("SUM(l.money) as year_money"));
@@ -44,7 +44,7 @@ class ReportStatementFunctionAns extends Controller {
 			$query->where('p.year', '=', $period->year);
 			$query->where('p.from_date', '<=', $period->from_date);
 
-			$query->groupBy('e.name', 'e.direction_enum', 'e.type_enum', 'l.type_enum', 'e.is_manual');
+			$query->groupBy('e.name', 'e.direction_enum', 'e.type_enum', 'e.scope_enum', 'e.is_manual');
 			$monthData = $query->get();
 
 			/*时间数据*/
@@ -109,7 +109,7 @@ class ReportStatementFunctionAns extends Controller {
 			}
 
 			if ($v->elementType == 'rcv') {
-				if ($v->dataType == 'es') {
+				if ($v->dataType == 'outside') {
 					$array = $item_rcv_out->nodes;
 					$array[] = $item;
 					$item_rcv_out->nodes = $array;
@@ -120,7 +120,7 @@ class ReportStatementFunctionAns extends Controller {
 				}
 			}
 			if ($v->elementType == 'cost') {
-				if ($v->dataType == 'ep') {
+				if ($v->dataType == 'outside') {
 					$array = $item_cost_out->nodes;
 					$array[] = $item;
 					$item_cost_out->nodes = $array;

@@ -31,7 +31,7 @@ class ReportStatementCompare extends Controller {
 
 			$query->addSelect('e.name as elementName');
 			$query->addSelect('e.type_enum as elementType');
-			$query->addSelect('l.type_enum as dataType');
+			$query->addSelect('e.scope_enum as dataType');
 			foreach ($groups as $mk => $mv) {
 				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.money) AS money_m_" . $mk));
 				$query->addSelect(DB::raw("SUM(CASE WHEN l.group_id='" . $mv->id . "' and p.month<='" . $period->month . "' THEN 1 ELSE 0 END * l.money) AS money_y_" . $mk));
@@ -51,7 +51,7 @@ class ReportStatementCompare extends Controller {
 			$query->where('p.year', $period->year);
 			$query->where('p.month', '<=', $period->month);
 
-			$query->groupBy('e.name', 'e.type_enum', 'l.type_enum');
+			$query->groupBy('e.name', 'e.type_enum', 'e.scope_enum');
 			$queryData = $query->get();
 
 			/*时间数据*/
@@ -144,7 +144,7 @@ class ReportStatementCompare extends Controller {
 				$item->{$pv} = $v->{$pv};
 			}
 			if ($v->elementType == 'rcv') {
-				if ($v->dataType == 'es') {
+				if ($v->dataType == 'outside') {
 					$array = $item_rcv_out->nodes;
 					$array[] = $item;
 					$item_rcv_out->nodes = $array;
@@ -155,7 +155,7 @@ class ReportStatementCompare extends Controller {
 				}
 			}
 			if ($v->elementType == 'cost') {
-				if ($v->dataType == 'ep') {
+				if ($v->dataType == 'outside') {
 					$array = $item_cost_out->nodes;
 					$array[] = $item;
 					$item_cost_out->nodes = $array;
