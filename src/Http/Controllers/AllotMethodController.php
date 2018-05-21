@@ -11,6 +11,7 @@ class AllotMethodController extends Controller {
 	public function index(Request $request) {
 		$query = Models\AllotMethod::select('id', 'code', 'name', 'memo');
 		$data = $query->get();
+		
 
 		return $this->toJson($data);
 	}
