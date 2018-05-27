@@ -57,7 +57,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			$query->orderBy('sequence');
 			$datas = $query->get();
 
-			Models\Dti::whereIn('id', $this->dtis)->update(['is_running' => 1, 'begin_date' => new Carbon, 'end_date' => null]);
+			Models\Dti::whereIn('id', $this->dtis)->update(['is_running' => 1, 'begin_date' => new Carbon, 'end_date' => null, 'msg' => '正在执行!' . (new Carbon)]);
 			Models\Dti::whereIn('id', $this->dtis)->increment('total_runs');
 
 			if (empty($this->context['access_token'])) {
@@ -74,13 +74,13 @@ class AmibaDtiRunJob implements ShouldQueue {
 			Models\Dti::whereIn('id', $this->dtis)->update(['is_running' => 0, 'end_date' => new Carbon]);
 			//日志
 			if ($e) {
+				Models\Dti::whereIn('id', $this->dtis)->update(['msg' => $e->getMessage()]);
 				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'failed', 'memo' => '接口程序处理.结束', 'content' => $e->getMessage()]);
 			} else {
+				Models\Dti::whereIn('id', $this->dtis)->update(['msg' => null]);
 				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'succeed', 'memo' => '接口程序处理.结束']);
 			}
-		}
-		if ($e) {
-			throw $e;
+
 		}
 	}
 	private function fetchDataFromU9($dti, $paramsConfig = []) {
@@ -232,12 +232,19 @@ class AmibaDtiRunJob implements ShouldQueue {
 		try {
 			Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']远程调用.开始']);
 			$paramsConfig = $this->getDtiParamConfig($dti);
+			Models\Dti::where('id', $dti->id)->update(['msg' => '远程获取数据开始...']);
 			if ($dti->category && starts_with($dti->category->code, 'u9')) {
 				$result = $this->fetchDataFromU9($dti, $paramsConfig);
 			} else {
 				$result = $this->fetchDataFromDti($dti, $paramsConfig);
 			}
+			Models\Dti::where('id', $dti->id)->update(['msg' => '远程获取数据结束...']);
+
+			Models\Dti::where('id', $dti->id)->update(['msg' => '处理数据存储开始...']);
+
 			$this->callLocalStore($dti, $result, $paramsConfig);
+
+			Models\Dti::where('id', $dti->id)->update(['msg' => '处理数据存储结束...']);
 
 		} catch (\Exception $exception) {
 			$e = $exception;

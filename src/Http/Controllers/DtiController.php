@@ -13,7 +13,7 @@ use Suite\Cbo\Models\PeriodAccount;
 class DtiController extends Controller {
 	public function run(Request $request) {
 		$inputDate = $request->input('date', Carbon::now()->toDateString());
-		$query = Models\Dti::select('id')->where('ent_id', GAuth::entId());
+		$query = Models\Dti::select('id', 'local_id')->where('ent_id', GAuth::entId());
 		if ($request->has('dtis')) {
 			$dtis = explode(",", $request->dtis);
 			$query->where(function ($query) use ($dtis) {
@@ -25,8 +25,8 @@ class DtiController extends Controller {
 				$query->where('id', $request->dti)->orWhere('code', $request->dti);
 			});
 		}
-		$query->orderBy('sequence');
-		$datas = $query->pluck('id')->toArray();
+		$dtiAll = $query->get();
+
 		$query = PeriodAccount::where('ent_id', GAuth::entId())
 			->where('from_date', '<=', $inputDate)
 			->where('to_date', '>=', $inputDate);
@@ -49,11 +49,12 @@ class DtiController extends Controller {
 		}
 		$context['local_host'] = $request->getSchemeAndHttpHost() . '/';
 
-		$job = new Jobs\AmibaDtiRunJob($context, $datas);
-		// $job->handle();
-		dispatch($job);
-
-		return $this->toJson($datas);
+		$dtiAll->groupBy('local_id')->each(function ($item, $key) use ($context) {
+			$job = new Jobs\AmibaDtiRunJob($context, $item->pluck('id')->all());
+			dispatch($job);
+		});
+		Models\Dti::whereIn('id', $dtiAll->pluck('id')->all())->update(['is_running' => 1]);
+		return $this->toJson($dtiAll);
 	}
 	public function log(Request $request) {
 		$query = Models\DtiLog::with('dti', 'dti.category');
