@@ -7,7 +7,7 @@
             <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="100" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex-xlarge="20">
-            <md-ref-input md-label="期间" required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-ref-input>
+            <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-ref-input>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -172,6 +172,13 @@ export default {
           this_income: common.formatDecimal(value.this_income)
         });
       });
+    },
+    init_period_ref(options) {
+      if (this.model.purpose && this.model.purpose.calendar_id) {
+        options.wheres.$calendar = { 'calendar_id': this.model.purpose.calendar_id };
+      } else {
+        options.wheres.$calendar =false;
+      }
     },
   },
   created() {

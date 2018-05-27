@@ -9,6 +9,7 @@ DECLARE v_to_date DATETIME;
 DECLARE v_id_start BIGINT;
 DECLARE v_id_count BIGINT;
 
+
 /*
 SELECT UUID_SHORT() into v_uid;
 */
@@ -117,40 +118,66 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_docLine(
 `money` DECIMAL(30,2),
 `bizkey` NVARCHAR(500)
 );
-
-
+DROP TEMPORARY TABLE IF EXISTS tml_data_group_filter;
+CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_group_filter(
+`modeling_id` NVARCHAR(100),
+`data_type` NVARCHAR(100),
+`data_code` NVARCHAR(100)
+);
+IF  (IFNULL(p_model,'')!='') THEN
+  INSERT INTO tml_data_group_filter(modeling_id,data_type,data_code)
+  SELECT DISTINCT m.id,gl.data_type,d.code
+  FROM `suite_amiba_modelings` AS m
+    INNER JOIN `suite_amiba_groups` AS g ON g.`purpose_id`=p_purpose
+    INNER JOIN `suite_amiba_group_lines` AS gl ON g.id=gl.group_id 
+    INNER JOIN suite_cbo_orgs AS d ON d.id=gl.data_id
+  WHERE g.`purpose_id`=p_purpose AND m.`purpose_id`=p_purpose AND (FIND_IN_SET(m.id , p_model)>0)
+   AND  gl.`data_type`='Suite\\Cbo\\Models\\Org';
+  
+  INSERT INTO tml_data_group_filter(modeling_id,data_type,data_code)
+  SELECT DISTINCT m.id,gl.data_type,d.code
+  FROM `suite_amiba_modelings` AS m
+    INNER JOIN `suite_amiba_groups` AS g ON g.`purpose_id`=p_purpose
+    INNER JOIN `suite_amiba_group_lines` AS gl ON g.id=gl.group_id 
+    INNER JOIN suite_cbo_depts AS d ON d.id=gl.data_id
+  WHERE g.`purpose_id`=p_purpose AND m.`purpose_id`=p_purpose AND (FIND_IN_SET(m.id , p_model)>0)
+    AND  gl.`data_type`='Suite\\Cbo\\Models\\Dept';
+END IF;
   
 /*期间的开始时间和结束时间*/
 SELECT from_date,to_date INTO v_from_date,v_to_date FROM `suite_cbo_period_accounts` WHERE id=p_period;
 /*业务数据*/
+SET @SQL_INSERT="
 INSERT INTO tml_data_elementing
 (
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
   ,`data_fm_org`,`data_fm_dept`,`data_fm_work` ,`data_fm_team` ,`data_to_org`,`data_to_dept`,`data_to_work`,`data_to_team`
   ,`data_trader`,`data_item`,`data_uom` ,`data_item_category` 
-)
-SELECT DISTINCT 
-  p_purpose,p_period,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
+)";
+SET @SQL_SELECT=CONCAT(" SELECT  
+  m.purpose_id,'",p_period,"',m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
   d.id AS data_id,'biz' AS data_type,ml.`value_type_enum`,
   d.qty AS src_qty,
   d.money AS src_money,
   ml.`adjust`
   ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team` ,d.`to_org`,d.`to_dept`,d.`to_work`,d.`to_team`
-  ,d.`trader`,d.`item`,d.`uom` ,d.`item_category` 
-FROM `suite_amiba_doc_bizs` AS d 
+  ,d.`trader`,d.`item`,d.`uom` ,d.`item_category` ");
+SET @SQL_FROM=" FROM `suite_amiba_doc_bizs` AS d 
   LEFT JOIN `suite_cbo_items` AS d_item ON d_item.code=d.item AND d_item.ent_id=d.ent_id
-  INNER JOIN  `suite_amiba_modelings` AS m ON m.`purpose_id`=p_purpose  AND d.ent_id=m.ent_id
+  INNER JOIN  `suite_amiba_modelings` AS m ON d.ent_id=m.ent_id
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
   LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.`doc_type_id`=dt.`id` 
   LEFT JOIN `suite_cbo_item_categories` AS ic ON ml.`item_category_id`=ic.`id`
   LEFT JOIN `suite_cbo_items` AS item ON ml.`item_id`=item.`id`
-  LEFT JOIN `suite_cbo_traders` AS trader ON ml.`trader_id`=trader.`id`
-WHERE 
-  d.ent_id=p_ent
+  LEFT JOIN `suite_cbo_traders` AS trader ON ml.`trader_id`=trader.`id` ";
+IF IFNULL(p_model,'')!='' THEN
+  SET @SQL_FROM =CONCAT(@SQL_FROM," LEFT JOIN tml_data_group_filter AS gf ON gf.modeling_id=m.id");
+END IF;
+  
+SET @SQL_WHERE=" WHERE 
+  d.ent_id=? and m.purpose_id=? AND d.`doc_date` BETWEEN ? AND ?
   AND ml.`biz_type_enum`=d.`biz_type` 
-  AND d.`doc_date` BETWEEN v_from_date AND v_to_date
-  AND (IFNULL(p_model,'')='' OR (FIND_IN_SET(m.id , p_model)>0))
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
   AND (ic.`code` IS NULL OR(ic.`code` IS NOT NULL AND ic.id=d_item.category_id))
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
@@ -160,33 +187,49 @@ WHERE
   AND (ml.`factor2` IS NULL OR(ml.`factor2` IS NOT NULL AND ml.`factor2`=d.`factor2`))
   AND (ml.`factor3` IS NULL OR(ml.`factor3` IS NOT NULL AND ml.`factor3`=d.`factor3`))
   AND (ml.`factor4` IS NULL OR(ml.`factor4` IS NOT NULL AND ml.`factor4`=d.`factor4`))
-  AND (ml.`factor5` IS NULL OR(ml.`factor5` IS NOT NULL AND ml.`factor5`=d.`factor5`));
+  AND (ml.`factor5` IS NULL OR(ml.`factor5` IS NOT NULL AND ml.`factor5`=d.`factor5`))";
+IF IFNULL(p_model,'')!='' THEN
+  SET @SQL_WHERE =CONCAT(@SQL_WHERE," AND (
+    (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Org' AND gf.data_code=d.fm_org)
+    OR (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.fm_dept)
+    OR (ml.match_direction_enum='to' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.to_org)
+    OR (ml.match_direction_enum='to' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.to_dept)
+  )");  
+END IF;
+
+PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE);
+EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
+DEALLOCATE PREPARE bizStmt;
+
 /*财务数据*/
-INSERT INTO tml_data_elementing
+SET @SQL_INSERT="INSERT INTO tml_data_elementing
 (
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
   `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
   `account_code`,`expense_code`
   ,`data_fm_org`,`data_fm_dept`,`data_fm_work` ,`data_fm_team` 
   ,`data_trader`
-)
-SELECT DISTINCT 
-  p_purpose,p_period,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
+)";
+SET @SQL_SELECT=CONCAT(" SELECT DISTINCT 
+  m.purpose_id,'",p_period,"',m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
   d.id AS data_id,'fi' AS data_type,ml.`value_type_enum`,
   0 AS src_qty,
   CASE WHEN ml.value_type_enum='debit' THEN d.`debit_money` ELSE d.`credit_money` END AS src_money,
   ml.`adjust`,
   d.account,d.`project`
   ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team`
-  ,d.`trader`
-FROM `suite_amiba_doc_fis` AS d 
-  INNER JOIN  `suite_amiba_modelings` AS m ON m.purpose_id=p_purpose  
+  ,d.`trader`");
+SET @SQL_FROM =" FROM `suite_amiba_doc_fis` AS d 
+  INNER JOIN  `suite_amiba_modelings` AS m ON d.ent_id=m.ent_id
   INNER JOIN `suite_amiba_modeling_lines` AS ml ON m.`id`=ml.`modeling_id`
   LEFT JOIN `suite_cbo_doc_types` AS dt ON ml.doc_type_id=dt.id
-  LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id
-WHERE ml.`biz_type_enum`=d.`biz_type` 
-  AND d.doc_date BETWEEN v_from_date AND v_to_date
-  AND (IFNULL(p_model,'')='' OR (FIND_IN_SET(m.id , p_model)>0))
+  LEFT JOIN `suite_cbo_traders` AS trader ON ml.trader_id=trader.id ";
+IF IFNULL(p_model,'')!='' THEN
+  SET @SQL_FROM =CONCAT(@SQL_FROM," LEFT JOIN tml_data_group_filter AS gf ON gf.modeling_id=m.id");
+END IF;
+
+SET @SQL_WHERE=" WHERE d.ent_id=? and m.purpose_id=? AND d.`doc_date` BETWEEN ? AND ? 
+  and ml.`biz_type_enum`=d.`biz_type` 
   AND (dt.`code` IS NULL OR(dt.`code` IS NOT NULL AND dt.`code`=d.`doc_type`))  
   AND (trader.`code` IS NULL OR(trader.`code` IS NOT NULL AND trader.`code`=d.`trader`))
   AND (ml.`project_code` IS NULL OR(ml.`project_code` IS NOT NULL AND ml.`project_code`=d.`project`))
@@ -195,7 +238,18 @@ WHERE ml.`biz_type_enum`=d.`biz_type`
   AND (ml.`factor2` IS NULL OR(ml.`factor2` IS NOT NULL AND ml.`factor2`=d.`factor2`))
   AND (ml.`factor3` IS NULL OR(ml.`factor3` IS NOT NULL AND ml.`factor3`=d.`factor3`))
   AND (ml.`factor4` IS NULL OR(ml.`factor4` IS NOT NULL AND ml.`factor4`=d.`factor4`))
-  AND (ml.`factor5` IS NULL OR(ml.`factor5` IS NOT NULL AND ml.`factor5`=d.`factor5`));
+  AND (ml.`factor5` IS NULL OR(ml.`factor5` IS NOT NULL AND ml.`factor5`=d.`factor5`))";
+IF IFNULL(p_model,'')!='' THEN
+  SET @SQL_WHERE =CONCAT(@SQL_WHERE," AND (
+    (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Org' AND gf.data_code=d.fm_org)
+    OR (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.fm_dept)
+  )");  
+END IF;
+
+PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE);
+EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
+DEALLOCATE PREPARE bizStmt;
+
   
   UPDATE tml_data_elementing SET `qty`=(`src_qty`*`adjust`/100) WHERE adjust IS NOT NULL AND src_qty!=0;
   UPDATE tml_data_elementing SET `money`=(`src_money`*`adjust`/100) WHERE adjust IS NOT NULL AND src_money!=0;

@@ -13,6 +13,9 @@
         <md-button @click.native="list">列表</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="model.pager"></md-part-toolbar-pager>
+      <md-part-toolbar-group>
+        <md-file-import md-entity="Suite\Amiba\Models\DataTime"  template="/assets/vendor/suite-cbo/files/suite.amiba.data.time.xlsx"></md-file-import>
+      </md-part-toolbar-group>
       <span class="flex"></span>
     </md-part-toolbar>
     <md-part-body>

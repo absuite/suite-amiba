@@ -7,10 +7,10 @@
             <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="50" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex-xlarge="20">
-            <md-ref-input md-label="从" required md-ref-id="suite.cbo.period.account.ref" v-model="model.fm_period"></md-ref-input>
+            <md-ref-input md-label="从" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.fm_period"></md-ref-input>
           </md-layout>
           <md-layout md-flex-xsmall="50" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex-xlarge="20">
-            <md-ref-input md-label="到" required md-ref-id="suite.cbo.period.account.ref" v-model="model.to_period"></md-ref-input>
+            <md-ref-input md-label="到" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.to_period"></md-ref-input>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -187,6 +187,13 @@ export default {
       _each(data, (value, key) => {
         this.dataDetail.push(value);
       });
+    },
+    init_period_ref(options) {
+      if (this.model.purpose && this.model.purpose.calendar_id) {
+        options.wheres.$calendar = { 'calendar_id': this.model.purpose.calendar_id };
+      } else {
+        options.wheres.$calendar =false;
+      }
     },
   },
   created() {},

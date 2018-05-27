@@ -66,7 +66,6 @@ class Price extends Model {
 			'code' => 'required',
 			'name' => 'required',
 			'purpose_id' => 'required',
-			'group_id' => 'required',
 		])->validate();
 		$input['ent_id'] = $ent_id;
 		$input['state_enum'] = 'opened';

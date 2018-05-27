@@ -32,6 +32,12 @@
           </md-layout>
           <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
             <md-field class="md-inset">
+              <label>部门</label>
+              <md-input v-model="model.dept"></md-input>
+            </md-field>
+          </md-layout>
+          <md-layout md-flex-sm="20" md-flex-md="15" md-flex-lg="15">
+            <md-field class="md-inset">
               <label>料品</label>
               <md-input v-model="model.item"></md-input>
             </md-field>
@@ -71,7 +77,7 @@ export default {
         return;
       }
       this.loading++;
-      const ids =_map(this.selectRows, 'id').toString();
+      const ids = _map(this.selectRows, 'id').toString();
       this.$http.delete('amiba/doc-bizs/' + ids).then(response => {
         this.loadData();
         this.loading--;
@@ -90,20 +96,23 @@ export default {
       options.wheres.$item = false;
 
       if (this.model.period) {
-        options.wheres.$fm_date = {'gte': {'doc_date': this.model.period.from_date }};
-        options.wheres.$to_date = {'lte': {'doc_date': this.model.period.to_date }};
+        options.wheres.$fm_date = { 'gte': { 'doc_date': this.model.period.from_date } };
+        options.wheres.$to_date = { 'lte': { 'doc_date': this.model.period.to_date } };
       }
       if (this.model.biz_type) {
-        options.wheres.$biz_type = {'like': {'biz_type': this.model.biz_type }};
+        options.wheres.$biz_type = { 'like': { 'biz_type': this.model.biz_type } };
       }
       if (this.model.doc_type) {
-        options.wheres.$doc_type ={'like': {'doc_type': this.model.doc_type }};
+        options.wheres.$doc_type = { 'like': { 'doc_type': this.model.doc_type } };
       }
       if (this.model.org) {
-        options.wheres.$org ={'like': {'org': this.model.org }};
+        options.wheres.$org = { 'like': { 'org': this.model.org } };
+      }
+      if (this.model.dept) {
+        options.wheres.$dept = { 'or': [{ 'like': { 'fm_dept': this.model.dept } }, { 'like': { 'to_dept': this.model.dept } }] };
       }
       if (this.model.item) {
-        options.wheres.$item = {'like': {'item': this.model.item }};
+        options.wheres.$item = { 'like': { 'item': this.model.item } };
       }
     },
     loadData() {

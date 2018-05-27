@@ -51,8 +51,12 @@
         <md-layout class="flex">
           <md-grid :datas="fetchLineDatas" :readonly="isApproved" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="对方阿米巴" field="group" dataType="entity" ref-id="suite.amiba.group.ref" :ref-init="init_group_ref" width="300px" editable/>
-            <md-grid-column label="价格类型" field="type_enum" dataType="enum" editable ref-id="suite.amiba.price.type.enum" />
             <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="300px" editable/>
+            <md-grid-column label="料号" width="150px">
+              <template slot-scope="row">
+                {{ row&&row.item?row.item.code:''}}
+              </template>
+            </md-grid-column>
             <md-grid-column label="价格" field="cost_price" editable/>
           </md-grid>
         </md-layout>
@@ -86,8 +90,7 @@ export default {
       var validator = this.$validate(this.model.main, {
         'code': 'required',
         'name': 'required',
-        'purpose': 'required',
-        'group': 'required'
+        'purpose': 'required'
       });
       var fail = validator.fails();
       if (fail && !notToast) {

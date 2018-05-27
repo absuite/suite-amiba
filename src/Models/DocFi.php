@@ -25,7 +25,7 @@ class DocFi extends Model {
 		$this->attributes['ent_id'] = empty($value) ? null : $value;
 	}
 
-	public static function fromImport($data) {
+	public static function fromImport($datas) {
 		$datas->each(function ($row, $key) {
 			$row['data_src_identity'] = 'import';
 			Validator::make($row, [

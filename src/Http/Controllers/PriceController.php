@@ -1,12 +1,13 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Libs\InputHelper;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
-use GAuth;
+
 class PriceController extends Controller {
 	public function index(Request $request) {
 		$query = Models\Price::select('id', 'code', 'name', 'memo');
@@ -47,7 +48,6 @@ class PriceController extends Controller {
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',
-			'group_id' => 'required',
 			'code' => 'required',
 			'name' => 'required',
 		]);
@@ -70,7 +70,6 @@ class PriceController extends Controller {
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',
-			'group_id' => 'required',
 			'code' => 'required',
 			'name' => 'required',
 		]);

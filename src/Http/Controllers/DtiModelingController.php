@@ -45,8 +45,10 @@ class DtiModelingController extends Controller {
 			$periods = CboModels\PeriodAccount::whereIn('id', $input['period_id'])->orderBy('from_date')->get();
 			foreach ($periods as $value) {
 				$input['period_id'] = $value->id;
-				if (!empty($input['modeling_id'])) {
+				if (!empty($input['modeling_id']) && is_array($input['modeling_id'])) {
 					$input['model_ids'] = implode(',', $input['modeling_id']);
+				} else if (!empty($input['modeling_id']) && is_string($input['modeling_id'])) {
+					$input['model_ids'] = implode(',', explode(',', $input['modeling_id']));
 				} else {
 					$input['model_ids'] = '';
 				}
@@ -57,8 +59,10 @@ class DtiModelingController extends Controller {
 				$job->handle();
 			}
 		} else {
-			if (!empty($input['modeling_id'])) {
+			if (!empty($input['modeling_id']) && is_array($input['modeling_id'])) {
 				$input['model_ids'] = implode(',', $input['modeling_id']);
+			} else if (!empty($input['modeling_id']) && is_string($input['modeling_id'])) {
+				$input['model_ids'] = implode(',', explode(',', $input['modeling_id']));
 			} else {
 				$input['model_ids'] = '';
 			}

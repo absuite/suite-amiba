@@ -26,8 +26,8 @@ class DocBiz extends Model {
 		$this->attributes['ent_id'] = empty($value) ? null : $value;
 	}
 
-	public static function fromImport($data) {
-		$datas->each(function ($row, $key) {
+	public static function fromImport($datas) {
+		$datas && $datas->each(function ($row, $key) {
 			$row['data_src_identity'] = 'import';
 			Validator::make($row, [
 				'doc_no' => 'required',
