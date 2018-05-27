@@ -77,7 +77,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 				Models\Dti::whereIn('id', $this->dtis)->update(['msg' => $e->getMessage()]);
 				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'failed', 'memo' => '接口程序处理.结束', 'content' => $e->getMessage()]);
 			} else {
-				Models\Dti::whereIn('id', $this->dtis)->update(['msg' => null]);
+				Models\Dti::whereIn('id', $this->dtis)->update(['msg' => '']);
 				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'succeed', 'memo' => '接口程序处理.结束']);
 			}
 

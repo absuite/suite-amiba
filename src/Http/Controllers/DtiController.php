@@ -49,11 +49,11 @@ class DtiController extends Controller {
 		}
 		$context['local_host'] = $request->getSchemeAndHttpHost() . '/';
 
+		Models\Dti::whereIn('id', $dtiAll->pluck('id')->all())->update(['is_running' => 1]);
 		$dtiAll->groupBy('local_id')->each(function ($item, $key) use ($context) {
 			$job = new Jobs\AmibaDtiRunJob($context, $item->pluck('id')->all());
 			dispatch($job);
 		});
-		Models\Dti::whereIn('id', $dtiAll->pluck('id')->all())->update(['is_running' => 1]);
 		return $this->toJson($dtiAll);
 	}
 	public function log(Request $request) {
