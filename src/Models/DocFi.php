@@ -2,6 +2,7 @@
 
 namespace Suite\Amiba\Models;
 use GAuth;
+use Gmf\Sys\Database\Concerns\BatchImport;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Validation\Rule;
 use Validator;
 
 class DocFi extends Model {
-	use Snapshotable, HasGuard;
+	use Snapshotable, HasGuard, BatchImport;
 	protected $table = 'suite_amiba_doc_fis';
 	public $incrementing = false;
 	protected $fillable = ['id', 'ent_id',
@@ -24,22 +25,32 @@ class DocFi extends Model {
 	public function setEntIdAttribute($value) {
 		$this->attributes['ent_id'] = empty($value) ? null : $value;
 	}
-
+	public function formatDefaultValue() {
+		if (empty($this->debit_money)) {
+			$this->debit_money = 0;
+		}
+		if (empty($this->credit_money)) {
+			$this->credit_money = 0;
+		}
+	}
+	public function validate() {
+		Validator::make($this->toArray(), [
+			'doc_no' => 'required',
+			'doc_date' => ['required', 'date'],
+			'biz_type' => [
+				'required',
+				Rule::in(['voucher']),
+			],
+			'debit_money' => ['numeric'],
+			'credit_money' => ['numeric'],
+		])->validate();
+	}
 	public static function fromImport($datas) {
-		$datas->each(function ($row, $key) {
+		$datas = $datas->map(function ($row) {
 			$row['data_src_identity'] = 'import';
-			Validator::make($row, [
-				'doc_no' => 'required',
-				'doc_date' => ['required', 'date'],
-				'biz_type' => [
-					'required',
-					Rule::in(['voucher']),
-				],
-				'debit_money' => ['numeric'],
-				'credit_money' => ['numeric'],
-			])->validate();
 			$row['ent_id'] = GAuth::entId();
-			static::create($row);
+			return $row;
 		});
+		static::BatchImport($datas);
 	}
 }
