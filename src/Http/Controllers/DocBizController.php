@@ -62,7 +62,11 @@ class DocBizController extends Controller {
 			$data['id'] = Uuid::generate();
 			return $data;
 		});
-		DB::table('suite_amiba_doc_bizs')->insert($datas->all());
+		$chunks = $data->chunk(500)->toArray();
+		foreach ($chunks as $key => $value) {
+			DB::table('suite_amiba_doc_bizs')->insert($value);
+		}
+
 		// $datas->each(function ($row) {
 		// 	AmibaModels\DocBiz::create($row);
 		// });
