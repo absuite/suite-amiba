@@ -1,10 +1,12 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use DB;
 use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models as AmibaModels;
+use Uuid;
 use Validator;
 
 class DocBizController extends Controller {
@@ -16,6 +18,7 @@ class DocBizController extends Controller {
 		$validator = Validator::make($input, [
 			'datas' => 'required|array|min:1',
 			'datas.*.doc_no' => 'required',
+			'datas.*.doc_date' => ['required', 'date'],
 			'datas.*.biz_type' => 'required',
 		]);
 		if ($validator->fails()) {
@@ -40,8 +43,9 @@ class DocBizController extends Controller {
 			$query->delete();
 		}
 		$datas = $request->input('datas');
-		foreach ($datas as $k => $v) {
-			$data = array_only($v, [
+		$datas = collect($datas);
+		$datas = $datas->map(function ($row) use ($entId, $data_src_identity) {
+			$data = array_only($row, [
 				'src_doc_id', 'src_doc_type', 'src_key_id', 'src_key_type',
 				'doc_no', 'doc_date', 'memo', 'org', 'person',
 				'biz_type', 'doc_type', 'direction',
@@ -55,8 +59,13 @@ class DocBizController extends Controller {
 			if (!empty($data['doc_date'])) {
 				$data['doc_date'] = substr($data['doc_date'], 0, 10);
 			}
-			AmibaModels\DocBiz::create($data);
-		}
+			$data['id'] = Uuid::generate();
+			return $data;
+		});
+		DB::table('suite_amiba_doc_bizs')->insert($datas->all());
+		// $datas->each(function ($row) {
+		// 	AmibaModels\DocBiz::create($row);
+		// });
 		return $this->toJson(true);
 	}
 	/**
