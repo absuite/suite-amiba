@@ -6,7 +6,6 @@ use Gmf\Sys\Database\Concerns\BatchImport;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rule;
 use Validator;
 
 class DocBiz extends Model {
@@ -45,7 +44,7 @@ class DocBiz extends Model {
 			'doc_no' => 'required',
 			'doc_date' => ['required', 'date'],
 			'biz_type' => ['required'],
-			'direction' => ['required', Rule::in(['rcv', 'ship', 'RCV', 'SHIP'])],
+			'direction' => ['required'],
 			'qty' => ['numeric'],
 			'price' => ['numeric'],
 			'money' => ['numeric'],
