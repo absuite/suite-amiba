@@ -44,19 +44,8 @@ class DocBiz extends Model {
 		Validator::make($this->toArray(), [
 			'doc_no' => 'required',
 			'doc_date' => ['required', 'date'],
-			'biz_type' => [
-				'required',
-				Rule::in(['ship', 'rcv',
-					'miscRcv', 'miscShip',
-					'transfer', 'moRcv', 'moIssue',
-					'process', 'receivables', 'payment',
-					'ar', 'ap', 'plan',
-					'expense']),
-			],
-			'direction' => [
-				'required',
-				Rule::in(['rcv', 'ship']),
-			],
+			'biz_type' => ['required'],
+			'direction' => ['required', Rule::in(['rcv', 'ship', 'RCV', 'SHIP'])],
 			'qty' => ['numeric'],
 			'price' => ['numeric'],
 			'money' => ['numeric'],
