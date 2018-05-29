@@ -310,7 +310,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 			foreach ($batchItems as $key => $value) {
 				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'dti_id' => $dti->id, 'state_enum' => 'runing', 'memo' => '接口程序[' . $dti->name . ']本地数据存储.开始 ' . count($value) . ':' . $i . '/' . count($batchItems)]);
 				Log::error(static::class . ' callLocalStore post ' . $i . ':' . $base_uri . $apiPath);
-
+				Models\Dti::where('id', $dti->id)->update(['msg' => '处理数据存储开始...' . count($value) . '/' . $collection->count()]);
 				$input = [
 					'server_name' => $dti->code,
 					'data_src_identity' => ($dti->category ? $dti->category->code : '') . ':' . $dti->code,
