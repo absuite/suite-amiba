@@ -6,7 +6,6 @@ use Gmf\Sys\Database\Concerns\BatchImport;
 use Gmf\Sys\Traits\HasGuard;
 use Gmf\Sys\Traits\Snapshotable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rule;
 use Validator;
 
 class DocFi extends Model {
@@ -37,10 +36,7 @@ class DocFi extends Model {
 		Validator::make($this->toArray(), [
 			'doc_no' => 'required',
 			'doc_date' => ['required', 'date'],
-			'biz_type' => [
-				'required',
-				Rule::in(['voucher']),
-			],
+			'biz_type' => ['required'],
 			'debit_money' => ['numeric'],
 			'credit_money' => ['numeric'],
 		])->validate();

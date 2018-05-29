@@ -20,6 +20,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 	protected $ent_id;
 	protected $sessionId;
 	public $timeout = 12000;
+	public $tries = 1;
 	/**
 	 * Create a new job instance.
 	 *
@@ -81,6 +82,9 @@ class AmibaDtiRunJob implements ShouldQueue {
 				Models\DtiLog::create(['ent_id' => $this->ent_id, 'session' => $this->sessionId, 'date' => $this->context['date'], 'state_enum' => 'succeed', 'memo' => '接口程序处理.结束']);
 			}
 
+		}
+		if ($e) {
+			throw $e;
 		}
 	}
 	private function fetchDataFromU9($dti, $paramsConfig = []) {

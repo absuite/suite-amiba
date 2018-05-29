@@ -37,14 +37,15 @@ class DocFiController extends Controller {
 
 		}
 		$datas = $request->input('datas');
+
 		$datas = collect($datas);
 		$datas = $datas->map(function ($row) use ($entId, $data_src_identity) {
-			$data['ent_id'] = $entId;
-			$data['data_src_identity'] = $data_src_identity;
-			if (!empty($data['doc_date'])) {
-				$data['doc_date'] = substr($data['doc_date'], 0, 10);
+			$row['ent_id'] = $entId;
+			$row['data_src_identity'] = $data_src_identity;
+			if (!empty($row['doc_date'])) {
+				$row['doc_date'] = substr($row['doc_date'], 0, 10);
 			}
-			return $data;
+			return $row;
 		});
 		AmibaModels\DocFi::BatchImport($datas);
 		return $this->toJson(true);

@@ -36,7 +36,7 @@ class DtiController extends Controller {
 		$context = [];
 		$context['ent_id'] = GAuth::entId();
 		$context['user_id'] = GAuth::id();
-
+		$context['run_in_job'] = $request->input('run_in_job');
 		$date = Carbon::parse($inputDate);
 
 		$context['date'] = $date->toDateString();
@@ -52,7 +52,12 @@ class DtiController extends Controller {
 		Models\Dti::whereIn('id', $dtiAll->pluck('id')->all())->update(['is_running' => 1]);
 		$dtiAll->groupBy('local_id')->each(function ($item, $key) use ($context) {
 			$job = new Jobs\AmibaDtiRunJob($context, $item->pluck('id')->all());
-			dispatch($job);
+			if (!empty($context['run_in_job']) && $context['run_in_job']) {
+				dispatch($job);
+			} else {
+				$job->handle();
+			}
+
 		});
 		return $this->toJson($dtiAll);
 	}
