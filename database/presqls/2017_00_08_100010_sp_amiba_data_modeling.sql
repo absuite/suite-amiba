@@ -151,15 +151,15 @@ SET @SQL_INSERT="
 INSERT INTO tml_data_elementing
 (
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
-  `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
+  `data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`
   ,`data_fm_org`,`data_fm_dept`,`data_fm_work` ,`data_fm_team` ,`data_to_org`,`data_to_dept`,`data_to_work`,`data_to_team`
   ,`data_trader`,`data_item`,`data_uom` ,`data_item_category` 
 )";
 SET @SQL_SELECT=CONCAT(" SELECT  
   m.purpose_id,'",p_period,"',m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
-  d.id AS data_id,'biz' AS data_type,ml.`value_type_enum`,
-  d.qty AS src_qty,
-  d.money AS src_money,
+  'biz' AS data_type,ml.`value_type_enum`,
+  SUM(d.qty) AS src_qty,
+  SUM(d.money) AS src_money,
   ml.`adjust`
   ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team` ,d.`to_org`,d.`to_dept`,d.`to_work`,d.`to_team`
   ,d.`trader`,d.`item`,d.`uom` ,d.`item_category` ");
@@ -190,14 +190,21 @@ SET @SQL_WHERE=" WHERE
   AND (ml.`factor5` IS NULL OR(ml.`factor5` IS NOT NULL AND ml.`factor5`=d.`factor5`))";
 IF IFNULL(p_model,'')!='' THEN
   SET @SQL_WHERE =CONCAT(@SQL_WHERE," AND (
-    (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Org' AND gf.data_code=d.fm_org)
-    OR (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.fm_dept)
-    OR (ml.match_direction_enum='to' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.to_org)
-    OR (ml.match_direction_enum='to' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.to_dept)
+    (ml.match_direction_enum='fm' AND gf.data_type='Suite\\\\Cbo\\\\Models\\\\Org' AND gf.data_code=d.fm_org)
+    OR (ml.match_direction_enum='fm' AND gf.data_type='Suite\\\\Cbo\\\\Models\\\\Dept' AND gf.data_code=d.fm_dept)
+    OR (ml.match_direction_enum='to' AND gf.data_type='Suite\\\\Cbo\\\\Models\\\\Org' AND gf.data_code=d.to_org)
+    OR (ml.match_direction_enum='to' AND gf.data_type='Suite\\\\Cbo\\\\Models\\\\Dept' AND gf.data_code=d.to_dept)
   )");  
 END IF;
 
-PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE);
+SET @SQL_GROUP=CONCAT(" GROUP BY  
+  m.purpose_id,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
+  ml.`value_type_enum`,
+  ml.`adjust`
+  ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team` ,d.`to_org`,d.`to_dept`,d.`to_work`,d.`to_team`
+  ,d.`trader`,d.`item`,d.`uom` ,d.`item_category` ");
+
+PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE,@SQL_GROUP);
 EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
 DEALLOCATE PREPARE bizStmt;
 
@@ -205,16 +212,16 @@ DEALLOCATE PREPARE bizStmt;
 SET @SQL_INSERT="INSERT INTO tml_data_elementing
 (
   `purpose_id`,`period_id`,`def_fm_group_id`,`def_to_group_id`,`modeling_id`,`modeling_line_id`,`match_direction_enum`,`match_group_id`,`element_id`,
-  `data_id`,`data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
+  `data_type`,`value_type_enum`,`src_qty`,`src_money`,`adjust`,
   `account_code`,`expense_code`
   ,`data_fm_org`,`data_fm_dept`,`data_fm_work` ,`data_fm_team` 
   ,`data_trader`
 )";
-SET @SQL_SELECT=CONCAT(" SELECT DISTINCT 
+SET @SQL_SELECT=CONCAT(" SELECT  
   m.purpose_id,'",p_period,"',m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
-  d.id AS data_id,'fi' AS data_type,ml.`value_type_enum`,
+  'fi' AS data_type,ml.`value_type_enum`,
   0 AS src_qty,
-  CASE WHEN ml.value_type_enum='debit' THEN d.`debit_money` ELSE d.`credit_money` END AS src_money,
+  SUM(CASE WHEN ml.value_type_enum='debit' THEN d.`debit_money` ELSE d.`credit_money` END) AS src_money,
   ml.`adjust`,
   d.account,d.`project`
   ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team`
@@ -241,12 +248,20 @@ SET @SQL_WHERE=" WHERE d.ent_id=? and m.purpose_id=? AND d.`doc_date` BETWEEN ? 
   AND (ml.`factor5` IS NULL OR(ml.`factor5` IS NOT NULL AND ml.`factor5`=d.`factor5`))";
 IF IFNULL(p_model,'')!='' THEN
   SET @SQL_WHERE =CONCAT(@SQL_WHERE," AND (
-    (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Org' AND gf.data_code=d.fm_org)
-    OR (ml.match_direction_enum='fm' AND gf.data_type='Suite\\Cbo\\Models\\Dept' AND gf.data_code=d.fm_dept)
+    (ml.match_direction_enum='fm' AND gf.data_type='Suite\\\\Cbo\\\\Models\\\\Org' AND gf.data_code=d.fm_org)
+    OR (ml.match_direction_enum='fm' AND gf.data_type='Suite\\\\Cbo\\\\Models\\\\Dept' AND gf.data_code=d.fm_dept)
   )");  
 END IF;
 
-PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE);
+SET @SQL_GROUP=CONCAT(" GROUP BY
+  m.purpose_id,m.group_id,ml.to_group_id,m.id,ml.id,ml.match_direction_enum,ml.match_group_id,ml.element_id,
+  ml.`value_type_enum`,
+  ml.`adjust`,
+  d.account,d.`project`
+  ,d.`fm_org`,d.`fm_dept`,d.`fm_work` ,d.`fm_team`
+  ,d.`trader`");
+
+PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE,@SQL_GROUP);
 EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
 DEALLOCATE PREPARE bizStmt;
 
