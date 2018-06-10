@@ -9,10 +9,9 @@ use Validator;
 use GAuth;
 class PurposeController extends Controller {
 	public function index(Request $request) {
-		$query = Models\Purpose::select('id', 'code', 'name', 'memo');
-		$data = $query->get();
-
-		return $this->toJson($data);
+		$size = $request->input('size', 10);
+		$query = Models\Purpose::with('calendar', 'currency');
+		return $this->toJson($query->paginate($size));
 	}
 	public function show(Request $request, string $id) {
 		$query = Models\Purpose::with('calendar', 'currency');

@@ -10,10 +10,10 @@ use Validator;
 use GAuth;
 class GroupController extends Controller {
 	public function index(Request $request) {
+		$size = $request->input('size', 10);
 		$query = Models\Group::select('id', 'code', 'name', 'memo');
-		$data = $query->get();
+		return $this->toJson($query->paginate($size));
 
-		return $this->toJson($data);
 	}
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);

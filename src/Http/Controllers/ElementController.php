@@ -9,10 +9,9 @@ use Validator;
 use GAuth;
 class ElementController extends Controller {
 	public function index(Request $request) {
-		$query = Models\Element::select('id', 'code', 'name', 'memo', 'scope_enum');
-		$data = $query->get();
-
-		return $this->toJson($data);
+		$size = $request->input('size', 10);
+		$query = Models\Element::with('parent', 'purpose');
+		return $this->toJson($query->paginate($size));
 	}
 	public function show(Request $request, string $id) {
 		$query = Models\Element::with('parent', 'purpose');
