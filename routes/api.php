@@ -89,7 +89,12 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 	//损益目标达成
 	Route::post('/reports/statement-purpose', 'ReportStatementPurpose@index');
 	//业务明细
-	Route::post('/reports/biz-total', 'Rpt\DocBizController@total');
+	Route::post('/reports/biz/total', 'Rpt\DocBizController@total');
 	//利润排名
 	Route::post('/reports/profit/rank', 'Rpt\ProfitController@rank');
+	Route::post('/reports/profit/total', 'Rpt\ProfitController@total');
+	Route::post('/reports/profit/trend', 'Rpt\ProfitController@trend');
+
+	Route::post('/reports/expend/analy', 'Rpt\ExpendController@analy');
+	Route::post('/reports/income/analy', 'Rpt\IncomeController@analy');
 });

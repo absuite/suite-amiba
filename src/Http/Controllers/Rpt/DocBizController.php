@@ -9,43 +9,39 @@ use Illuminate\Support\Facades\Log;
 use Suite\Amiba\Libs\QueryHelper;
 
 class DocBizController extends Controller {
-	public function total(Request $request) {
-		Log::error(static::class);
-		$result = [];
-		$qc = QueryCase::formatRequest($request);
-		$group = QueryHelper::getGroup($qc);
+  public function total(Request $request) {
+		$size = $request->input('size', 10);
+    $query = DB::table('suite_amiba_data_docs as l')
+      ->join('suite_cbo_period_accounts as p', 'l.period_id', '=', 'p.id')
+			->join('suite_amiba_groups as g', 'l.fm_group_id', '=', 'g.id')
+			->join('suite_amiba_elements as e', 'l.element_id', '=', 'e.id')
+      ->leftJoin('suite_amiba_groups as tg', 'l.to_group_id', '=', 'tg.id');
+		$query->addSelect('g.name as group_name');
+		$query->addSelect('tg.name as to_group_name');
+		$query->addSelect('p.name as period_name');
+		$query->addSelect('l.doc_no');
+		$query->addSelect('l.use_type_enum');
+    $query->addSelect('l.money as money');
 
-		$query = DB::table('suite_amiba_result_profits as l')
-			->join('suite_cbo_period_accounts as p', 'l.period_id', '=', 'p.id')
-			->join('suite_amiba_groups as g', 'l.group_id', '=', 'g.id');
-		$query->addSelect('p.name as name');
-		$query->addSelect(DB::raw("SUM(l.cost) AS this_cost"));
-		$query->addSelect(DB::raw("SUM(l.income) AS this_income"));
-		$query->addSelect(DB::raw("SUM(l.income-l.cost) AS this_profit"));
+    // if ($v = $request->input('purpose_id')) {
+    //   $query->where('g.purpose_id', $v);
+    // }
+    // if ($v = $request->input('group')) {
+    //   $query->where('g.code', $v);
+    // }
+    // if ($v = $request->input('period')) {
+    //   $query->where('p.code', '=', $v);
+		// }
+		$query->orderBy('g.name');
+		$query->orderBy('p.name');
+		$query->orderBy('l.doc_date','desc');
 
-		foreach ($qc->wheres as $key => $value) {
-			if ($value->name == 'fm_period') {
-				QueryCase::attachWhere($query, $value, 'p.code');
-			} else if ($value->name == 'to_period') {
-				QueryCase::attachWhere($query, $value, 'p.code');
-			} else {
-				QueryCase::attachWhere($query, $value, 'l.' . $value->name);
-			}
-		}
-		$query->groupBy('p.from_date', 'p.name');
-		$query->orderBy('p.from_date');
-		$monthData = $query->get();
-
-		$monthData = $monthData->each(function ($item) {
-			$item->this_cost = floatval($item->this_cost);
-			$item->this_income = floatval($item->this_income);
-			$item->this_profit = floatval($item->this_profit);
-		});
-
-		$result = $monthData;
-
-		return $this->toJson($result, function ($r) use ($group) {
-			$r->group($group);
-		});
-	}
+    $pager = $query->paginate($size);
+    $items = $pager->getCollection();
+    $items = $items->each(function ($item) {
+      $item->money = floatval($item->money);
+    });
+    $pager->setCollection($items);
+    return $this->toJson($pager);
+  }
 }

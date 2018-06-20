@@ -9,11 +9,13 @@ use Suite\Amiba\Models as AmibaModels;
 use Suite\Cbo\Models as CboModels;
 
 class ReportController extends Controller {
+	private function buildPerio($period){
+		$item = new Builder();
+		$item->id($period->id)->code($period->code)->name($period->name)->from_date($period->from_date)->to_date($period->to_date);
+		return $item;
+	}
 	public function getPeriodInfo(Request $request) {
-		$result = [];
-
 		$config = new Builder();
-
 		$calendar_id = false;
 		if (!empty($request->calendar_id)) {
 			$calendar_id = $request->calendar_id;
@@ -24,26 +26,27 @@ class ReportController extends Controller {
 				$calendar_id = $tmp->calendar_id;
 			}
 		}
-		$date = AmibaModels\DataDoc::where('ent_id', GAuth::entId())
-			->where('doc_date', '<=', date('Y-m-d'))
-			->max('doc_date');
-		//当前期间
-		if (empty($date)) {
-			$date = date('Y-m-d');
-		}
-
-		$item = false;
-		$tmp = CboModels\PeriodAccount::where('calendar_id', $calendar_id)
-			->where('from_date', '<=', $date)
-			->where('to_date', '>=', $date)
-			->first();
-		if ($tmp) {
-			$item = new Builder();
-			$item->id($tmp->id)->code($tmp->code)->name($tmp->name)->from_date($tmp->from_date)->to_date($tmp->to_date);
+		//期间列表
+		$periodAll = CboModels\PeriodAccount::where('calendar_id', $calendar_id)->orderBy('from_date')->get();
+		$item =[];
+		if ($periodAll) {
+			foreach($periodAll as $v){
+				$item[]=$this->buildPerio($v);
+			}
 		}
 		if ($item) {
-			$config->period($item);
+			$config->periods($item);
+		}	
+		//当前期间
+		$date = date('Y-m-d');
+		$item = false;
+		foreach($periodAll as $v){
+			if($v->from_date>=$date && $v->to_date<=$date){
+				$item=$this->buildPerio($v);
+				break;
+			}
 		}
+		$config->period($item);
 
 		//前六期间
 		$date = date('Y-m-d');
