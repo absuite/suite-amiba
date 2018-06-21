@@ -86,7 +86,7 @@ class Price extends Model {
 				if (empty($value)) {
 					return false;
 				}
-				return CboModels\Item::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value)->orWhere('name', $value);})->value('id');
+				return CboModels\Item::where('ent_id', $ent_id)->where(function ($query) use ($value) {$query->where('code', $value);})->value('id');
 			},
 		]);
 		$input = InputHelper::fillEnum($input, $data, [

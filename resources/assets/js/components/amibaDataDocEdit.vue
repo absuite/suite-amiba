@@ -73,6 +73,11 @@
             <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" width="200px" editable/>
             <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" width="200px" editable/>
             <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="200px" editable/>
+            <md-grid-column label="料号" width="150px">
+              <template slot-scope="row">
+                {{ row&&row.item?row.item.code:''}}
+              </template>
+            </md-grid-column>
             <md-grid-column label="描述" editable field="memo" />
             <md-grid-column label="费用项目" editable field="expense_code" />
             <md-grid-column label="科目" editable field="account_code" />
