@@ -1,13 +1,13 @@
 <?php
 
-use Gmf\Sys\Models\App\App;
+use Gmf\Sys\Models\Sv\Pack;
 use Illuminate\Database\Seeder;
 
 /**
  * 在数据库结构创建或者修改成功后，执行此逻辑，需要支持可多次重复执行.
  *
  */
-class SuiteAmibaAppAmibaPreSeeder extends Seeder
+class SuiteAmibaSvPackAmibaPreSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,7 +16,7 @@ class SuiteAmibaAppAmibaPreSeeder extends Seeder
      */
     public function run()
     {
-        App::BatchImport([
+        Pack::BatchImport([
             ['openid' => 'suite.amiba', 'code' => 'suite.amiba', 'name' => '套件阿米巴应用'],
         ]);
     }
