@@ -226,7 +226,7 @@ class QueryHelper {
     if (empty($treeNode->nodes)) {
       return;
 		}
-		if(empty($treeNode->indent)){
+		if(!isset($treeNode->indent)){
 			$treeNode->indent=0;
 		}
     foreach ($treeNode->nodes as $key => $value) {

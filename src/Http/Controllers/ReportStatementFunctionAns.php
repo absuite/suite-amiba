@@ -70,6 +70,7 @@ class ReportStatementFunctionAns extends Controller {
 		});
 
 		$rootNode =new \StdClass;
+		$rootNode->indent=-1;
 		$rootNode ->nodes= QueryHelper::buildTree($elements);
 
     /*时间数据*/
