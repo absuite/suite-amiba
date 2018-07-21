@@ -12,6 +12,13 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 	Route::get('/groups/all', 'GroupController@all');
 	Route::resource('groups', 'GroupController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
+	Route::get('/modelings/refs/project', 'ModelingController@get_ref_project');
+	Route::get('/modelings/refs/account', 'ModelingController@get_ref_account');
+	Route::get('/modelings/refs/factor1', 'ModelingController@get_ref_factor1');
+	Route::get('/modelings/refs/factor2', 'ModelingController@get_ref_factor2');
+	Route::get('/modelings/refs/factor3', 'ModelingController@get_ref_factor3');
+	Route::get('/modelings/refs/factor4', 'ModelingController@get_ref_factor4');
+	Route::get('/modelings/refs/factor5', 'ModelingController@get_ref_factor5');
 	Route::get('/modelings/{id}/lines', 'ModelingController@showLines');
 	Route::resource('modelings', 'ModelingController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 

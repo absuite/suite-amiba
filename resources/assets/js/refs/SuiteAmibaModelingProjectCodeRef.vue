@@ -11,7 +11,7 @@
   import common from "gmf/core/utils/common";
   import MdRefMixin from "gmf/core/mixins/MdRef/MdRef";
   export default {
-    name: "SuiteAmibaModelingAccountCodeRef",
+    name: "SuiteAmibaModelingProjectCodeRef",
     mixins: [MdRefMixin],
     data() {
       return {
@@ -26,7 +26,7 @@
           }
         };
         this.$http
-          .get("amiba/modelings/refs/account", options)
+          .get("amiba/modelings/refs/project", options)
           .then(res => {
             this.mainDatas = res.data.data;
           });
