@@ -59,7 +59,8 @@ INSERT INTO tml_result_allocated(purpose_id,period_id,group_id,element_id,curren
 SELECT d.purpose_id,d.period_id,d.fm_group_id,d.element_id,MAX(currency_id),SUM(d.money) AS money
 FROM `suite_amiba_data_docs` AS d 
 WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
-  AND d.use_type_enum ='indirect'
+  AND d.src_type_enum IN ('interface','manual')
+  AND EXISTS (SELECT ar.id FROM suite_amiba_allot_rules AS ar WHERE d.purpose_id=ar.purpose_id AND d.fm_group_id=ar.group_id AND d.element_id=ar.element_id)
 GROUP BY d.purpose_id,d.period_id,d.fm_group_id,d.element_id;
 
 /*
@@ -82,12 +83,12 @@ SET l.total=t.total,l.rate=CASE WHEN t.total=0 THEN 0 ELSE l.radix/t.total END;
 
 
 /*删除之前分配的数据*/
-DELETE l FROM suite_amiba_data_docs AS l  WHERE l.ent_id=p_ent AND l.purpose_id=p_purpose AND l.period_id=p_period AND use_type_enum ='allocated';
+DELETE l FROM suite_amiba_data_docs AS l  WHERE l.ent_id=p_ent AND l.purpose_id=p_purpose AND l.period_id=p_period AND src_type_enum ='allot';
 
 
 -- 插入数据
-INSERT INTO `suite_amiba_data_docs`(id,ent_id,doc_no,doc_date,use_type_enum,purpose_id,period_id,fm_group_id,element_id,currency_id,state_enum,money)
-SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,p_ent,CONCAT('Allocated',DATE_FORMAT(NOW(),'%Y%m%d'),(@rownum:=@rownum+1)+1000),NOW() AS doc_date,'allocated',
+INSERT INTO `suite_amiba_data_docs`(id,ent_id,doc_no,doc_date,src_type_enum,purpose_id,period_id,fm_group_id,element_id,currency_id,state_enum,money)
+SELECT MD5(REPLACE(UUID_SHORT(),'-','')) AS id,p_ent,CONCAT('allot',DATE_FORMAT(NOW(),'%Y%m%d'),(@rownum:=@rownum+1)+1000),NOW() AS doc_date,'allot',
   a.purpose_id,p_period AS period_id,a.group_id,IFNULL(a.to_element_id,l.element_id) AS element_id,l.currency_id,'approved',
   SUM(l.money*a.rate) AS money
 FROM tml_result_allocated AS l

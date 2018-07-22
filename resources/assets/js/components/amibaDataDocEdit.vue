@@ -45,8 +45,8 @@
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-field>
-              <label>数据用途</label>
-              <md-enum :disabled="isApproved" md-enum-id="suite.amiba.doc.use.type.enum" v-model="model.main.use_type_enum" />
+              <label>数据来源</label>
+              <md-enum disabled md-enum-id="suite.amiba.doc.src.type.enum" v-model="model.main.src_type_enum" />
             </md-field>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
@@ -125,7 +125,6 @@ export default {
         'purpose': 'required',
         'period': 'required',
         'element': 'required',
-        'use_type_enum': 'required'
       });
       var fail = validator.fails();
       if (fail && !notToast) {
@@ -145,7 +144,7 @@ export default {
           fm_group: null,
           to_group: null,
           'state_enum': 'opened',
-          'use_type_enum': '',
+          'src_type_enum': 'manual',
           'doc_no': '',
         }
       }

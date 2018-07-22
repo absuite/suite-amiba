@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Suite\Amiba\Models;
 use Validator;
 use GAuth;
+use DB;
 class AllotRuleController extends Controller {
 	public function index(Request $request) {
 		$query = Models\AllotRule::select('id', 'code', 'name', 'memo');
@@ -14,6 +15,35 @@ class AllotRuleController extends Controller {
 
 		return $this->toJson($data);
 	}
+	public function relations(Request $request) {
+		$query = DB::table('suite_amiba_allot_rules as r')
+		->join('suite_amiba_allot_rule_lines as rl','r.id','=','rl.rule_id')
+		->leftJoin('suite_amiba_groups as fg','r.group_id','=','fg.id')
+		->leftJoin('suite_amiba_groups as tg','rl.group_id','=','tg.id')
+		->join('suite_amiba_elements as fe','r.element_id','=','fe.id')
+		->join('suite_amiba_elements as te','rl.element_id','=','te.id')
+		->select('r.group_id as fm_group_id','r.element_id as fm_element_id')
+		->addSelect('rl.group_id as to_group_id','rl.element_id as to_element_id');
+		$query->addSelect('rl.rate');
+		$query->addSelect(DB::raw("CONCAT(IFNULL(r.group_id,''),'|',IFNULL(r.group_id,'')) as parent_id"));
+		$query->addSelect(DB::raw("CONCAT(IFNULL(rl.group_id,''),'|',IFNULL(rl.group_id,'')) as id"));
+
+		$query->orderBy('r.group_id');
+		$query->orderBy('r.element_id');
+		$query->orderBy('rl.group_id');
+		$query->orderBy('rl.element_id');
+		$data=$query->get();
+
+	$nodes=	$data->all();
+	foreach($nodes as $key=>$item){
+		unset($nodes[$key+2]);
+		
+		var_dump($key);
+	}
+	var_dump($nodes);
+		return $this->toJson($data);
+	}
+	
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
 		$query = Models\AllotRuleLine::with('group', 'element');

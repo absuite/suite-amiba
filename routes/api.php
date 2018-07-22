@@ -30,6 +30,7 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 	Route::get('/allot-methods/{id}/lines', 'AllotMethodController@showLines');
 	Route::resource('allot-methods', 'AllotMethodController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
+	Route::get('/allot-rules/relations', 'AllotRuleController@relations');
 	Route::get('/allot-rules/{id}/lines', 'AllotRuleController@showLines');
 	Route::resource('allot-rules', 'AllotRuleController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
