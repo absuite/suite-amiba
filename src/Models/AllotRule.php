@@ -11,7 +11,7 @@ class AllotRule extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_allot_rules';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo',
+	protected $fillable = ['id', 'ent_id', 'code', 'name', 'memo','bizkey',
 		'purpose_id', 'method_id', 'group_id', 'element_id'];
 
 	//属性

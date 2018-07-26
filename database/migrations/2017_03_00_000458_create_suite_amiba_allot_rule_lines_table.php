@@ -19,6 +19,7 @@ class CreateSuiteAmibaAllotRuleLinesTable extends Migration {
 		$md->entity('rule', 'suite.amiba.allot.rule')->nullable()->comment('分配标准');
 		$md->entity('element', 'suite.amiba.element')->nullable()->comment('目的核算要素');
 		$md->entity('group', 'suite.amiba.group')->nullable()->comment('目的阿米巴');
+		$md->string('bizkey',250)->nullable()->comment('业务主键');
 		$md->decimal('rate', 30, 2)->comment('比例');
 		$md->timestamps();
 

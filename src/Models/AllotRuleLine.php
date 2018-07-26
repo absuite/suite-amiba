@@ -11,7 +11,7 @@ class AllotRuleLine extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_allot_rule_lines';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'rule_id', 'group_id', 'element_id', 'rate'];
+	protected $fillable = ['id', 'ent_id', 'rule_id','bizkey', 'group_id', 'element_id', 'rate'];
 
 	//属性
 	public function setEntIdAttribute($value) {

@@ -22,6 +22,7 @@ class CreateSuiteAmibaAllotRulesTable extends Migration {
 		$md->entity('element', 'suite.amiba.element')->nullable()->comment('来源核算要素');
 		$md->string('code')->nullable()->comment('编码');
 		$md->string('name')->comment('名称');
+		$md->string('bizkey',250)->nullable()->comment('业务主键');
 		$md->text('memo')->nullable()->comment('备注');
 		$md->timestamps();
 

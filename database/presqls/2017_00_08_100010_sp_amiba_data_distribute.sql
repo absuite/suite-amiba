@@ -2,7 +2,7 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_amiba_data_distribute$$
 
 
-CREATE PROCEDURE sp_amiba_data_distribute(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200)) 
+CREATE PROCEDURE sp_amiba_data_distribute(IN p_ent CHAR(200),IN p_purpose CHAR(200),IN p_period CHAR(200),IN p_level INT) 
 BEGIN
 
 DECLARE v_loop INT DEFAULT 1;
@@ -19,16 +19,10 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tml_result_allocated(
   `money` DECIMAL(30,9) DEFAULT 0
 );
 
-/*节点对应最末级的节点*/
-DROP TEMPORARY TABLE IF EXISTS tml_data_childGroup;
-CREATE TEMPORARY TABLE IF NOT EXISTS tml_data_childGroup(
-  `id` NVARCHAR(100),
-  `last_id` NVARCHAR(100),
-  `loops` INT
-);
 DROP TEMPORARY TABLE IF EXISTS suite_amiba_allot_total;
 CREATE TEMPORARY TABLE IF NOT EXISTS suite_amiba_allot_total(
   `purpose_id` NVARCHAR(100),
+  `group_id` NVARCHAR(100),
   `element_id` NVARCHAR(100),
   `total` DECIMAL(30,9) DEFAULT 0
 );
@@ -37,6 +31,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS suite_amiba_allot_line(
   `purpose_id` NVARCHAR(100),
   `group_id` NVARCHAR(100),
   `element_id` NVARCHAR(100),
+  `to_group_id` NVARCHAR(100),
   `to_element_id` NVARCHAR(100),
   `total` DECIMAL(30,9) DEFAULT 0,
   `radix` DECIMAL(30,9) DEFAULT 0,
@@ -44,13 +39,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS suite_amiba_allot_line(
 );
 
 SET v_loop=1;
-/*末级阿米巴单元*/
-INSERT INTO tml_data_childGroup(id,last_id,loops) 
-SELECT DISTINCT g.id,g.id,v_loop
-FROM suite_amiba_groups AS g
-  LEFT JOIN suite_amiba_groups AS child ON child.parent_id=g.id
-WHERE  g.purpose_id=p_purpose
-   AND child.id IS NULL;
+
 
 /*
 核算 待分配数据
@@ -60,25 +49,31 @@ SELECT d.purpose_id,d.period_id,d.fm_group_id,d.element_id,MAX(currency_id),SUM(
 FROM `suite_amiba_data_docs` AS d 
 WHERE  d.`purpose_id`=p_purpose AND d.`period_id`=p_period
   AND d.src_type_enum IN ('interface','manual')
-  AND EXISTS (SELECT ar.id FROM suite_amiba_allot_rules AS ar WHERE d.purpose_id=ar.purpose_id AND d.fm_group_id=ar.group_id AND d.element_id=ar.element_id)
+  AND EXISTS (SELECT ar.id FROM suite_amiba_allot_rules AS ar 
+	INNER JOIN suite_amiba_allot_levels AS le ON ar.purpose_id=le.purpose_id AND ar.`group_id`=le.`group_id`  
+  WHERE d.purpose_id=ar.purpose_id AND d.fm_group_id=ar.group_id AND d.element_id=ar.element_id
+    AND le.`period_id`=d.period_id
+    AND ar.bizkey=le.bizkey
+    AND le.`level`=p_level 
+  )
 GROUP BY d.purpose_id,d.period_id,d.fm_group_id,d.element_id;
 
 /*
 计算分配比例
 */
-INSERT INTO suite_amiba_allot_line(purpose_id,group_id,element_id,to_element_id,radix)
-SELECT r.purpose_id,rl.group_id,r.element_id,MAX(rl.`element_id`) AS element_id,SUM(ml.rate) AS radix
+INSERT INTO suite_amiba_allot_line(purpose_id,group_id,element_id,to_group_id,to_element_id,radix)
+SELECT r.purpose_id,r.group_id,r.element_id,rl.group_id,rl.`element_id`,SUM(ml.rate) AS radix
 FROM suite_amiba_allot_rules AS r
   INNER JOIN `suite_amiba_allot_rule_lines` AS rl ON r.id=rl.rule_id
   INNER JOIN `suite_amiba_allot_methods` AS m ON r.method_id=m.id
   INNER JOIN `suite_amiba_allot_method_lines` AS ml ON m.id=ml.method_id AND ml.group_id=rl.group_id
 WHERE  r.purpose_id=p_purpose AND m.purpose_id=p_purpose
-GROUP BY r.purpose_id,rl.group_id,r.element_id;
+GROUP BY r.purpose_id,r.group_id,r.element_id,rl.group_id,rl.`element_id`;
 
-INSERT INTO suite_amiba_allot_total(purpose_id,element_id,total)
-SELECT l.purpose_id,l.element_id,SUM(radix) FROM suite_amiba_allot_line AS l GROUP BY l.purpose_id,l.element_id;
+INSERT INTO suite_amiba_allot_total(purpose_id,group_id,element_id,total)
+SELECT l.purpose_id,l.group_id,l.element_id,SUM(radix) FROM suite_amiba_allot_line AS l GROUP BY l.purpose_id,l.group_id,l.element_id;
 
-UPDATE suite_amiba_allot_line AS l INNER JOIN suite_amiba_allot_total AS t ON l.purpose_id=t.purpose_id AND l.element_id=t.element_id
+UPDATE suite_amiba_allot_line AS l INNER JOIN suite_amiba_allot_total AS t ON l.purpose_id=t.purpose_id AND l.element_id=t.element_id AND l.group_id=t.group_id
 SET l.total=t.total,l.rate=CASE WHEN t.total=0 THEN 0 ELSE l.radix/t.total END;
 
 

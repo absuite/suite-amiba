@@ -76,174 +76,211 @@
   </md-part>
 </template>
 <script>
-  import model from 'cbo/mixins/MdModel/MdModel';
-  import modelGrid from 'cbo/mixins/MdModel/MdModelGrid';
-  import _forEach from 'lodash/forEach'
-  import Highcharts from 'highcharts';
-  import HighchartsSankey from 'highcharts/modules/sankey';
-  HighchartsSankey(Highcharts);
+import model from "cbo/mixins/MdModel/MdModel";
+import modelGrid from "cbo/mixins/MdModel/MdModelGrid";
+import _forEach from "lodash/forEach";
+import Highcharts from "highcharts";
+import HighchartsSankey from "highcharts/modules/sankey";
+HighchartsSankey(Highcharts);
 
-  export default {
-    mixins: [model, modelGrid],
-    computed: {
-      canSave() {
-        return this.validate(true);
+export default {
+  mixins: [model, modelGrid],
+  computed: {
+    canSave() {
+      return this.validate(true);
+    }
+  },
+  data() {
+    return {
+      showChart: false,
+      defaultPurpose: this.$root.configs.purpose
+    };
+  },
+  methods: {
+    validate(notToast) {
+      var validator = this.$validate(this.model.main, {
+        code: "required",
+        name: "required",
+        purpose: "required",
+        method: "required",
+        element: "required"
+      });
+      var fail = validator.fails();
+      if (fail && !notToast) {
+        this.$toast(validator.errors.all());
       }
+      return !fail;
     },
-    data() {
+    initModel() {
       return {
-        showChart: false,
-        defaultPurpose:this.$root.configs.purpose
+        main: {
+          code: "",
+          name: "",
+          purpose: this.$root.configs.purpose,
+          method: null,
+          element: null,
+          group: null,
+          lines: []
+        }
+      };
+    },
+    list() {
+      this.$router.push({
+        name: "module",
+        params: {
+          module: "amiba.allot.rule.list"
+        }
+      });
+    },
+    onLineAdd() {
+      this.$refs["lineRef"].open();
+    },
+    lineRefClose(datas) {
+      _forEach(datas, (v, k) => {
+        this.$refs.grid &&
+          this.$refs.grid.addDatas({
+            group: v,
+            element: this.model.main.element,
+            rate: "0"
+          });
+      });
+    },
+    init_group_ref(options) {
+      options.wheres.$leaf = {
+        is_leaf: "1"
+      };
+      if (this.model.main.$purpose) {
+        options.wheres.$purpose = {
+          purpose_id: this.model.main.purpose.id
+        };
+      } else {
+        options.wheres.$purpose = false;
       }
     },
-    methods: {
-      validate(notToast) {
-        var validator = this.$validate(this.model.main, {
-          'code': 'required',
-          'name': 'required',
-          purpose: 'required',
-          method: 'required',
-          element: 'required'
-        });
-        var fail = validator.fails();
-        if (fail && !notToast) {
-          this.$toast(validator.errors.all());
-        }
-        return !fail;
-      },
-      initModel() {
-        return {
-          main: {
-            'code': '',
-            'name': '',
-            purpose: this.$root.configs.purpose,
-            method: null,
-            element: null,
-            group: null,
-            'lines': []
-          }
-        }
-      },
-      list() {
-        this.$router.push({
-          name: 'module',
-          params: {
-            module: 'amiba.allot.rule.list'
-          }
-        });
-      },
-      onLineAdd() {
-        this.$refs['lineRef'].open();
-      },
-      lineRefClose(datas) {
-        _forEach(datas, (v, k) => {
-          this.$refs.grid && this.$refs.grid.addDatas({
-            'group': v,
-            'element': this.model.main.element,
-            rate: '0'
-          });
-        });
-      },
-      init_group_ref(options) {
-        options.wheres.$leaf = {
-          is_leaf: '1'
+    init_method_ref(options) {
+      if (this.model.main.purpose) {
+        options.wheres.$purpose = {
+          purpose_id: this.model.main.purpose.id
         };
-        if (this.model.main.$purpose) {
-          options.wheres.$purpose = {
-            purpose_id: this.model.main.purpose.id
-          };
-        } else {
-          options.wheres.$purpose = false;
-        }
-      },
-      init_method_ref(options) {
-        if (this.model.main.purpose) {
-          options.wheres.$purpose = {
-            purpose_id: this.model.main.purpose.id
-          };
-        } else {
-          options.wheres.$purpose = false;
-        }
-      },
-      init_element_ref(options) {
-        if (this.model.main.purpose) {
-          options.wheres.$purpose = {
-            purpose_id: this.model.main.purpose.id
-          };
-        } else {
-          options.wheres.$purpose = false;
-        }
-      },
-      initChart() {
-        var opts = {
-          title: {
-            text: ''
-          },
-          series: [{
-            keys: ['from', 'to', 'weight'],
+      } else {
+        options.wheres.$purpose = false;
+      }
+    },
+    init_element_ref(options) {
+      if (this.model.main.purpose) {
+        options.wheres.$purpose = {
+          purpose_id: this.model.main.purpose.id
+        };
+      } else {
+        options.wheres.$purpose = false;
+      }
+    },
+    initChart() {
+      var opts = {
+        title: {
+          text: ""
+        },
+        series: [
+          {
+            keys: ["from", "to", "weight"],
             point: {
               // 鼠标划过节点时高亮相连的连接节点
               events: {
-                mouseOver: function () {
+                mouseOver: function() {
                   if (this.isNode) {
-                    Highcharts.each(this.linksFrom, function (p) {
-                      var newColor = new Highcharts.color(p.color).setOpacity(1);
-                      p.graphic.element.setAttribute('fill', 'rgba(' + newColor.rgba.join() + ')');
+                    Highcharts.each(this.linksFrom, function(p) {
+                      var newColor = new Highcharts.color(p.color).setOpacity(
+                        1
+                      );
+                      p.graphic.element.setAttribute(
+                        "fill",
+                        "rgba(" + newColor.rgba.join() + ")"
+                      );
                     });
-                    Highcharts.each(this.linksTo, function (p) {
-                      var newColor = new Highcharts.color(p.color).setOpacity(1);
-                      p.graphic.element.setAttribute('fill', 'rgba(' + newColor.rgba.join() + ')');
+                    Highcharts.each(this.linksTo, function(p) {
+                      var newColor = new Highcharts.color(p.color).setOpacity(
+                        1
+                      );
+                      p.graphic.element.setAttribute(
+                        "fill",
+                        "rgba(" + newColor.rgba.join() + ")"
+                      );
                     });
                   }
                 },
-                mouseOut: function () {
+                mouseOut: function() {
                   if (this.isNode) {
-                    Highcharts.each(this.linksFrom, function (p) {
-                      var newColor = new Highcharts.color(p.color).setOpacity(0.5);
-                      p.graphic.element.setAttribute('fill', 'rgba(' + newColor.rgba.join() + ')');
+                    Highcharts.each(this.linksFrom, function(p) {
+                      var newColor = new Highcharts.color(p.color).setOpacity(
+                        0.5
+                      );
+                      p.graphic.element.setAttribute(
+                        "fill",
+                        "rgba(" + newColor.rgba.join() + ")"
+                      );
                     });
-                    Highcharts.each(this.linksTo, function (p) {
-                      var newColor = new Highcharts.color(p.color).setOpacity(0.5);
-                      p.graphic.element.setAttribute('fill', 'rgba(' + newColor.rgba.join() + ')');
+                    Highcharts.each(this.linksTo, function(p) {
+                      var newColor = new Highcharts.color(p.color).setOpacity(
+                        0.5
+                      );
+                      p.graphic.element.setAttribute(
+                        "fill",
+                        "rgba(" + newColor.rgba.join() + ")"
+                      );
                     });
                   }
                 }
               }
             },
             data: [
-              ['巴A1', '巴B1', 1],
-              ['巴A1', '巴B2', 1],
-              ['巴B2', '巴C1', 1],
-              ['巴C1', '巴D1', 1],
-              ['巴C1', '巴D2', 1],
-              ['巴B2', '巴C2', 1],
-              ['巴B2', '巴C3', 1],
-              ['巴B2', '巴C4', 1],
-              ['巴A1', '巴B3', 1],
-              ['巴A1', '巴C1', 1],
-              ['E3', '巴C1', 1],
-              ['F8', '巴D4', 1],
+              ["巴A1", "巴B1", 1],
+              ["巴A1", "巴B2", 1],
+              ["巴B2", "巴C1", 1],
+              ["巴C1", "巴D1", 1],
+              ["巴C1", "巴D2", 1],
+              ["巴B2", "巴C2", 1],
+              ["巴B2", "巴C3", 1],
+              ["巴B2", "巴C4", 1],
+              ["巴A1", "巴B3", 1],
+              ["巴A1", "巴C1", 1],
+              ["E3", "巴C1", 1],
+              ["F8", "巴D4", 1]
             ],
-            type: 'sankey',
-            name: 'Sankey demo series'
-          }]
-        };
-        this.$refs.myChart && this.$refs.myChart.mergeOption(opts);
-      }
-    },
-    mounted(){
-       this.initChart();
-    },
-    created() {
-      this.model.entity = 'suite.amiba.allot.rule';
-      this.model.order = "code";
-      this.route = 'amiba/allot-rules';
-     
-    },
-  };
+            type: "sankey",
+            name: "Sankey demo series"
+          }
+        ]
+      };
+
+      this.$http
+        .get("amiba/allot-rules/relations", {
+          params: {
+            purpose_id: this.defaultPurpose ? this.defaultPurpose.id : ""
+          }
+        })
+        .then(res => {
+          var datas = [];
+          _forEach(res.data.data,function(d) {
+            datas.push([d.fm_name, d.to_name, d.rate]);
+          });
+          opts.series[0].data = datas;
+
+          this.$refs.myChart && this.$refs.myChart.mergeOption(opts);
+        });
+    }
+  },
+  mounted() {
+    this.initChart();
+  },
+  created() {
+    this.model.entity = "suite.amiba.allot.rule";
+    this.model.order = "code";
+    this.route = "amiba/allot-rules";
+  }
+};
 </script>
 <style lang="scss" scoped>
-.md-drawer{
+.md-drawer {
   width: 70%;
 }
 </style>
