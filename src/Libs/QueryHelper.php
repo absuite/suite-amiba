@@ -5,8 +5,16 @@ use Carbon\Carbon;
 use DB;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Query\QueryCase;
-
+use GAuth;
 class QueryHelper {
+  public static function geMyGroups(){
+    $query =DB::table('gmf_sys_authority_role_entities as d');
+		$query ->join('gmf_sys_authority_role_users as u','d.role_id','=','u.role_id');
+		$query->where('d.data_type','Suite\\Amiba\\Models\\Group');
+    $query->whereIn('u.user_id',GAuth::ids());
+    $query->distinct();
+    return $query->pluck('data_id');
+  }
   public static function getPeriod($queryCase) {
     $purposeId = false;
     $periodId = false;

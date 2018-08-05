@@ -6,12 +6,17 @@ use Gmf\Sys\Libs\InputHelper;
 use Gmf\Sys\Libs\TreeBuilder;
 use Illuminate\Http\Request;
 use Suite\Amiba\Models;
+use Suite\Amiba\Libs\QueryHelper;
 use Validator;
 use GAuth;
+use DB;
 class GroupController extends Controller {
 	public function index(Request $request) {
 		$size = $request->input('size', 10);
 		$query = Models\Group::select('id', 'code', 'name', 'memo');
+		if($request->input('me')){
+			$query->whereIn('id',QueryHelper::geMyGroups());
+		}
 		return $this->toJson($query->paginate($size));
 
 	}
