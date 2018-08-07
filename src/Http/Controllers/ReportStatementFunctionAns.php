@@ -138,6 +138,10 @@ class ReportStatementFunctionAns extends Controller {
 		$result=[];
 		
     QueryHelper::appendNodesToArray($result,$rootNode);
+    foreach($result as $key => $value) {
+      $value->month_value=round($value->month_value,2);
+      $value->year_value=round($value->year_value,2);
+    }
 
     return $this->toJson($result);
   }
