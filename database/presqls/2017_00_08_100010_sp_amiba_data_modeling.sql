@@ -420,15 +420,10 @@ DEALLOCATE PREPARE bizStmt;
   -- 来源巴
   UPDATE `suite_amiba_prices` AS p
     INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
-    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_fm_group_id AND IFNULL(pl.group_id,'')='' AND IFNULL(pl.item_id,'')=''
+    INNER JOIN tml_data_elementing AS l ON IFNULL(p.group_id,'')='' AND IFNULL(pl.group_id,'')='' AND pl.item_id=l.item_id
   SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
+  WHERE p.purpose_id=p_purpose AND p.ent_id=p_ent AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
   
-  UPDATE `suite_amiba_prices` AS p
-    INNER JOIN `suite_amiba_price_lines` AS pl ON p.id=pl.price_id
-    INNER JOIN tml_data_elementing AS l ON p.group_id=l.m_to_group_id AND IFNULL(pl.group_id,'')='' AND IFNULL(pl.item_id,'')=''
-  SET l.money=l.qty*pl.cost_price
-  WHERE p.purpose_id=p_purpose AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
   
 
   -- 更新数据用途
