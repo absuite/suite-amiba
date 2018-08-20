@@ -36,6 +36,10 @@ class ReportStatementPurpose extends Controller {
 					}
 				}
 			});
+			$groupIds = QueryHelper::geMyGroups();
+      if ($groupIds) {
+        $query->whereIn('t.group_id', $groupIds);
+      }
 			$query->leftJoin('suite_cbo_period_accounts as fp', function ($join) use ($qc, $period, $group) {
 				$join->on('t.fm_period_id', '=', 'fp.id');
 				$join->where('fp.from_date', '>=', $period->from_date);

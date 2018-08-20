@@ -6,13 +6,13 @@
     <md-part-toolbar>
       <md-part-toolbar-group class="flex">
         <md-layout md-gutter>
-          <md-layout md-hide-xsmall md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex-xlarge="20">
+          <md-layout md-flex-xs="100" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex="20">
             <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="50" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex-xlarge="20">
+          <md-layout md-flex-xs="100" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex="20">
             <md-ref-input md-label="从" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.fm_period"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xsmall="50" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex-xlarge="20">
+          <md-layout md-flex-xs="100" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex="20">
             <md-ref-input md-label="到" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.to_period"></md-ref-input>
           </md-layout>
         </md-layout>

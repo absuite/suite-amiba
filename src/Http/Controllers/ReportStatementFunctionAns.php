@@ -37,6 +37,10 @@ class ReportStatementFunctionAns extends Controller {
         QueryCase::attachWhere($query, $value, 'l.' . $value->name);
       }
     }
+    $groupIds = QueryHelper::geMyGroups();
+      if ($groupIds) {
+        $query->whereIn('l.group_id', $groupIds);
+      }
 
     $query->where('p.year', '=', $period->year);
     $query->where('p.from_date', '<=', $period->from_date);

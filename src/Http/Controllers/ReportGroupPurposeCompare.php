@@ -36,6 +36,11 @@ class ReportGroupPurposeCompare extends Controller {
 
 		$groups = QueryHelper::getGroups($qc, !$hasGroup);
 
+		$groupIds = QueryHelper::geMyGroups();
+    if ($groupIds) {
+      $query->whereIn('l.group_id', $groupIds);
+    }
+
 		$query->groupBy('l.group_id');
 		$monthData = $query->get();
 

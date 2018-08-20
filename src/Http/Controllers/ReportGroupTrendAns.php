@@ -32,6 +32,10 @@ class ReportGroupTrendAns extends Controller {
 				QueryCase::attachWhere($query, $value, 'l.' . $value->name);
 			}
 		}
+		$groupIds = QueryHelper::geMyGroups();
+    if ($groupIds) {
+      $query->whereIn('l.group_id', $groupIds);
+    }
 		$query->groupBy('p.from_date', 'p.name');
 		$query->orderBy('p.from_date');
 		$monthData = $query->get();

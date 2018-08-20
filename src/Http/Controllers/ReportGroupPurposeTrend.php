@@ -33,6 +33,11 @@ class ReportGroupPurposeTrend extends Controller {
 			}
 		}
 
+		$groupIds = QueryHelper::geMyGroups();
+    if ($groupIds) {
+      $query->whereIn('l.group_id', $groupIds);
+    }
+
 		$query->groupBy('l.period_id');
 		$monthData = $query->get();
 
