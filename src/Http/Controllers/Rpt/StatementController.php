@@ -1,28 +1,38 @@
 <?php
 
-namespace Suite\Amiba\Http\Controllers;
+namespace Suite\Amiba\Http\Controllers\Rpt;
 use DB;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Http\Controllers\Controller;
-use Gmf\Sys\Query\QueryCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Suite\Amiba\Libs\QueryHelper;
 use Suite\Amiba\Models\Element;
 
-class ReportStatementFunctionAns extends Controller {
-  public function index(Request $request) {
+class StatementController extends Controller {
+  private function getPeriodItem($periodId) {
+    $query = DB::table('suite_cbo_period_accounts as a');
+    $query->addSelect('a.id');
+    $query->addSelect('a.name');
+    $query->addSelect('a.year');
+    $query->addSelect('a.month');
+    $query->addSelect('a.to_date');
+    $query->addSelect('a.from_date');
+    $query->where('a.id', $periodId);
+
+    return $query->first();
+  }
+  public function ans(Request $request) {
     Log::error(static::class);
     $result = [];
     $monthData = [];
-    $timeData = false;
-    $qc = QueryCase::formatRequest($request);
-    $period = QueryHelper::getPeriod($qc);
-    $group = QueryHelper::getGroup($qc);
-    if (empty($period) || empty($group)) {
-      return $this->toJson(false);
-    }
 
+    $purpose_id = $request->input('purpose_id');
+
+    $period=$this->getPeriodItem($request->input('period_id'));
+    if(empty($period)){
+      return $this->toJson($result); 
+    }
     $query = DB::table('suite_amiba_result_accounts as l');
     $query->join('suite_cbo_period_accounts as p', 'l.period_id', '=', 'p.id');
     $query->join('suite_amiba_elements as e', 'l.element_id', '=', 'e.id');
@@ -31,18 +41,16 @@ class ReportStatementFunctionAns extends Controller {
     $query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.money) AS month_value"));
     $query->addSelect(DB::raw("SUM(l.money) as year_value"));
 
-    foreach ($qc->wheres as $key => $value) {
-      if ($value->name == 'group_id') {
-        QueryCase::attachWhere($query, $value, 'l.' . $value->name);
-      } else if ($value->name == 'purpose_id') {
-        QueryCase::attachWhere($query, $value, 'l.' . $value->name);
-      }
+    if ($v = $request->input('purpose_id')) {
+      $query->where('l.purpose_id', $v);
+    }
+    if ($v = $request->input('group_id')) {
+      $query->where('l.group_id', $v);
     }
     $groupIds = QueryHelper::geMyGroups();
     if ($groupIds) {
       $query->whereIn('l.group_id', $groupIds);
     }
-
     $query->where('p.year', '=', $period->year);
     $query->where('p.from_date', '<=', $period->from_date);
 
@@ -94,26 +102,6 @@ class ReportStatementFunctionAns extends Controller {
     $rootNode->indent = -1;
     $rootNode->nodes = QueryHelper::buildTree($elementNodes);
 
-    /*时间数据*/
-    $query = DB::table('suite_amiba_data_time_lines as l');
-    $query->join('suite_amiba_data_times as t', 'l.time_id', '=', 't.id');
-    $query->join('suite_cbo_period_accounts as p', 't.period_id', '=', 'p.id');
-
-    $query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.total_time) AS time_month"));
-    $query->addSelect(DB::raw("SUM(l.total_time) as time_year"));
-
-    foreach ($qc->wheres as $key => $value) {
-      if ($value->name == 'group_id') {
-        QueryCase::attachWhere($query, $value, 'l.' . $value->name);
-      } else if ($value->name == 'purpose_id') {
-        QueryCase::attachWhere($query, $value, 't.' . $value->name);
-      }
-    }
-    $query->where('p.year', '=', $period->year);
-    $query->where('p.from_date', '<=', $period->from_date);
-
-    $timeData = $query->first();
-
     //汇总上级
     QueryHelper::sumTreeNodes($rootNode, ['month_value', 'year_value']);
     QueryHelper::itemRatioTreeNodes($rootNode, 'month_ratio', 'month_value');
@@ -160,6 +148,9 @@ class ReportStatementFunctionAns extends Controller {
     foreach ($result as $key => $value) {
       $value->month_value = round($value->month_value, 2);
       $value->year_value = round($value->year_value, 2);
+    }
+    foreach ($result as $key => $value) {
+      $value->nodes=null;
     }
 
     return $this->toJson($result);

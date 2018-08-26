@@ -3,15 +3,22 @@
 namespace Suite\Amiba\Libs;
 use Carbon\Carbon;
 use DB;
-use Gmf\Sys\Builder;
-use Gmf\Sys\Query\QueryCase;
 use GAuth;
+use Gmf\Sys\Query\QueryCase;
+
 class QueryHelper {
-  public static function geMyGroups(){
-    $query =DB::table('gmf_sys_authority_role_entities as d');
-		$query ->join('gmf_sys_authority_role_users as u','d.role_id','=','u.role_id');
-		$query->where('d.data_type','Suite\\Amiba\\Models\\Group');
-    $query->whereIn('u.user_id',GAuth::ids());
+
+  public static function geMyGroups() {
+    if (DB::table('gmf_sys_authority_roles as r')
+      ->join('gmf_sys_authority_role_users as u', 'r.id', '=', 'u.role_id')
+      ->where('r.code', 'gmf.role.sys.super')
+      ->whereIn('u.user_id', GAuth::ids())) {
+      return false;
+    }
+    $query = DB::table('gmf_sys_authority_role_entities as d');
+    $query->join('gmf_sys_authority_role_users as u', 'd.role_id', '=', 'u.role_id');
+    $query->where('d.data_type', 'Suite\\Amiba\\Models\\Group');
+    $query->whereIn('u.user_id', GAuth::ids());
     $query->distinct();
     return $query->pluck('data_id');
   }
@@ -182,22 +189,22 @@ class QueryHelper {
       foreach ($tree->nodes as $nk => $nv) {
         static::sumTreeNodes($nv, $sumFields);
         foreach ($sumFields as $fk => $fv) {
-          $tv[$fv] = $tv[$fv] + (empty($nv->{$fv})?0: $nv->{$fv});
+          $tv[$fv] = $tv[$fv] + (empty($nv->{$fv}) ? 0 : $nv->{$fv});
         }
       }
     }
     foreach ($sumFields as $fk => $fv) {
-      $tree->{$fv} = (empty($tree->{$fv})?0: $tree->{$fv})+ $tv[$fv];
+      $tree->{$fv} = (empty($tree->{$fv}) ? 0 : $tree->{$fv}) + $tv[$fv];
     }
   }
-  public static function itemRatioTreeNodes(&$tree,$ratioField, $valueField) {
+  public static function itemRatioTreeNodes(&$tree, $ratioField, $valueField) {
     if (!empty($tree->nodes) && count($tree->nodes)) {
       foreach ($tree->nodes as $nk => $nv) {
-        static::itemRatioTreeNodes($nv,$ratioField, $valueField);
-        if(!empty($tree->{$valueField})&&!empty($nv->{$valueField})){
-          $nv->{$ratioField}=round($nv->{$valueField}/$tree->{$valueField}*100,2).'%';
-        }else{
-          $nv->{$ratioField}='0.00%';
+        static::itemRatioTreeNodes($nv, $ratioField, $valueField);
+        if (!empty($tree->{$valueField}) && !empty($nv->{$valueField})) {
+          $nv->{$ratioField} = round($nv->{$valueField} / $tree->{$valueField} * 100, 2) . '%';
+        } else {
+          $nv->{$ratioField} = '0.00%';
         }
       }
     }
@@ -211,7 +218,7 @@ class QueryHelper {
       }
     }
     if (count($nodes)) {
-      $parentNode->nodes=$nodes;
+      $parentNode->nodes = $nodes;
     }
   }
   public static function buildTree($rows = []) {
@@ -222,8 +229,8 @@ class QueryHelper {
         $tree[] = $v;
       }
     }
-    return count($tree) ? $tree : false;
-	}
+    return $tree;
+  }
   /**
    * 把树型结构的数据平
    * @param  array  $array [description]
@@ -233,12 +240,12 @@ class QueryHelper {
   public static function appendNodesToArray(array &$array, $treeNode) {
     if (empty($treeNode->nodes)) {
       return;
-		}
-		if(!isset($treeNode->indent)){
-			$treeNode->indent=0;
-		}
+    }
+    if (!isset($treeNode->indent)) {
+      $treeNode->indent = 0;
+    }
     foreach ($treeNode->nodes as $key => $value) {
-      $value->indent=$treeNode->indent + 1;
+      $value->indent = $treeNode->indent + 1;
       array_push($array, $value);
       if (!empty($value->nodes)) {
         static::appendNodesToArray($array, $value);

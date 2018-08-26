@@ -15,7 +15,7 @@ class GroupController extends Controller {
 		$size = $request->input('size', 10);
 		$query = Models\Group::select('id', 'code', 'name', 'memo');
 		if($request->input('me')){
-			$query->whereIn('id',QueryHelper::geMyGroups());
+			//$query->whereIn('id',QueryHelper::geMyGroups());
 		}
 		return $this->toJson($query->paginate($size));
 

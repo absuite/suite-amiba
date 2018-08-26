@@ -23,15 +23,15 @@ class DocBizController extends Controller {
 		$query->addSelect('l.use_type_enum');
     $query->addSelect('l.money as money');
 
-    // if ($v = $request->input('purpose_id')) {
-    //   $query->where('g.purpose_id', $v);
-    // }
-    // if ($v = $request->input('group')) {
-    //   $query->where('g.code', $v);
-    // }
-    // if ($v = $request->input('period')) {
-    //   $query->where('p.code', '=', $v);
-		// }
+    if ($v = $request->input('purpose_id')) {
+      $query->where('g.purpose_id', $v);
+    }
+    if ($v = $request->input('group')) {
+      $query->where('g.code', $v);
+    }
+    if ($v = $request->input('period')) {
+      $query->where('p.code', '=', $v);
+		}
 		$query->orderBy('g.name');
 		$query->orderBy('p.name');
 		$query->orderBy('l.doc_date','desc');

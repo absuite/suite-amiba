@@ -105,4 +105,6 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 
 	Route::post('/reports/expend/analy', 'Rpt\ExpendController@analy');
 	Route::post('/reports/income/analy', 'Rpt\IncomeController@analy');
+
+	Route::post('/reports/statement/ans', 'Rpt\StatementController@ans');
 });
