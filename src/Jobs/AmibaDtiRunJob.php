@@ -109,7 +109,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 		if (!empty($paramsConfig['ent_code'])) {
 			$input['context']['EntCode'] = $paramsConfig['ent_code'];
 		}
-		if ($dti->body && count($dti->body)) {
+		if ($dti->body && !empty($dti->body)) {
 			$input['parameters'] = json_encode($this->parseParams($dti->body, $paramsConfig));
 		}
 		Log::error(static::class . "dti post to u9 {$base_uri}{$apiPath}:" . json_encode($input));
@@ -152,7 +152,7 @@ class AmibaDtiRunJob implements ShouldQueue {
 				}
 			}
 		}
-		if ($dti->body && count($dti->body)) {
+		if ($dti->body && !empty($dti->body)) {
 			$input['params'] = $this->parseParams($dti->body, $paramsConfig);
 		}
 		Log::error(static::class . "dti post to {$base_uri}{$apiPath} begin:" . json_encode($input));
