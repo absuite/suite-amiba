@@ -5,7 +5,7 @@ namespace Suite\Amiba\Http\Controllers\Rpt;
 use DB;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Suite\Amiba\Libs\QueryHelper;
 class ExpendController extends Controller {
   public function analy(Request $request) {
     $size = $request->input('size', 10);
@@ -26,6 +26,9 @@ class ExpendController extends Controller {
     }
     if ($v = $request->input('period')) {
       $query->where('p.code', '=', $v);
+    }
+    if ($v = QueryHelper::geMyGroups()) {
+      $query->whereIn('l.group_id', $v);
     }
     $query->where('e.type_enum', '=', 'cost');
 

@@ -31,7 +31,10 @@ class DocBizController extends Controller {
     }
     if ($v = $request->input('period')) {
       $query->where('p.code', '=', $v);
-		}
+    }
+    if ($v = QueryHelper::geMyGroups()) {
+      $query->whereIn('l.group_id', $v);
+    }
 		$query->orderBy('g.name');
 		$query->orderBy('p.name');
 		$query->orderBy('l.doc_date','desc');

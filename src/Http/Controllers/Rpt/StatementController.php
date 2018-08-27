@@ -1,6 +1,7 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers\Rpt;
+
 use DB;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Http\Controllers\Controller;
@@ -9,8 +10,10 @@ use Illuminate\Support\Facades\Log;
 use Suite\Amiba\Libs\QueryHelper;
 use Suite\Amiba\Models\Element;
 
-class StatementController extends Controller {
-  private function getPeriodItem($periodId) {
+class StatementController extends Controller
+{
+  private function getPeriodItem($periodId)
+  {
     $query = DB::table('suite_cbo_period_accounts as a');
     $query->addSelect('a.id');
     $query->addSelect('a.name');
@@ -22,16 +25,17 @@ class StatementController extends Controller {
 
     return $query->first();
   }
-  public function ans(Request $request) {
+  public function ans(Request $request)
+  {
     Log::error(static::class);
     $result = [];
     $monthData = [];
 
     $purpose_id = $request->input('purpose_id');
 
-    $period=$this->getPeriodItem($request->input('period_id'));
-    if(empty($period)){
-      return $this->toJson($result); 
+    $period = $this->getPeriodItem($request->input('period_id'));
+    if (empty($period)) {
+      return $this->toJson($result);
     }
     $query = DB::table('suite_amiba_result_accounts as l');
     $query->join('suite_cbo_period_accounts as p', 'l.period_id', '=', 'p.id');
@@ -47,9 +51,8 @@ class StatementController extends Controller {
     if ($v = $request->input('group_id')) {
       $query->where('l.group_id', $v);
     }
-    $groupIds = QueryHelper::geMyGroups();
-    if ($groupIds) {
-      $query->whereIn('l.group_id', $groupIds);
+    if ($v = QueryHelper::geMyGroups()) {
+      $query->whereIn('l.group_id', $v);
     }
     $query->where('p.year', '=', $period->year);
     $query->where('p.from_date', '<=', $period->from_date);
@@ -154,7 +157,7 @@ class StatementController extends Controller {
       $value->year_value = round($value->year_value, 2);
     }
     foreach ($result as $key => $value) {
-      $value->nodes=null;
+      $value->nodes = null;
     }
 
     return $this->toJson($result);

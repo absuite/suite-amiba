@@ -5,7 +5,7 @@ namespace Suite\Amiba\Http\Controllers\Rpt;
 use DB;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Suite\Amiba\Libs\QueryHelper;
 class ProfitController extends Controller {
   public function total(Request $request) {
     $size = $request->input('size', 10);
@@ -27,6 +27,9 @@ class ProfitController extends Controller {
     }
     if ($v = $request->input('group')) {
       $query->where('g.code', $v);
+    }
+    if ($v = QueryHelper::geMyGroups()) {
+      $query->whereIn('l.group_id', $v);
     }
     $query->groupBy('g.name', 'p.name');
     $query->orderBy('g.name');
