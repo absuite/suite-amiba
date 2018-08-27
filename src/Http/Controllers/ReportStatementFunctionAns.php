@@ -1,6 +1,7 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+
 use DB;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Http\Controllers\Controller;
@@ -10,8 +11,10 @@ use Illuminate\Support\Facades\Log;
 use Suite\Amiba\Libs\QueryHelper;
 use Suite\Amiba\Models\Element;
 
-class ReportStatementFunctionAns extends Controller {
-  public function index(Request $request) {
+class ReportStatementFunctionAns extends Controller
+{
+  public function index(Request $request)
+  {
     Log::error(static::class);
     $result = [];
     $monthData = [];
@@ -59,9 +62,9 @@ class ReportStatementFunctionAns extends Controller {
       });
     });
 
-    $elementNodes = [];
+    $elementMap = [];
     foreach ($elements as $key => $value) {
-      $elementNodes[] = new Builder([
+      $elementMap[$value->id] = new Builder([
         'id' => $value->id,
         'parent_id' => $value->parent_id,
         'itemName' => $value->name,
@@ -74,8 +77,8 @@ class ReportStatementFunctionAns extends Controller {
       ]);
       $p = $value;
       while (true) {
-        if ($p && $p->id != $p->parent_id && !empty($p->parent)) {
-          $elementNodes[] = new Builder([
+        if ($p && $p->id != $p->parent_id && !empty($p->parent) && $p->parent_id == $p->parent->id) {
+          $elementMap[$p->parent->id] = new Builder([
             'id' => $p->parent->id,
             'parent_id' => $p->parent->parent_id,
             'itemName' => $p->parent->name,
@@ -90,9 +93,13 @@ class ReportStatementFunctionAns extends Controller {
         }
       }
     }
+    $elements = [];
+    foreach ($elementMap as $key => $value) {
+      $elements[] = $value;
+    }
     $rootNode = new \StdClass;
     $rootNode->indent = -1;
-    $rootNode->nodes = QueryHelper::buildTree($elementNodes);
+    $rootNode->nodes = QueryHelper::buildTree($elements);
 
     /*时间数据*/
     $query = DB::table('suite_amiba_data_time_lines as l');

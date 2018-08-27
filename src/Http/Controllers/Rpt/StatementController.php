@@ -67,9 +67,9 @@ class StatementController extends Controller {
       });
     });
 
-    $elementNodes = [];
+    $elementMap = [];
     foreach ($elements as $key => $value) {
-      $elementNodes[] = new Builder([
+      $elementMap[$value->id] = new Builder([
         'id' => $value->id,
         'parent_id' => $value->parent_id,
         'itemName' => $value->name,
@@ -82,8 +82,8 @@ class StatementController extends Controller {
       ]);
       $p = $value;
       while (true) {
-        if ($p && $p->id != $p->parent_id && !empty($p->parent)) {
-          $elementNodes[] = new Builder([
+        if ($p && $p->id != $p->parent_id && !empty($p->parent) && $p->parent_id == $p->parent->id) {
+          $elementMap[$p->parent->id] = new Builder([
             'id' => $p->parent->id,
             'parent_id' => $p->parent->parent_id,
             'itemName' => $p->parent->name,
@@ -98,9 +98,13 @@ class StatementController extends Controller {
         }
       }
     }
+    $elements = [];
+    foreach ($elementMap as $key => $value) {
+      $elements[] = $value;
+    }
     $rootNode = new \StdClass;
     $rootNode->indent = -1;
-    $rootNode->nodes = QueryHelper::buildTree($elementNodes);
+    $rootNode->nodes = QueryHelper::buildTree($elements);
 
     //汇总上级
     QueryHelper::sumTreeNodes($rootNode, ['month_value', 'year_value']);
