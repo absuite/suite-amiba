@@ -39,7 +39,7 @@
               <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
             </md-table-cell>
             <template v-for="cItem in row.categories">
-              <md-table-cell md-numeric>{{cItem.money_month}}</md-table-cell>
+              <md-table-cell md-numeric>{{cItem.money_month|mdThousand}}</md-table-cell>
               <md-table-cell md-numeric>{{cItem.money_month_ratio}}</md-table-cell>
               <md-table-cell md-numeric>{{cItem.money_year}}</md-table-cell>
             </template>
@@ -51,6 +51,7 @@
 </template>
 <script>
 import common from 'gmf/core/utils/common';
+import mdThousand from 'gmf/filters/mdThousand';
 export default {
   data() {
     return {
@@ -65,6 +66,9 @@ export default {
       groups: []
     };
   },
+  filters: {
+      mdThousand: mdThousand
+    },
   watch: {
     'model.purpose': function(value) {
       this.loadData();

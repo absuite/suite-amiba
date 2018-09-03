@@ -28,8 +28,8 @@
             <md-table-cell>
               <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
             </md-table-cell>
-            <md-table-cell md-numeric>{{row.plan_value}}</md-table-cell>
-            <md-table-cell md-numeric>{{row.month_value}}</md-table-cell>
+            <md-table-cell md-numeric>{{row.plan_value|mdThousand}}</md-table-cell>
+            <md-table-cell md-numeric>{{row.month_value|mdThousand}}</md-table-cell>
             <md-table-cell md-numeric>{{row.diff_value}}</md-table-cell>
           </md-table-row>
         </md-table>
@@ -40,6 +40,7 @@
 <script>
 import common from 'gmf/core/utils/common';
 import _each from 'lodash/each'
+import mdThousand from 'gmf/filters/mdThousand';
 export default {
   data() {
     return {
@@ -52,6 +53,9 @@ export default {
       dataDetail: []
     };
   },
+  filters: {
+      mdThousand: mdThousand
+    },
   watch: {
     'model.purpose': function(value) {
       this.loadData();
