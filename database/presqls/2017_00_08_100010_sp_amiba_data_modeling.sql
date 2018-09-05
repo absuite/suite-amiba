@@ -266,12 +266,12 @@ EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
 DEALLOCATE PREPARE bizStmt;
 
   
-  UPDATE tml_data_elementing SET `qty`=(`src_qty`*`adjust`/100) WHERE adjust IS NOT NULL AND src_qty!=0;
-  UPDATE tml_data_elementing SET `money`=(`src_money`*`adjust`/100) WHERE adjust IS NOT NULL AND src_money!=0;
+  
+  UPDATE tml_data_elementing SET `qty`=(`src_qty`* CONVERT(`adjust`,DECIMAL) /100) WHERE adjust IS NOT NULL AND src_qty!=0;
+  UPDATE tml_data_elementing SET `money`=(`src_money`* CONVERT(`adjust`,DECIMAL)/100) WHERE adjust IS NOT NULL AND src_money!=0;
   
   
   UPDATE tml_data_elementing SET `money`=`qty` WHERE value_type_enum='qtyvalue';
-  
   UPDATE tml_data_elementing SET `money`=0 WHERE value_type_enum='qty';
   
   UPDATE tml_data_elementing AS l 
