@@ -264,6 +264,7 @@ SET @SQL_GROUP=CONCAT(" GROUP BY
 PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE,@SQL_GROUP);
 EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
 DEALLOCATE PREPARE bizStmt;
+<<<<<<< HEAD
 
   
   
@@ -272,7 +273,14 @@ DEALLOCATE PREPARE bizStmt;
   
   
   UPDATE tml_data_elementing SET `money`=`qty` WHERE value_type_enum='qtyvalue';
+=======
+  
+  -- 计算取值类型
+  UPDATE tml_data_elementing SET `qty`=src_qty WHERE src_qty!=0;
+  UPDATE tml_data_elementing SET `money`=`src_qty` WHERE value_type_enum='qtyvalue';  
+>>>>>>> 0f80705f70147b4d50bb40dcf15e408aea24f841
   UPDATE tml_data_elementing SET `money`=0 WHERE value_type_enum='qty';
+  UPDATE tml_data_elementing SET `money`=`src_money` WHERE value_type_enum NOT IN ('qtyvalue','qty');
   
   UPDATE tml_data_elementing AS l 
     INNER JOIN `suite_cbo_orgs` AS d ON  d.code=l.data_fm_org
@@ -427,7 +435,8 @@ DEALLOCATE PREPARE bizStmt;
   SET l.money=l.qty*pl.cost_price
   WHERE p.purpose_id=p_purpose AND p.ent_id=p_ent AND l.value_type_enum='qty' AND l.qty!=0 AND l.money=0;
   
-  
+  -- 计算调整比例
+  UPDATE tml_data_elementing SET `money`=(`money`*`adjust`/100) WHERE adjust IS NOT NULL AND money!=0;
 
   -- 更新数据用途
   UPDATE tml_data_elementing SET use_type_enum='indirect' WHERE m_fm_group_id IS NULL;
