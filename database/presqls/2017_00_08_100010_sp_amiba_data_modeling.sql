@@ -264,21 +264,10 @@ SET @SQL_GROUP=CONCAT(" GROUP BY
 PREPARE bizStmt FROM CONCAT(@SQL_INSERT,@SQL_SELECT,@SQL_FROM,@SQL_WHERE,@SQL_GROUP);
 EXECUTE bizStmt USING p_ent,p_purpose,v_from_date,v_to_date;
 DEALLOCATE PREPARE bizStmt;
-<<<<<<< HEAD
-
-  
-  
-  UPDATE tml_data_elementing SET `qty`=(`src_qty`* CONVERT(`adjust`,DECIMAL) /100) WHERE adjust IS NOT NULL AND src_qty!=0;
-  UPDATE tml_data_elementing SET `money`=(`src_money`* CONVERT(`adjust`,DECIMAL)/100) WHERE adjust IS NOT NULL AND src_money!=0;
-  
-  
-  UPDATE tml_data_elementing SET `money`=`qty` WHERE value_type_enum='qtyvalue';
-=======
   
   -- 计算取值类型
   UPDATE tml_data_elementing SET `qty`=src_qty WHERE src_qty!=0;
   UPDATE tml_data_elementing SET `money`=`src_qty` WHERE value_type_enum='qtyvalue';  
->>>>>>> 0f80705f70147b4d50bb40dcf15e408aea24f841
   UPDATE tml_data_elementing SET `money`=0 WHERE value_type_enum='qty';
   UPDATE tml_data_elementing SET `money`=`src_money` WHERE value_type_enum NOT IN ('qtyvalue','qty');
   
