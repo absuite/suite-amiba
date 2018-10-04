@@ -70,19 +70,25 @@ class AmibaMenuSeeder extends Seeder {
 			$id = "58973cf017e811e7a5b9637111cf6bd6";
 			Menu::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->code('amiba.price')->name('交易价表')->parent('amiba.allot')
-					->uri('amiba.price.edit')->sequence($this->sequence . '0202')->tag($this->tag);
+					->uri('amiba.price.list')->sequence($this->sequence . '0202')->tag($this->tag);
 			});
 
 			$id = "58973e3017e811e785733dcc713b8d8e";
 			Menu::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->code('amiba.price.adjust')->name('调价单')->parent('amiba.allot')
-					->uri('amiba.price.adjust.edit')->sequence($this->sequence . '0204')->tag($this->tag);
+					->uri('amiba.price.adjust.list')->sequence($this->sequence . '0204')->tag($this->tag);
+			});
+
+			$id = "01e8c7d86a541990a3f63159095cf4fa";
+			Menu::build(function (Builder $builder) use ($id) {
+				$builder->id($id)->code('amiba.price.query')->name('料价查询')->parent('amiba.allot')
+					->uri('amiba.price.query')->sequence($this->sequence . '0205')->tag($this->tag);
 			});
 
 			$id = "99f8827017e911e7b51adb0893dd0bab";
 			Menu::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->code('amiba.data.target')->name('经营目标')->parent('amiba.allot')
-					->uri('amiba.data.target.edit')->sequence($this->sequence . '0206')->tag($this->tag);
+					->uri('amiba.data.target.list')->sequence($this->sequence . '0206')->tag($this->tag);
 			});
 
 			// $id = "697f27c0129e11e785d351785edb2c8c";

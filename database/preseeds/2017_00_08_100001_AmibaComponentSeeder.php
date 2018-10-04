@@ -122,6 +122,10 @@ class AmibaComponentSeeder extends Seeder {
 			});
 
 			Models\Component::build(function (Builder $builder) {
+				$builder->code('amibaPriceQuery')->name('料价查询')->type_enum('ui')->path('amibaPriceQuery');
+			});
+
+			Models\Component::build(function (Builder $builder) {
 				$builder->code('amibaDataTargetEdit')->name('经营目标')->type_enum('ui')->path('amibaDataTargetEdit');
 			});
 			Models\Component::build(function (Builder $builder) {

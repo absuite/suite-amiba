@@ -39,7 +39,7 @@ class Price extends Model {
 	}
 	public function group() {
 		return $this->belongsTo('Suite\Amiba\Models\Group');
-	}
+	}	
 	public function lines() {
 		return $this->hasMany('Suite\Amiba\Models\PriceLine', 'price_id');
 	}

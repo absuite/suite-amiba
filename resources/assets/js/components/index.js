@@ -42,6 +42,7 @@ import amibaDataDistributeList from './amibaDataDistributeList.vue';
 
 import amibaPriceEdit from './amibaPriceEdit.vue';
 import amibaPriceList from './amibaPriceList.vue';
+import amibaPriceQuery from './amibaPriceQuery.vue';
 
 import amibaPriceAdjustEdit from './amibaPriceAdjustEdit.vue';
 import amibaPriceAdjustList from './amibaPriceAdjustList.vue';
@@ -114,6 +115,7 @@ export default function install(Vue) {
 
   Vue.component('amibaPriceEdit', amibaPriceEdit);
   Vue.component('amibaPriceList', amibaPriceList);
+  Vue.component(amibaPriceQuery.name, amibaPriceQuery);
 
   Vue.component('amibaPriceAdjustEdit', amibaPriceAdjustEdit);
   Vue.component('amibaPriceAdjustList', amibaPriceAdjustList);

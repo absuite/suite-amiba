@@ -37,6 +37,7 @@ class CreateSuiteAmibaModelingLinesTable extends Migration {
 		$md->string('adjust')->nullable()->comment('取值比率');
 
 		$md->entity('to_group', 'suite.amiba.group')->nullable()->comment('交易方');
+		$md->entity('price', 'suite.amiba.price')->nullable()->comment('考核价表');
 		$md->timestamps();
 
 		$md->foreign('modeling_id')->references('id')->on('suite_amiba_modelings')->onDelete('cascade');

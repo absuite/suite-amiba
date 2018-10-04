@@ -18,7 +18,7 @@ class ModelingController extends Controller {
   }
   public function showLines(Request $request, string $id) {
     $pageSize = $request->input('size', 10);
-    $withs = ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group'];
+    $withs = ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group', 'price'];
     $query = Models\ModelingLine::with($withs);
     $query->where('modeling_id', $id);
 
@@ -79,7 +79,7 @@ class ModelingController extends Controller {
     $fillable = ['biz_type_enum', 'value_type_enum', 'project_code', 'account_code',
       'factor1', 'factor2', 'factor3', 'factor4', 'factor5', 'adjust',
       'match_direction_enum'];
-    $entityable = ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group'];
+    $entityable = ['element', 'doc_type', 'item_category', 'item', 'trader', 'match_group', 'to_group', 'price'];
 
     if ($lines && count($lines)) {
       foreach ($lines as $key => $value) {
@@ -119,104 +119,104 @@ class ModelingController extends Controller {
   }
 
   public function get_ref_project(Request $request) {
-    
+
     $biz = DB::table('suite_amiba_doc_bizs')->select('project as item')->whereNotNull('project')
       ->where('ent_id', GAuth::entId());
 
     $fi = DB::table('suite_amiba_doc_fis')->select('project as item')->whereNotNull('project')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $biz->where('project','like','%'.$v.'%');
-        $fi->where('project','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $biz->where('project', 'like', '%' . $v . '%');
+      $fi->where('project', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->union($biz)->distinct()->take(40)->get();
     return $this->toJson($data);
   }
-  public function get_ref_account(Request $request) {   
+  public function get_ref_account(Request $request) {
 
     $fi = DB::table('suite_amiba_doc_fis')->select('account as item')->whereNotNull('account')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $fi->where('account','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $fi->where('account', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->distinct()->take(40)->get();
     return $this->toJson($data);
   }
-  public function get_ref_factor1(Request $request) {    
+  public function get_ref_factor1(Request $request) {
     $biz = DB::table('suite_amiba_doc_bizs')->select('factor1 as item')->whereNotNull('factor1')
       ->where('ent_id', GAuth::entId());
     $fi = DB::table('suite_amiba_doc_fis')->select('factor1 as item')->whereNotNull('factor1')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $biz->where('factor1','like','%'.$v.'%');
-        $fi->where('factor1','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $biz->where('factor1', 'like', '%' . $v . '%');
+      $fi->where('factor1', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->union($biz)->distinct()->take(40)->get();
 
     return $this->toJson($data);
   }
 
-  public function get_ref_factor2(Request $request) {    
+  public function get_ref_factor2(Request $request) {
     $biz = DB::table('suite_amiba_doc_bizs')->select('factor2 as item')->whereNotNull('factor2')
       ->where('ent_id', GAuth::entId());
     $fi = DB::table('suite_amiba_doc_fis')->select('factor2 as item')->whereNotNull('factor2')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $biz->where('factor2','like','%'.$v.'%');
-        $fi->where('factor2','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $biz->where('factor2', 'like', '%' . $v . '%');
+      $fi->where('factor2', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->union($biz)->distinct()->take(40)->get();
 
     return $this->toJson($data);
   }
-  public function get_ref_factor3(Request $request) {    
+  public function get_ref_factor3(Request $request) {
     $biz = DB::table('suite_amiba_doc_bizs')->select('factor3 as item')->whereNotNull('factor3')
       ->where('ent_id', GAuth::entId());
     $fi = DB::table('suite_amiba_doc_fis')->select('factor3 as item')->whereNotNull('factor3')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $biz->where('factor3','like','%'.$v.'%');
-        $fi->where('factor3','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $biz->where('factor3', 'like', '%' . $v . '%');
+      $fi->where('factor3', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->union($biz)->distinct()->take(40)->get();
 
     return $this->toJson($data);
   }
-  public function get_ref_factor4(Request $request) {    
+  public function get_ref_factor4(Request $request) {
     $biz = DB::table('suite_amiba_doc_bizs')->select('factor4 as item')->whereNotNull('factor4')
       ->where('ent_id', GAuth::entId());
     $fi = DB::table('suite_amiba_doc_fis')->select('factor4 as item')->whereNotNull('factor4')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $biz->where('factor4','like','%'.$v.'%');
-        $fi->where('factor4','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $biz->where('factor4', 'like', '%' . $v . '%');
+      $fi->where('factor4', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->union($biz)->distinct()->take(40)->get();
 
     return $this->toJson($data);
   }
-  public function get_ref_factor5(Request $request) {    
+  public function get_ref_factor5(Request $request) {
     $biz = DB::table('suite_amiba_doc_bizs')->select('factor5 as item')->whereNotNull('factor5')
       ->where('ent_id', GAuth::entId());
     $fi = DB::table('suite_amiba_doc_fis')->select('factor5 as item')->whereNotNull('factor5')
       ->where('ent_id', GAuth::entId());
 
-      if($v=$request->input('q')){
-        $biz->where('factor5','like','%'.$v.'%');
-        $fi->where('factor5','like','%'.$v.'%');
-      }
+    if ($v = $request->input('q')) {
+      $biz->where('factor5', 'like', '%' . $v . '%');
+      $fi->where('factor5', 'like', '%' . $v . '%');
+    }
 
     $data = $fi->union($biz)->distinct()->take(40)->get();
 
