@@ -58,6 +58,8 @@
               </template>
             </md-grid-column>
             <md-grid-column label="价格" field="cost_price" editable/>
+            <md-grid-column label="开始时间" field="fm_date" dataType="date" width="120px" editable/>
+            <md-grid-column label="结束时间" field="to_date" dataType="date" width="120px" editable/>
           </md-grid>
         </md-layout>
       </md-content>

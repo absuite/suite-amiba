@@ -13,7 +13,7 @@ class PriceLine extends Model {
 	use Snapshotable, HasGuard;
 	protected $table = 'suite_amiba_price_lines';
 	public $incrementing = false;
-	protected $fillable = ['id', 'ent_id', 'price_id', 'group_id', 'item_id', 'type_enum', 'cost_price'];
+	protected $fillable = ['id', 'ent_id', 'price_id', 'group_id', 'item_id', 'type_enum', 'cost_price','fm_date','to_date'];
 
 	//属性
 	public function setEntIdAttribute($value) {

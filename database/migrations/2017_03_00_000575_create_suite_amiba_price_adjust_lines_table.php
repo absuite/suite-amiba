@@ -22,7 +22,6 @@ class CreateSuiteAmibaPriceAdjustLinesTable extends Migration {
     $md->entity('group', 'suite.amiba.group')->nullable()->comment('目的阿米巴');
     $md->entity('item', 'suite.cbo.item')->nullable()->comment('物料');
     $md->decimal('cost_price', 30, 2)->default(0)->comment('价格');
-    $md->boolean('disabled')->nullable()->comment('失效的');
     $md->timestamp('fm_date')->nullable()->comment('开始时间');
     $md->timestamp('to_date')->nullable()->comment('结束时间');
     $md->timestamps();
