@@ -24,7 +24,6 @@
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-ref-input md-label="阿米巴" :md-init="init_group_ref" required md-ref-id="suite.amiba.group.ref" v-model="model.main.group"></md-ref-input>
-            </md-ref-input>
           </md-layout>
           <md-layout md-flex-xs="100" md-flex-sm="50" md-flex-md="33" md-flex="20">
             <md-ref-input md-label="开始期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.main.fm_period">

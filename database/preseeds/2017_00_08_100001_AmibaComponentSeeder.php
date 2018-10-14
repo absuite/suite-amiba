@@ -207,6 +207,11 @@ class AmibaComponentSeeder extends Seeder {
 			Models\Component::build(function (Builder $builder) {
 				$builder->code('suite.amiba.modeling.factor5.ref')->name('因素5');
 			});
+
+
+			Models\Component::build(function (Builder $builder) {
+				$builder->code('AmibaDtiModelingPrice')->name('建模单价异常')->type_enum('ui')->path('AmibaDtiModelingPrice');
+			});
 		});
 	}
 

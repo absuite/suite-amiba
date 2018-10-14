@@ -69,6 +69,8 @@ import amibaReportStatementDevoteAns from './amibaReportStatementDevoteAns.vue';
 import amibaReportStatementCompare from './amibaReportStatementCompare.vue';
 import amibaReportStatementTrend from './amibaReportStatementTrend.vue';
 import amibaReportStatementPurpose from './amibaReportStatementPurpose.vue';
+import AmibaDtiModelingPrice from './amibaDtiModelingPrice.vue';
+
 
 export default function install(Vue) {
   Vue.component('amibaElementEdit', amibaElementEdit);
@@ -145,6 +147,6 @@ export default function install(Vue) {
   Vue.component('amibaReportStatementTrend', amibaReportStatementTrend);
   Vue.component('amibaReportStatementPurpose', amibaReportStatementPurpose);
 
-
+  Vue.component('AmibaDtiModelingPrice', AmibaDtiModelingPrice);
 
 }

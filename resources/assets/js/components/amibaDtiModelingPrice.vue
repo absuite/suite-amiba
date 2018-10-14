@@ -13,45 +13,45 @@
         </md-layout>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button class="md-primary" @click.native="runAll" :disabled="is_running>0">
-          <md-icon>play_circle_filled</md-icon>
-          <span>开始建模</span>
-        </md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
-        <md-button @click.native="refresh">
-          <span>刷新</span>
+        <md-button class="md-primary" @click.native="runAll">
+          <span>查询</span>
         </md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
-      <md-part-toolbar-group>
-        <md-button @click.native="priceError">
-          <span>单价异常</span>
-        </md-button>
-      </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body class="no-padding">
       <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true">
         <md-grid-column label="模型" width="180px">
           <template slot-scope="row">
-            {{ row.name}}({{ row.code}})
+            <div>{{ row.model_name}}</div>
+            <div class="md-caption">{{ row.model_code}}</div>
           </template>
         </md-grid-column>
-        <md-grid-column label="阿米巴" width="180px">
+        <md-grid-column label="期间" width="180px">
           <template slot-scope="row">
-            {{ row.group.name}}({{ row.group.code}})
+            <div>{{ row.period_name}}</div>
+            <div class="md-caption">{{ row.period_code}}</div>
           </template>
         </md-grid-column>
-        <md-grid-column label="开始时间" field="start_time" />
-        <md-grid-column label="结束时间" field="end_time" />
-        <md-grid-column label="状态">
-          <template slot-scope="row">
-            <span v-if="row.status==0">等待执行</span>
-            <span v-else-if="row.status==1">正在执行</span>
-            <span v-if="row.status==2&&row.succeed==1">执行成功</span>
-            <span v-if="row.status==2&&row.succeed==0">执行失败</span>
+        <md-grid-column label="来源阿米巴" width="180px">
+         <template slot-scope="row">
+            <div>{{ row.fm_group_name}}</div>
+            <div class="md-caption">{{ row.fm_group_code}}</div>
           </template>
         </md-grid-column>
+        <md-grid-column label="目标阿米巴" width="180px">
+         <template slot-scope="row">
+            <div>{{ row.to_group_name}}</div>
+            <div class="md-caption">{{ row.to_group_code}}</div>
+          </template>
+        </md-grid-column>
+         <md-grid-column label="物料" width="180px">
+         <template slot-scope="row">
+            <div>{{ row.item_name}}</div>
+            <div class="md-caption">{{ row.item_code}}</div>
+          </template>
+        </md-grid-column>
+        <md-grid-column label="单据日期" field="date" />
         <md-grid-column label="消息" field="msg" width="500px" multiple />
       </md-grid>
       <md-loading :loading="loading"></md-loading>
@@ -62,7 +62,7 @@
   import common from 'gmf/core/utils/common';
   import _extend from 'lodash/extend'
   export default {
-    name: "AmibaDtiModelingEdit",
+    name:"AmibaDtiModelingPrice",
     data() {
       return {
         model: {
@@ -70,7 +70,6 @@
           period: this.$root.configs.period
         },
         loading: 0,
-        is_running: 0
       };
     },
     watch: {
@@ -82,12 +81,6 @@
       }
     },
     methods: {
-      refresh() {
-        this.$refs.grid.refresh()
-      },
-      priceError() {
-        this.$goModule("AmibaDtiModelingPrice")
-      },
       async loadDatas({
         pager
       }) {
@@ -101,34 +94,12 @@
         if (!params.period_id || !params.purpose_id) {
           return []
         }
-        return await this.$http.get('amiba/dti-modelings', {
+        return await this.$http.get('amiba/dti-modelings/prices', {
           params: params
         })
       },
       runAll() {
-        const rows = this.$refs.grid.getSelectedDatas(true);
-        rows && rows.forEach(item => {
-          this.runItem(item);
-        });
-      },
-      runItem(item) {
-        if (!item) return;
-        item.status = 1;
-        const datas = {
-          model_id: item.id,
-          period_id: this.model.period.id
-        };
-        this.is_running++;
-        item.start_time = common.now();
-        item.end_time = '';
-        this.$http.post('amiba/dti-modelings', datas).then(response => {
-          this.$toast(item.name + '成功提交请求!');
-          item.msg = '成功提交请求';
-          this.is_running--;
-        }, err => {
-          this.is_running--;
-          this.$toast(err);
-        });
+        this.$refs.grid.refresh()
       },
       init_period_ref(options) {
         if (this.model.purpose && this.model.purpose.calendar_id) {
