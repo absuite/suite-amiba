@@ -34,12 +34,14 @@
       <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true">
         <md-grid-column label="模型" width="180px">
           <template slot-scope="row">
-            {{ row.name}}({{ row.code}})
+            <div>{{ row.name}}</div>
+            <div class="md-caption">{{ row.code}}</div>
           </template>
         </md-grid-column>
         <md-grid-column label="阿米巴" width="180px">
           <template slot-scope="row">
-            {{ row.group.name}}({{ row.group.code}})
+            <div>{{ row.group.name}}</div>
+            <div class="md-caption">{{ row.group.code}}</div>
           </template>
         </md-grid-column>
         <md-grid-column label="开始时间" field="start_time" />
