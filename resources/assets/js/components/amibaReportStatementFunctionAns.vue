@@ -1,16 +1,21 @@
 <template>
   <md-part class="md-full">
     <md-part-toolbar>
-      <md-part-toolbar-group class="flex">
+      <md-part-toolbar-group>
         <md-layout md-gutter>
-          <md-layout md-flex-xs="100" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex="20">
+          <md-layout md-flex="50">
             <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
-          <md-layout md-flex-xs="100" md-flex-sm="33" md-flex-md="25" md-flex-lg="20" md-flex="20">
+          <md-layout md-flex="50">
             <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref"
               v-model="model.period"></md-ref-input>
           </md-layout>
         </md-layout>
+      </md-part-toolbar-group>
+      <div class="flex">
+      </div>
+      <md-part-toolbar-group>
+        <md-button @click.native="exportData">导出</md-button>
       </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body direction="row" class="no-padding no-margin">
@@ -44,6 +49,7 @@
   import common from 'gmf/core/utils/common';
   import mdThousand from 'gmf/filters/mdThousand';
   import _each from 'lodash/each'
+  import excelDwnload from 'cbo/utils/excelDwnload ';
   export default {
     data() {
       return {
@@ -73,7 +79,10 @@
       },
     },
     methods: {
-      loadData() {
+      exportData() {
+        this.loadData(true);
+      },
+      loadData(isDownload) {
         var queryCase = {
           wheres: []
         };
@@ -96,8 +105,15 @@
             'group_id': this.model.group.id
           });
         }
+        if(isDownload){
+          queryCase.is_download=1
+        }
         this.$http.post('amiba/reports/statement-function-ans', queryCase).then(response => {
-          this.updateTableOptions(response.data.data);
+          if (isDownload) {
+            excelDwnload(response.data)
+          } else {
+            this.updateTableOptions(response.data.data);
+          }
         }, response => {
           this.$toast(response);
         });

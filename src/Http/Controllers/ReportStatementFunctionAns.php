@@ -3,18 +3,18 @@
 namespace Suite\Amiba\Http\Controllers;
 
 use DB;
+use Excel;
 use Gmf\Sys\Builder;
 use Gmf\Sys\Http\Controllers\Controller;
 use Gmf\Sys\Query\QueryCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Suite\Amiba\Http\Exports\ExcelExport;
 use Suite\Amiba\Libs\QueryHelper;
 use Suite\Amiba\Models\Element;
 
-class ReportStatementFunctionAns extends Controller
-{
-  public function index(Request $request)
-  {
+class ReportStatementFunctionAns extends Controller {
+  public function index(Request $request) {
     Log::error(static::class);
     $result = [];
     $monthData = [];
@@ -169,6 +169,16 @@ class ReportStatementFunctionAns extends Controller
       $value->year_value = round($value->year_value, 2);
     }
 
-    return $this->toJson($result);
+    $cellData = [
+      ['学号', '姓名', '成绩'],
+      ['10001', 'AAAAA', '99'],
+      ['10002', 'BBBBB', '92'],
+      ['10003', 'CCCCC', '95'],
+      ['10004', 'DDDDD', '89'],
+      ['10005', 'EEEEE', '96'],
+    ];
+    (new ExcelExport(collection($cellData)))->download('invoices.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    // return Excel::download($cellData, 'users.xlsx');
+    // return $this->toJson($result);
   }
 }
