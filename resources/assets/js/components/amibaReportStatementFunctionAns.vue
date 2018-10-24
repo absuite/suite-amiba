@@ -12,10 +12,9 @@
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
-      <div class="flex">
-      </div>
+      <span class="flex"></span>
       <md-part-toolbar-group>
-        <md-button @click.native="exportData">导出</md-button>
+        <md-button @click.native="exportData" class="md-primary"><md-icon>cloud_download</md-icon><span>导出</span></md-button>
       </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body direction="row" class="no-padding no-margin">
@@ -46,117 +45,136 @@
   </md-part>
 </template>
 <script>
-  import common from 'gmf/core/utils/common';
-  import mdThousand from 'gmf/filters/mdThousand';
-  import _each from 'lodash/each'
-  import excelDwnload from 'cbo/utils/excelDwnload ';
-  export default {
-    data() {
-      return {
-        model: {
-          purpose: this.$root.configs.purpose,
-          period: this.$root.configs.period,
-          group: null
-        },
-        groups: [],
-        dataDetail: [],
+import Column from "gmf/components/MdGrid/classes/Column";
+import DataExport from "gmf/components/MdGrid/classes/DataExport";
 
-      };
-    },
-    filters: {
-      mdThousand: mdThousand
-    },
-    watch: {
-      'model.purpose': function (value) {
-        this.loadData();
-        this.loadGroups();
+import common from "gmf/core/utils/common";
+import mdThousand from "gmf/filters/mdThousand";
+import _each from "lodash/each";
+import excelDwnload from "cbo/utils/excelDwnload ";
+export default {
+  data() {
+    return {
+      model: {
+        purpose: this.$root.configs.purpose,
+        period: this.$root.configs.period,
+        group: null
       },
-      'model.period': function (value) {
-        this.loadData();
-      },
-      'model.group': function (value) {
-        this.loadData();
-      },
-    },
-    methods: {
-      exportData() {
-        this.loadData(true);
-      },
-      loadData(isDownload) {
-        var queryCase = {
-          wheres: []
-        };
-        if (!this.model.purpose || !this.model.period || !this.model.group) {
-          this.dataDetail = [];
-          return;
-        }
-        if (this.model.purpose) {
-          queryCase.wheres.push({
-            'purpose_id': this.model.purpose.id
-          });
-        }
-        if (this.model.period) {
-          queryCase.wheres.push({
-            'period_id': this.model.period.id
-          });
-        }
-        if (this.model.group) {
-          queryCase.wheres.push({
-            'group_id': this.model.group.id
-          });
-        }
-        if(isDownload){
-          queryCase.is_download=1
-        }
-        this.$http.post('amiba/reports/statement-function-ans', queryCase).then(response => {
-          if (isDownload) {
-            excelDwnload(response.data)
-          } else {
-            this.updateTableOptions(response.data.data);
-          }
-        }, response => {
-          this.$toast(response);
-        });
-      },
-      focusGroup(group) {
-        this.model.group = group;
-      },
-      loadGroups() {
-        var params = {};
-        if (this.model.purpose) {
-          params.purpose_id = this.model.purpose.id;
-        }
-        this.groups = [];
-        this.$http.get('amiba/groups/all', {
-          params: params
-        }).then(response => {
-          this.groups = response.data.data;
-          this.model.group = null;
-        }, response => {
-          this.$toast(response);
-        });
-      },
-      updateTableOptions(data) {
-        this.dataDetail = [];
-        _each(data, (value, key) => {
-          this.dataDetail.push(value);
-        });
-      },
-      init_period_ref(options) {
-        if (this.model.purpose && this.model.purpose.calendar_id) {
-          options.wheres.$calendar = {
-            'calendar_id': this.model.purpose.calendar_id
-          };
-        } else {
-          options.wheres.$calendar = false;
-        }
-      },
-    },
-    created() {
-
-    },
-    mounted() {
+      groups: [],
+      dataDetail: []
+    };
+  },
+  filters: {
+    mdThousand: mdThousand
+  },
+  watch: {
+    "model.purpose": function(value) {
+      this.loadData();
       this.loadGroups();
     },
-  };
+    "model.period": function(value) {
+      this.loadData();
+    },
+    "model.group": function(value) {
+      this.loadData();
+    }
+  },
+  methods: {
+    exportData() {
+      const cols = [];
+      cols.push(new Column({ field: "itemName", label: "收支项目" }));
+      cols.push(new Column({ field: "month_value", label: "发生额" }));
+      cols.push(new Column({ field: "month_ratio", label: "结构比率" }));
+      cols.push(new Column({ field: "year_value", label: "年累计" }));
+      cols.push(new Column({ field: "year_ratio", label: "累计比率" }));
+
+      const datas = this.dataDetail.map(res => {
+        return {
+          itemName: Array(res.indent).join(" ") + res.itemName,
+          month_value: res.month_value,
+          month_ratio: res.month_ratio,
+          year_value: res.year_value,
+          year_ratio: res.year_ratio
+        };
+      });
+
+      const de = new DataExport(datas, cols);
+      de.toExcel("报表-职能式损益表");
+    },
+    loadData() {
+      var queryCase = {
+        wheres: []
+      };
+      if (!this.model.purpose || !this.model.period || !this.model.group) {
+        this.dataDetail = [];
+        return;
+      }
+      if (this.model.purpose) {
+        queryCase.wheres.push({
+          purpose_id: this.model.purpose.id
+        });
+      }
+      if (this.model.period) {
+        queryCase.wheres.push({
+          period_id: this.model.period.id
+        });
+      }
+      if (this.model.group) {
+        queryCase.wheres.push({
+          group_id: this.model.group.id
+        });
+      }
+      this.$http.post("amiba/reports/statement-function-ans", queryCase).then(
+        response => {
+          this.updateTableOptions(response.data.data);
+        },
+        response => {
+          this.$toast(response);
+        }
+      );
+    },
+    focusGroup(group) {
+      this.model.group = group;
+    },
+    loadGroups() {
+      var params = {};
+      if (this.model.purpose) {
+        params.purpose_id = this.model.purpose.id;
+      }
+      this.groups = [];
+      this.$http
+        .get("amiba/groups/all", {
+          params: params
+        })
+        .then(
+          response => {
+            this.groups = response.data.data;
+            this.model.group = null;
+          },
+          response => {
+            this.$toast(response);
+          }
+        );
+    },
+    updateTableOptions(data) {
+      this.dataDetail = [];
+      _each(data, (value, key) => {
+        this.dataDetail.push(value);
+      });
+    },
+    init_period_ref(options) {
+      if (this.model.purpose && this.model.purpose.calendar_id) {
+        options.wheres.$calendar = {
+          calendar_id: this.model.purpose.calendar_id
+        };
+      } else {
+        options.wheres.$calendar = false;
+      }
+    }
+  },
+  created() {},
+  mounted() {
+    this.loadGroups();
+  }
+};
 </script>
