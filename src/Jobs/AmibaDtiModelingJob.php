@@ -2,6 +2,7 @@
 
 namespace Suite\Amiba\Jobs;
 
+use Carbon\Carbon;
 use DB;
 use GuzzleHttp;
 use Illuminate\Bus\Queueable;
@@ -10,10 +11,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Suite\Amiba\Models\DtiModeling;
-use Carbon\Carbon;
 
-class AmibaDtiModelingJob implements ShouldQueue
-{
+class AmibaDtiModelingJob implements ShouldQueue {
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
   protected $model;
   protected $period;
@@ -23,13 +22,11 @@ class AmibaDtiModelingJob implements ShouldQueue
    *
    * @return void
    */
-  public function __construct($model, $period)
-  {
+  public function __construct($model, $period) {
     $this->model = $model;
     $this->period = $period;
   }
-  private function handleByRuntime()
-  {
+  private function handleByRuntime() {
     $base_uri = env("GMF_RUNTIME_HOST");
     $client = new GuzzleHttp\Client([
       'base_uri' => $base_uri,
@@ -45,30 +42,30 @@ class AmibaDtiModelingJob implements ShouldQueue
     $res = $client->request('POST', "api/amiba/models/modeling", [
       'json' => $input,
     ]);
-    $result = (string)$res->getBody();
+    $result = (string) $res->getBody();
   }
   /**
    * Execute the job.
    *
    * @return void
    */
-  public function handle()
-  {
+  public function handle() {
     if (empty($this->model)) {
       return;
     }
     $e = false;
     try {
-      if (!empty(env("GMF_RUNTIME_HOST"))) {
-        $this->handleByRuntime();
-        return;
-      }
       $m = DtiModeling::updateOrCreate([
         "ent_id" => $this->model->ent_id,
         "purpose_id" => $this->model->purpose_id,
         "period_id" => $this->period->id,
-        "model_id" => $this->model->id
+        "model_id" => $this->model->id,
       ], ["msg" => "开始执行"]);
+
+      if (!empty(env("GMF_RUNTIME_HOST"))) {
+        $this->handleByRuntime();
+        return;
+      }
       $m->succeed = false;
       $m->start_time = new Carbon;
       $m->end_time = null;
@@ -79,9 +76,13 @@ class AmibaDtiModelingJob implements ShouldQueue
     } catch (\Exception $ex) {
       $e = $ex;
       throw $ex;
-    }
-    finally {
-      $m = DtiModeling::find($this->model->id);
+    } finally {
+      $m = DtiModeling::updateOrCreate([
+        "ent_id" => $this->model->ent_id,
+        "purpose_id" => $this->model->purpose_id,
+        "period_id" => $this->period->id,
+        "model_id" => $this->model->id,
+      ], ["msg" => "执行成功"]);
       if ($e) {
         $m->succeed = false;
         $m->msg = $e->getMessage();
