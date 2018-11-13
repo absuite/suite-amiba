@@ -1,6 +1,8 @@
 @import "~gmf/components/MdAnimation/variables";
 @import "~gmf/components/MdLayout/mixins";
+
 @include md-layout-small-and-up {
+
   .md-refs-dialog,
   .md-query {
     .md-table .md-table-cell {
@@ -14,6 +16,13 @@
     .md-card-content {
       max-height: 3rem;
     }
+
     &.md-active {}
+  }
+}
+
+.md-part-toolbar-group {
+  .md-field {
+    width: 180px;
   }
 }
