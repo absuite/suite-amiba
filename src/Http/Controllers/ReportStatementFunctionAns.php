@@ -16,7 +16,6 @@ class ReportStatementFunctionAns extends Controller {
     Log::error(static::class);
     $result = [];
     $monthData = [];
-    $timeData = false;
     $qc = QueryCase::formatRequest($request);
     $period = QueryHelper::getPeriod($qc);
     $group = QueryHelper::getGroup($qc);
@@ -98,26 +97,6 @@ class ReportStatementFunctionAns extends Controller {
     $rootNode = new \StdClass;
     $rootNode->indent = -1;
     $rootNode->nodes = QueryHelper::buildTree($elements);
-
-    /*时间数据*/
-    $query = DB::table('suite_amiba_data_time_lines as l');
-    $query->join('suite_amiba_data_times as t', 'l.time_id', '=', 't.id');
-    $query->join('suite_cbo_period_accounts as p', 't.period_id', '=', 'p.id');
-
-    $query->addSelect(DB::raw("SUM(CASE WHEN p.id='" . $period->id . "' THEN 1  ELSE 0 END * l.total_time) AS time_month"));
-    $query->addSelect(DB::raw("SUM(l.total_time) as time_year"));
-
-    foreach ($qc->wheres as $key => $value) {
-      if ($value->name == 'group_id') {
-        QueryCase::attachWhere($query, $value, 'l.' . $value->name);
-      } else if ($value->name == 'purpose_id') {
-        QueryCase::attachWhere($query, $value, 't.' . $value->name);
-      }
-    }
-    $query->where('p.year', '=', $period->year);
-    $query->where('p.from_date', '<=', $period->from_date);
-
-    $timeData = $query->first();
 
     //汇总上级
     QueryHelper::sumTreeNodes($rootNode, ['month_value', 'year_value']);

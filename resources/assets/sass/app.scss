@@ -16,12 +16,23 @@
     .md-card-content {
       max-height: 3rem;
     }
+  }
+}
 
-    &.md-active {}
+.md-part-body {
+  max-width: 100%;
+
+  .md-part-side.md-active {
+    display: flex;
+    min-width: 230px;
+    max-width: 230px;
   }
 }
 
 .md-part-toolbar-group {
+  flex-direction: row;
+  display: flex;
+
   .md-field {
     width: 180px;
   }

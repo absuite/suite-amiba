@@ -143,7 +143,7 @@ class AmibaMenuSeeder extends Seeder {
 			$id = "afa0afd00a1311e78a3fe397c887211f";
 			Menu::build(function (Builder $builder) use ($id) {
 				$builder->id($id)->code('amiba.data.doc')->name('核算数据表')->parent('amiba.data')
-					->uri('amiba.data.doc.edit')->sequence($this->sequence . '0406')->tag($this->tag);
+					->uri('amiba.data.doc.list')->sequence($this->sequence . '0406')->tag($this->tag);
 			});
 
 			$id = "8aa26d00185311e782f0637e65706dd8";

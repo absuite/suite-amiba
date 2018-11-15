@@ -2,15 +2,8 @@
   <md-part class="md-full">
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-layout md-gutter>
-          <md-layout md-flex="50">
-            <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
-          </md-layout>
-          <md-layout md-flex="50">
-            <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref"
-              v-model="model.period"></md-ref-input>
-          </md-layout>
-        </md-layout>
+        <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
+        <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-ref-input>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-group>
@@ -24,11 +17,11 @@
       <div class="layout flex layout-column md-query">
         <md-table class="layout-fill">
           <md-table-row>
-            <md-table-head>收支项目</md-table-head>
-            <md-table-head md-numeric>发生额</md-table-head>
-            <md-table-head md-numeric>结构比率</md-table-head>
-            <md-table-head md-numeric>年累计</md-table-head>
-            <md-table-head md-numeric>累计比率</md-table-head>
+            <md-table-head style="width: 200px;">收支项目</md-table-head>
+            <md-table-head md-numeric style="width:180px;">发生额</md-table-head>
+            <md-table-head md-numeric style="width: 180px;">结构比率</md-table-head>
+            <md-table-head md-numeric style="width: 180px;">年累计</md-table-head>
+            <md-table-head md-numeric style="width: 180px;">累计比率</md-table-head>
           </md-table-row>
           <md-table-row v-for="(row, index) in dataDetail" :key="index">
             <md-table-cell>

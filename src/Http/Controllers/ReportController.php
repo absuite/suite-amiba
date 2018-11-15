@@ -41,7 +41,7 @@ class ReportController extends Controller {
 		$date = date('Y-m-d');
 		$item = false;
 		foreach($periodAll as $v){
-			if($v->from_date>=$date && $v->to_date<=$date){
+			if($date>=$v->from_date && $date<=$v->to_date){
 				$item=$this->buildPerio($v);
 				break;
 			}
