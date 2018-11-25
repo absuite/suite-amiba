@@ -8,6 +8,15 @@
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-group>
+        <md-field>
+          <label>显示单位</label>
+          <md-select v-model="display.unit" md-dense>
+            <md-option value="0">元</md-option>
+            <md-option value="3">千</md-option>
+            <md-option value="4">万</md-option>
+            <md-option value="8">亿</md-option>
+          </md-select>
+        </md-field>
         <md-button @click.native="exportData" class="md-primary">
           <md-icon>cloud_download</md-icon><span>导出</span>
         </md-button>
@@ -30,7 +39,7 @@
               <div :class="['md-indent-'+row.indent]">{{row.itemName}}</div>
             </md-table-cell>
             <template v-for="(g,rk) in dataCategories">
-              <md-table-cell md-numeric :key="rk">{{row["money_m_"+g]|mdThousand}}</md-table-cell>
+              <md-table-cell md-numeric :key="rk">{{row["money_m_"+g]|formatDecimal({unit:display.unit})}}</md-table-cell>
             </template>
           </md-table-row>
         </md-table>
@@ -43,12 +52,15 @@
   import DataExport from "gmf/components/MdGrid/classes/DataExport";
 
   import common from "gmf/core/utils/common";
-  import mdThousand from "gmf/filters/mdThousand";
+  import formatDecimal from "../filters/formatDecimal";
   import _each from "lodash/each";
   import excelDwnload from "cbo/utils/excelDwnload ";
   export default {
     data() {
       return {
+        display:{
+          unit:0,
+        },
         model: {
           purpose: this.$root.configs.purpose,
           fm_period: null,
@@ -61,7 +73,7 @@
       };
     },
     filters: {
-      mdThousand: mdThousand
+      formatDecimal:formatDecimal
     },
     watch: {
       'model.purpose': function (value) {

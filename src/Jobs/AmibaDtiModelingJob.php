@@ -5,11 +5,13 @@ namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
 use DB;
 use GuzzleHttp;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Psr\Http\Message\ResponseInterface;
 use Suite\Amiba\Models\DtiModeling;
 
 class AmibaDtiModelingJob implements ShouldQueue {
@@ -42,7 +44,7 @@ class AmibaDtiModelingJob implements ShouldQueue {
     $res = $client->request('POST', "api/amiba/models/modeling", [
       'json' => $input,
     ]);
-    $result = (string) $res->getBody();
+    // $result = (string) $res->getBody();
   }
   /**
    * Execute the job.
@@ -60,37 +62,39 @@ class AmibaDtiModelingJob implements ShouldQueue {
         "purpose_id" => $this->model->purpose_id,
         "period_id" => $this->period->id,
         "model_id" => $this->model->id,
-      ], ["msg" => "开始执行"]);
+      ], ["msg" => "开始执行", "start_time" => new Carbon]);
 
       if (!empty(env("GMF_RUNTIME_HOST"))) {
         $this->handleByRuntime();
-        return;
+      } else {
+        $m->succeed = false;
+        $m->start_time = new Carbon;
+        $m->end_time = null;
+        $m->msg = null;
+        $m->save();
+        DB::statement("CALL sp_amiba_data_modeling(?,?,?,?);", [$this->model->ent_id, $this->model->purpose_id, $this->period->id, $this->model->id]);
       }
-      $m->succeed = false;
-      $m->start_time = new Carbon;
-      $m->end_time = null;
-      $m->msg = null;
-      $m->save();
-
-      DB::statement("CALL sp_amiba_data_modeling(?,?,?,?);", [$this->model->ent_id, $this->model->purpose_id, $this->period->id, $this->model->id]);
     } catch (\Exception $ex) {
       $e = $ex;
       throw $ex;
     } finally {
-      $m = DtiModeling::updateOrCreate([
-        "ent_id" => $this->model->ent_id,
-        "purpose_id" => $this->model->purpose_id,
-        "period_id" => $this->period->id,
-        "model_id" => $this->model->id,
-      ], ["msg" => "执行成功"]);
-      if ($e) {
-        $m->succeed = false;
-        $m->msg = $e->getMessage();
+      if (!empty(env("GMF_RUNTIME_HOST"))) {
       } else {
-        $m->succeed = true;
+        $m = DtiModeling::updateOrCreate([
+          "ent_id" => $this->model->ent_id,
+          "purpose_id" => $this->model->purpose_id,
+          "period_id" => $this->period->id,
+          "model_id" => $this->model->id,
+        ], ["msg" => "执行成功"]);
+        if ($e) {
+          $m->succeed = false;
+          $m->msg = $e->getMessage();
+        } else {
+          $m->succeed = true;
+        }
+        $m->end_time = new Carbon;
+        $m->save();
       }
-      $m->end_time = new Carbon;
-      $m->save();
     }
   }
 
