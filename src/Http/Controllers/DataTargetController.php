@@ -85,7 +85,7 @@ class DataTargetController extends Controller {
 	}
 	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
-		$fillable = ['rate'];
+		$fillable = ['type_enum', 'rate', 'money'];
 		$entityable = ['element'];
 
 		if ($lines && count($lines)) {

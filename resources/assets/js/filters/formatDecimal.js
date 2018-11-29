@@ -4,7 +4,7 @@ export default function formatDecimal(num, options) {
   //quantile:分位数，默认3，表示千分位
   options = options || {}
   if (!options.precision) options.precision = 2;
-  if (!options.unit) options.unit = 2;
+  if (!options.unit) options.unit = 0;
   if (!options.quantile) options.quantile = 3;
 
   num = parseFloat(num);

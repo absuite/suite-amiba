@@ -63,7 +63,6 @@ export default {
         'group': 'required',
         'fm_period': 'required',
         'to_period': 'required',
-        'lines': 'required|min:1'
       });
       var fail = validator.fails();
       if (fail && !notToast) {
