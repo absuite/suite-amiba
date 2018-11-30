@@ -22,7 +22,7 @@ class DataAdjustController extends Controller {
 		$withs = ['fm_group', 'to_group', 'fm_element', 'to_element'];
 
 		$query = Models\DataAdjustLine::with($withs);
-		$query->where('method_id', $id);
+		$query->where('adjust_id', $id);
 
 		$sortField = $request->input('sortField');
 		$sortOrder = $request->input('sortOrder', 'asc');
@@ -69,7 +69,7 @@ class DataAdjustController extends Controller {
 	 * @return [type]           [description]
 	 */
 	public function update(Request $request, $id) {
-		$input = $request->only(['memo']);
+		$input = $request->only(['memo','doc_no','doc_date']);
 		$input = InputHelper::fillEntity($input, $request, ['purpose', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',

@@ -44,7 +44,7 @@
           <md-grid :datas="fetchLineDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
             <md-grid-column label="调出核算要素" field="fm_element" dataType="entity" ref-id="suite.amiba.element.ref" width="200px" editable/>
             <md-grid-column label="调入核算要素" field="to_element" dataType="entity" ref-id="suite.amiba.element.ref" width="200px" editable/>
-            <md-grid-column label="调出阿米巴" field="fm_gGroup" dataType="entity" ref-id="suite.amiba.group.ref" width="200px" editable/>
+            <md-grid-column label="调出阿米巴" field="fm_group" dataType="entity" ref-id="suite.amiba.group.ref" width="200px" editable/>
             <md-grid-column label="调入阿米巴" field="to_group" dataType="entity" ref-id="suite.amiba.group.ref" width="200px" editable/>
             <md-grid-column label="调整金额" field="money" editable/>
           </md-grid>
