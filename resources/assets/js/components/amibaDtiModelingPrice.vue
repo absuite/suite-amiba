@@ -18,39 +18,38 @@
         </md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
+      <md-part-toolbar-group>
+        <md-fetch :fetch="doFetch"></md-fetch>
+      </md-part-toolbar-group>
     </md-part-toolbar>
     <md-part-body class="no-padding">
-      <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true">
-        <md-grid-column label="模型" width="180px">
+      <md-grid :datas="loadDatas" :pagerSize="50" ref="grid" :row-focused="false" :auto-load="true" show-download>
+        <md-grid-column label="模型" width="180px" field="model_name" >
           <template slot-scope="row">
             <div>{{ row.model_name}}</div>
             <div class="md-caption">{{ row.model_code}}</div>
           </template>
         </md-grid-column>
-        <md-grid-column label="期间" width="180px">
+        <md-grid-column label="期间" width="180px" field="period_name" >
           <template slot-scope="row">
             <div>{{ row.period_name}}</div>
             <div class="md-caption">{{ row.period_code}}</div>
           </template>
         </md-grid-column>
-        <md-grid-column label="来源阿米巴" width="180px">
-         <template slot-scope="row">
+        <md-grid-column label="来源阿米巴" width="180px" field="fm_group_name" >
+          <template slot-scope="row">
             <div>{{ row.fm_group_name}}</div>
             <div class="md-caption">{{ row.fm_group_code}}</div>
           </template>
         </md-grid-column>
-        <md-grid-column label="目标阿米巴" width="180px">
-         <template slot-scope="row">
+        <md-grid-column label="目标阿米巴" width="180px" field="to_group_name" >
+          <template slot-scope="row">
             <div>{{ row.to_group_name}}</div>
             <div class="md-caption">{{ row.to_group_code}}</div>
           </template>
         </md-grid-column>
-         <md-grid-column label="物料" width="180px">
-         <template slot-scope="row">
-            <div>{{ row.item_name}}</div>
-            <div class="md-caption">{{ row.item_code}}</div>
-          </template>
-        </md-grid-column>
+        <md-grid-column label="料号" field="item_code" />
+        <md-grid-column label="品名" field="item_name" />
         <md-grid-column label="单据日期" field="date" />
         <md-grid-column label="消息" field="msg" width="500px" multiple />
       </md-grid>
@@ -62,13 +61,14 @@
   import common from 'gmf/core/utils/common';
   import _extend from 'lodash/extend'
   export default {
-    name:"AmibaDtiModelingPrice",
+    name: "AmibaDtiModelingPrice",
     data() {
       return {
         model: {
           purpose: this.$root.configs.purpose,
           period: this.$root.configs.period
         },
+        currentQ: "",
         loading: 0,
       };
     },
@@ -94,12 +94,20 @@
         if (!params.period_id || !params.purpose_id) {
           return []
         }
+        params.q = this.currentQ;
         return await this.$http.get('amiba/dti-modelings/prices', {
           params: params
         })
       },
+      doFetch(q) {
+        if (this.currentQ != q) {
+          this.currentQ = q;
+          this.runAll();
+        }
+        this.currentQ = q;
+      },
       runAll() {
-        this.$refs.grid.refresh()
+        this.$refs.grid.refresh();
       },
       init_period_ref(options) {
         if (this.model.purpose && this.model.purpose.calendar_id) {

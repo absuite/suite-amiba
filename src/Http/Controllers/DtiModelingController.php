@@ -1,6 +1,7 @@
 <?php
 
 namespace Suite\Amiba\Http\Controllers;
+use DB;
 use GAuth;
 use Gmf\Sys\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +9,7 @@ use Suite\Amiba\Jobs;
 use Suite\Amiba\Models;
 use Suite\Cbo\Models as CboModels;
 use Validator;
-use DB;
+
 class DtiModelingController extends Controller {
   public function GetPriceError(Request $request) {
     $pageSize = $request->input('size', 20);
@@ -24,13 +25,25 @@ class DtiModelingController extends Controller {
     $query->addSelect('l.price as price');
     $query->addSelect('l.msg as msg');
 
-    $query->addSelect('p.code as period_code','p.name as period_name');
-    $query->addSelect('m.code as model_code','m.name as model_name');
-    $query->addSelect('fm.code as fm_group_code','fm.name as fm_group_name');
-    $query->addSelect('to.code as to_group_code','to.name as to_group_name');
-    $query->addSelect('item.code as item_code','item.name as item_name');
+    $query->addSelect('p.code as period_code', 'p.name as period_name');
+    $query->addSelect('m.code as model_code', 'm.name as model_name');
+    $query->addSelect('fm.code as fm_group_code', 'fm.name as fm_group_name');
+    $query->addSelect('to.code as to_group_code', 'to.name as to_group_name');
+    $query->addSelect('item.code as item_code', 'item.name as item_name');
 
-    $query->orderBy('p.from_date',"l.model_id","l.fm_group_id","l.to_group_id","l.date","l.item_id");
+    if (!empty($v = $request->input('purpose_id'))) {
+      $query->where('l.purpose_id', $v);
+    }
+    if (!empty($v = $request->input('period_id'))) {
+      $query->where('l.period_id', $v);
+    }
+    if (!empty($v = $request->input('q'))) {
+      $query->where(function ($query) use ($v) {
+        $query->where("item.code", "like", "%" . $v . "%")->orWhere("item.name", "like", "%" . $v . "%");
+      });
+    }
+
+    $query->orderBy('p.from_date', "l.model_id", "l.fm_group_id", "l.to_group_id", "l.date", "l.item_id");
 
     $data = $query->paginate($pageSize);
 
@@ -39,7 +52,6 @@ class DtiModelingController extends Controller {
   public function index(Request $request) {
     $query = Models\Modeling::with('purpose', 'group');
     $items = $query->get();
-
 
     $query = Models\DtiModeling::with('period');
     $query->where('ent_id', GAuth::entId());

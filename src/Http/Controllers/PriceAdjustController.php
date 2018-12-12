@@ -67,10 +67,9 @@ class PriceAdjustController extends Controller {
 	 */
 	public function update(Request $request, $id) {
 		$input = $request->only(['code', 'name']);
-		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period', 'state_enum']);
+		$input = InputHelper::fillEntity($input, $request, ['purpose', 'group', 'period']);
 		$validator = Validator::make($input, [
 			'purpose_id' => 'required',
-			'group_id' => 'required',
 			'code' => 'required',
 			'name' => 'required',
 		]);

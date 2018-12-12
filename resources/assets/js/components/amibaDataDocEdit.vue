@@ -69,22 +69,22 @@
           </md-layout>
         </md-layout>
         <md-layout class="flex">
-          <md-grid :datas="fetchLineDatas" :readonly="isApproved" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">
-            <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" width="200px" editable/>
-            <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" width="200px" editable/>
+          <md-grid :datas="fetchLineDatas" :readonly="isApproved" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" :showAdd="true" :showRemove="true">            
             <md-grid-column label="料品" field="item" dataType="entity" ref-id="suite.cbo.item.ref" width="200px" editable/>
             <md-grid-column label="料号" width="150px">
               <template slot-scope="row">
                 {{ row&&row.item?row.item.code:''}}
               </template>
             </md-grid-column>
-            <md-grid-column label="描述" editable field="memo" />
-            <md-grid-column label="费用项目" editable field="expense_code" />
-            <md-grid-column label="科目" editable field="account_code" />
-            <md-grid-column label="计量单位" field="unit" dataType="entity" ref-id="suite.cbo.unit.ref" width="200px" editable/>
+            <md-grid-column label="科目" editable field="account_code" />            
             <md-grid-column label="数量" field="qty" editable/>
             <md-grid-column label="单价" field="price" editable/>
             <md-grid-column label="金额" field="money" editable/>
+            <md-grid-column label="计量单位" field="unit" dataType="entity" ref-id="suite.cbo.unit.ref" width="200px" editable/>            
+            <md-grid-column label="费用项目" editable field="expense_code" />
+            <md-grid-column label="客商" field="trader" dataType="entity" ref-id="suite.cbo.trader.ref" width="200px" editable/>
+            <md-grid-column label="料品分类" field="item_category" dataType="entity" ref-id="suite.cbo.item.category.ref" width="200px" editable/>
+             <md-grid-column label="描述" editable field="memo" />
           </md-grid>
         </md-layout>
       </md-content>
@@ -93,38 +93,56 @@
   </md-part>
 </template>
 <script>
-import model from 'cbo/mixins/MdModel/MdModel';
-import modelGrid from 'cbo/mixins/MdModel/MdModelGrid';
-import _forEach from 'lodash/forEach'
+import model from "cbo/mixins/MdModel/MdModel";
+import modelGrid from "cbo/mixins/MdModel/MdModelGrid";
+import _forEach from "lodash/forEach";
 export default {
   mixins: [model, modelGrid],
   data() {
     return {
-      lineRefID: '',
-      lineRefField: ''
+      lineRefID: "",
+      lineRefField: ""
     };
   },
   computed: {
-
     canSave() {
-      return this.model && this.model.main && this.model.main.state_enum === 'opened' && this.validate(true);
+      return (
+        this.model &&
+        this.model.main &&
+        this.model.main.state_enum === "opened" &&
+        this.validate(true)
+      );
     },
     canApprove() {
-      return this.model && this.model.main && this.model.main.id && this.model.main.state_enum === 'opened' && this.validate(true);
+      return (
+        this.model &&
+        this.model.main &&
+        this.model.main.id &&
+        this.model.main.state_enum === "opened" &&
+        this.validate(true)
+      );
     },
     canUnapprove() {
-      return this.model && this.model.main && this.model.main.state_enum === 'approved';
+      return (
+        this.model &&
+        this.model.main &&
+        this.model.main.state_enum === "approved"
+      );
     },
     isApproved() {
-      return this.model && this.model.main && this.model.main.state_enum === 'approved';
+      return (
+        this.model &&
+        this.model.main &&
+        this.model.main.state_enum === "approved"
+      );
     }
   },
   methods: {
     validate(notToast) {
       var validator = this.$validate(this.model.main, {
-        'purpose': 'required',
-        'period': 'required',
-        'element': 'required',
+        purpose: "required",
+        period: "required",
+        element: "required"
       });
       var fail = validator.fails();
       if (fail && !notToast) {
@@ -138,60 +156,74 @@ export default {
           doc_date: this.$root.configs.date,
           purpose: this.$root.configs.purpose,
           period: this.$root.configs.period,
-          memo: '',
+          memo: "",
           currency: this.$root.configs.currency,
           element: null,
           fm_group: null,
           to_group: null,
-          'state_enum': 'opened',
-          'src_type_enum': 'manual',
-          'doc_no': '',
+          state_enum: "opened",
+          src_type_enum: "manual",
+          doc_no: ""
         }
-      }
+      };
     },
     async afterInitData() {
-      this.model.main.doc_no = await this.$root.issueSn('suite.amiba.data.doc');
+      this.model.main.doc_no = await this.$root.issueSn("suite.amiba.data.doc");
     },
     approve() {
       const oldState = this.model.main.state_enum;
-      this.model.main.state_enum = 'approved';
+      this.model.main.state_enum = "approved";
       if (!this.serverStore()) {
         this.model.main.state_enum = oldState;
       }
     },
     unapprove() {
       const oldState = this.model.main.state_enum;
-      this.model.main.state_enum = 'opened';
+      this.model.main.state_enum = "opened";
       if (!this.serverStore()) {
         this.model.main.state_enum = oldState;
       }
     },
     afterCopy() {
-      this.model.main.state_enum = 'opened';
+      this.model.main.state_enum = "opened";
     },
     list() {
-      this.$router.push({ name: 'module', params: { module: 'amiba.data.doc.list' } });
+      this.$router.push({
+        name: "module",
+        params: { module: "amiba.data.doc.list" }
+      });
     },
     onLineAdd() {
-      if (this.$refs.grid && this.$refs.grid.focusCell && this.$refs.grid.focusCell.column) {
+      if (
+        this.$refs.grid &&
+        this.$refs.grid.focusCell &&
+        this.$refs.grid.focusCell.column
+      ) {
         this.lineRefField = this.$refs.grid.focusCell.column.field;
         this.lineRefID = this.$refs.grid.focusCell.column.refId;
-        if (this.lineRefField == 'item' ||
-          this.lineRefField == 'trader' ||
-          this.lineRefField == 'item_category') {
+        if (
+          this.lineRefField == "item" ||
+          this.lineRefField == "trader" ||
+          this.lineRefField == "item_category"
+        ) {
           this.$nextTick(() => {
-            this.$refs['lineRef'].open();
+            this.$refs["lineRef"].open();
           });
           return;
         }
       }
-      this.$refs.grid && this.$refs.grid.addDatas({ data_type_enum: '' });
+      this.$refs.grid && this.$refs.grid.addDatas({ data_type_enum: "" });
     },
     lineRefClose(datas) {
-      if (!datas || !datas.length || !this.lineRefField ||
-        !this.$refs.grid || !this.$refs.grid.focusCell ||
+      if (
+        !datas ||
+        !datas.length ||
+        !this.lineRefField ||
+        !this.$refs.grid ||
+        !this.$refs.grid.focusCell ||
         !this.$refs.grid.focusCell.row ||
-        !this.$refs.grid.focusCell.row.data) {
+        !this.$refs.grid.focusCell.row.data
+      ) {
         return;
       }
       if (!this.$refs.grid.focusCell.getValue()) {
@@ -201,46 +233,50 @@ export default {
       _forEach(datas, (v, k) => {
         let row = {};
         row[this.lineRefField] = v;
-        row['data_type_enum'] = '';
+        row["data_type_enum"] = "";
         this.$refs.grid.addDatas(row);
       });
     },
     init_fm_group_ref(options) {
-      options.wheres.$leaf = { is_leaf: '1' };
+      options.wheres.$leaf = { is_leaf: "1" };
       if (this.model.main.purpose) {
-        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
+        options.wheres.$purpose = { purpose_id: this.model.main.purpose.id };
       } else {
         options.wheres.$purpose = false;
       }
     },
     init_to_group_ref(options) {
-      options.wheres.$leaf = { 'is_leaf': '1' };
+      options.wheres.$leaf = { is_leaf: "1" };
       if (this.model.main.purpose) {
-        options.wheres.$purpose = {'purpose_id': this.model.main.purpose.id };
+        options.wheres.$purpose = { purpose_id: this.model.main.purpose.id };
       } else {
         options.wheres.$purpose = false;
       }
     },
     init_element_ref(options) {
-      options.wheres.$leaf = { 'is_leaf': '1' };
+      options.wheres.$leaf = { is_leaf: "1" };
       if (this.model.main.purpose) {
-        options.wheres.$purpose = { 'purpose_id': this.model.main.purpose.id };
+        options.wheres.$purpose = { purpose_id: this.model.main.purpose.id };
       } else {
         options.wheres.$purpose = false;
       }
     },
     init_period_ref(options) {
       if (this.model.main.purpose && this.model.main.purpose.calendar_id) {
-        options.wheres.$calendar = { 'calendar_id': this.model.main.purpose.calendar_id };
+        options.wheres.$calendar = {
+          calendar_id: this.model.main.purpose.calendar_id
+        };
       } else {
-        options.wheres.$calendar = { 'calendar_id': this.$root.configs.calendar.id };
+        options.wheres.$calendar = {
+          calendar_id: this.$root.configs.calendar.id
+        };
       }
-    },
+    }
   },
   created() {
-    this.model.entity = 'suite.amiba.data.doc';
+    this.model.entity = "suite.amiba.data.doc";
     this.model.order = "doc_no";
-    this.route = 'amiba/data-docs';
-  },
+    this.route = "amiba/data-docs";
+  }
 };
 </script>
