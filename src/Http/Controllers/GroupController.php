@@ -12,10 +12,13 @@ use Validator;
 
 class GroupController extends Controller {
   public function index(Request $request) {
-    $size = $request->input('size', 10);
+    $size = $request->input('size', 50);
     $query = Models\Group::select('id', 'code', 'name', 'memo');
     if ($v = QueryHelper::geMyGroups()) {
       $query->whereIn('id', $v);
+    }
+    if ($v=$request->input('purpose_id')) {
+      $query->where('purpose_id', $v);
     }
     return $this->toJson($query->paginate($size));
 
