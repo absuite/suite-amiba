@@ -108,6 +108,11 @@
         })
       },
       runAll() {
+        const datas = {
+          purpose_id: this.model.purpose.id,
+          period_id: this.model.period.id
+        };
+        this.$http.post('amiba/dti-modelings/cache', datas);
         const rows = this.$refs.grid.getSelectedDatas(true);
         rows && rows.forEach(item => {
           this.runItem(item);

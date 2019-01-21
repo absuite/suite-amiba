@@ -5,13 +5,11 @@ namespace Suite\Amiba\Jobs;
 use Carbon\Carbon;
 use DB;
 use GuzzleHttp;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Psr\Http\Message\ResponseInterface;
 use Suite\Amiba\Models\DtiModeling;
 
 class AmibaDtiModelingJob implements ShouldQueue {
@@ -24,9 +22,20 @@ class AmibaDtiModelingJob implements ShouldQueue {
    *
    * @return void
    */
-  public function __construct($model, $period) {
+  public function __construct($model=null, $period=null) {
     $this->model = $model;
     $this->period = $period;
+  }
+  public function Cache($ent_id, $data) {
+    $base_uri = env("GMF_RUNTIME_HOST");
+    $client = new GuzzleHttp\Client([
+      'base_uri' => $base_uri,
+      'headers' => ['Accept' => 'application/json', 'Content-Type' => 'application/json', 'Ent' => $ent_id],
+      'verify' => false,
+    ]);
+    $res = $client->request('POST', "api/amiba/models/cache", [
+      'json' => $data,
+    ]);
   }
   private function handleByRuntime() {
     $base_uri = env("GMF_RUNTIME_HOST");

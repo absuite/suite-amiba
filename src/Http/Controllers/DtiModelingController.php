@@ -113,4 +113,10 @@ class DtiModelingController extends Controller {
 
     return $this->toJson(true);
   }
+  public function doCache(Request $request) {
+    $input = array_only($request->all(), ['purpose_id', 'period_id']);
+    $job = new Jobs\AmibaDtiModelingJob();
+    $job->Cache(GAuth::entId(), $input);
+    return $this->toJson(true);
+  }
 }
