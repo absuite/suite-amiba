@@ -10,7 +10,7 @@ use GAuth;
 class PurposeController extends Controller {
 	public function index(Request $request) {
 		$size = $request->input('size', 10);
-		$query = Models\Purpose::with('calendar', 'currency');
+		$query = Models\Purpose::with('calendar', 'currency')->orderBy("code");
 		return $this->toJson($query->paginate($size));
 	}
 	public function show(Request $request, string $id) {
