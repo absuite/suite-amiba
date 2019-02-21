@@ -13,7 +13,7 @@ use Validator;
 class DtiModelingController extends Controller {
   
   public function DeletePriceError(Request $request) {
-    DB::table('suite_amiba_dti_modeling_prices as l')->delete();
+    DB::table('suite_amiba_dti_modeling_prices')->delete();
     return $this->toJson(true);
   }
   public function GetPriceError(Request $request) {
