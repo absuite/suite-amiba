@@ -26,6 +26,7 @@ Route::prefix('api/amiba')->middleware(['api', 'auth:api'])->namespace($ns)->gro
 	Route::get('dtis/log', 'DtiController@log');
 	
 	Route::get('dti-modelings/prices', 'DtiModelingController@GetPriceError');
+	Route::delete('dti-modelings/prices', 'DtiModelingController@DeletePriceError');
 	Route::resource('dti-modelings', 'DtiModelingController', ['only' => ['index', 'store', 'destroy']]);
 
 	Route::get('/allot-methods/{id}/lines', 'AllotMethodController@showLines');
