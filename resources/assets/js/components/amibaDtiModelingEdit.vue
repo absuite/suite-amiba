@@ -7,8 +7,7 @@
             <md-ref-input md-label="目的" required md-ref-id="suite.amiba.purpose.ref" v-model="model.purpose"></md-ref-input>
           </md-layout>
           <md-layout md-flex="50">
-            <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref"
-              v-model="model.period"></md-ref-input>
+            <md-ref-input md-label="期间" :md-init="init_period_ref" required md-ref-id="suite.cbo.period.account.ref" v-model="model.period"></md-ref-input>
           </md-layout>
         </md-layout>
       </md-part-toolbar-group>
@@ -61,97 +60,101 @@
   </md-part>
 </template>
 <script>
-  import common from 'gmf/core/utils/common';
-  import _extend from 'lodash/extend'
-  export default {
-    name: "AmibaDtiModelingEdit",
-    data() {
-      return {
-        model: {
-          purpose: this.$root.configs.purpose,
-          period: this.$root.configs.period
-        },
-        loading: 0,
-        is_running: 0
-      };
-    },
-    watch: {
-      "model.purpose"() {
-        this.$refs.grid.refresh()
+import common from "gmf/core/utils/common";
+import _extend from "lodash/extend";
+export default {
+  name: "AmibaDtiModelingEdit",
+  data() {
+    return {
+      model: {
+        purpose: this.$root.configs.purpose,
+        period: this.$root.configs.period
       },
-      "model.period"() {
-        this.$refs.grid.refresh()
+      loading: 0,
+      is_running: 0
+    };
+  },
+  watch: {
+    "model.purpose"() {
+      this.$refs.grid.refresh();
+    },
+    "model.period"() {
+      this.$refs.grid.refresh();
+    }
+  },
+  methods: {
+    refresh() {
+      this.$refs.grid.refresh();
+    },
+    priceError() {
+      this.$goModule("AmibaDtiModelingPrice");
+    },
+    async loadDatas({ pager }) {
+      const params = _extend({}, pager, {});
+      if (this.model.purpose) {
+        params.purpose_id = this.model.purpose.id;
       }
+      if (this.model.period) {
+        params.period_id = this.model.period.id;
+      }
+      if (!params.period_id || !params.purpose_id) {
+        return [];
+      }
+      return await this.$http.get("amiba/dti-modelings", {
+        params: params
+      });
     },
-    methods: {
-      refresh() {
-        this.$refs.grid.refresh()
-      },
-      priceError() {
-        this.$goModule("AmibaDtiModelingPrice")
-      },
-      async loadDatas({
-        pager
-      }) {
-        const params = _extend({}, pager, {});
-        if (this.model.purpose) {
-          params.purpose_id = this.model.purpose.id;
-        }
-        if (this.model.period) {
-          params.period_id = this.model.period.id
-        }
-        if (!params.period_id || !params.purpose_id) {
-          return []
-        }
-        return await this.$http.get('amiba/dti-modelings', {
-          params: params
+    runAll() {
+      const datas = {
+        purpose_id: this.model.purpose.id,
+        period_id: this.model.period.id
+      };
+      this.$http
+        .post("amiba/dti-modelings/cache", datas)
+        .then(res => {
+          const rows = this.$refs.grid.getSelectedDatas(true);
+          rows &&
+            rows.forEach(item => {
+              this.runItem(item);
+            });
         })
-      },
-      runAll() {
-        const datas = {
-          purpose_id: this.model.purpose.id,
-          period_id: this.model.period.id
-        };
-        this.$http.post('amiba/dti-modelings/cache', datas);
-        const rows = this.$refs.grid.getSelectedDatas(true);
-        rows && rows.forEach(item => {
-          this.runItem(item);
-        });
-      },
-      runItem(item) {
-        if (!item) return;
-        item.status = 1;
-        const datas = {
-          model_id: item.id,
-          period_id: this.model.period.id
-        };
-        this.is_running++;
-        item.start_time = common.now();
-        item.end_time = '';
-        this.$http.post('amiba/dti-modelings', datas).then(response => {
-          this.$toast(item.name + '成功提交请求!');
-          item.msg = '成功提交请求';
-          this.is_running--;
-        }, err => {
-          this.is_running--;
+        .catch(err => {
           this.$toast(err);
         });
-      },
-      init_period_ref(options) {
-        if (this.model.purpose && this.model.purpose.calendar_id) {
-          options.wheres.$calendar = {
-            'calendar_id': this.model.purpose.calendar_id
-          };
-        } else {
-          options.wheres.$calendar = false;
+    },
+    runItem(item) {
+      if (!item) return;
+      item.status = 1;
+      const datas = {
+        model_id: item.id,
+        period_id: this.model.period.id
+      };
+      this.is_running++;
+      item.start_time = common.now();
+      item.end_time = "";
+      this.$http.post("amiba/dti-modelings", datas).then(
+        response => {
+          this.$toast(item.name + "成功提交请求!");
+          item.msg = "成功提交请求";
+          this.is_running--;
+        },
+        err => {
+          this.is_running--;
+          this.$toast(err);
         }
-      },
+      );
     },
-    created() {
-
-    },
-    mounted() {
-
-    },
-  };
+    init_period_ref(options) {
+      if (this.model.purpose && this.model.purpose.calendar_id) {
+        options.wheres.$calendar = {
+          calendar_id: this.model.purpose.calendar_id
+        };
+      } else {
+        options.wheres.$calendar = false;
+      }
+    }
+  },
+  created() {},
+  mounted() {}
+};
 </script>

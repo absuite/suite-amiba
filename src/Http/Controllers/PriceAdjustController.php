@@ -17,7 +17,7 @@ class PriceAdjustController extends Controller {
 	public function showLines(Request $request, string $id) {
 		$pageSize = $request->input('size', 10);
 
-		$withs = ['group_id', 'item'];
+		$withs = ['group', 'item'];
 
 		$query = Models\PriceAdjustLine::with($withs);
 		$query->where('adjust_id', $id);
@@ -82,7 +82,7 @@ class PriceAdjustController extends Controller {
 	}
 	private function storeLines(Request $request, $headId) {
 		$lines = $request->input('lines');
-		$fillable = ['type_enum', 'cost_price'];
+		$fillable = ['type_enum', 'cost_price','fm_date','to_date'];
 		$entityable = ['group', 'item'];
 
 		if ($lines && count($lines)) {
