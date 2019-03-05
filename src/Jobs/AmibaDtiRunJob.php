@@ -325,7 +325,6 @@ class AmibaDtiRunJob implements ShouldQueue {
 				]);
 				$result = (string) $res->getBody();
 				$result = json_decode($result);
-				$result = $result->data;
 				$i++;
 			}
 
